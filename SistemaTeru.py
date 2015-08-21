@@ -21,7 +21,7 @@ class MainSystem():
 		with open("Comandas\\" + self.dia + ".csv", "a") as arch:
 			arch.write("\n" + temp[:temp.index(".")] + "," + str(self.comanda))
 
-	def consumo(self, con):
+	def calculoComanda(self, con):
 		total = sum(con)
 		return "Total: " + str(total) + "Propina Sugerida: " + str(total * 0.1) +\
 		 "Total Sugerido: " + str(total * 1.1)
@@ -37,7 +37,6 @@ class Comanda(object):
 		self.total = total
 		self.propina = propina
 		self.dineroRecibido = dineroRecibido
-		self.cambio = self.dineroRecibido - self.total
 
 	def agregarPropina(self, propina=0):
 		self.propina += propina
@@ -47,9 +46,9 @@ class Comanda(object):
 		return self.total - self.dineroRecibido
 
 	def cobro(self):
-		return "Num. Clientes: " + self.numClientes + "\nTotal: " + str(self.total) + "\nPropina: " + str(self.propina) +\
-		 " Total con Propina: " + str(self.total + self.propina) + "\nDinero Recibido: " + str(self.dineroRecibido) +\
-		 "Cambio: " + str(self.cambio)
+		return "Num. Clientes: " + str(self.numClientes) + "\nTotal: " + str(self.total) + "\nPropina: " + str(self.propina) +\
+		 "\nTotal con Propina: " + str(self.total + self.propina) + "\nDinero Recibido: " + str(self.dineroRecibido) +\
+		 "\nCambio: " + str(self.dineroRecibido + self.propina - self.total)
 
 	def __str__(self):
 		""" Formato: #Clientes, total, propina, total + propina, dineroRecibido, cambio """
