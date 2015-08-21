@@ -21,10 +21,9 @@ class MainSystem():
 		self.comanda.propina = int(propina)
 
 	def commitComanda(self):
-		print("commit")
 		temp = str(datetime.datetime.now().time())
 		with open("Comandas\\" + self.dia + ".csv", "a") as arch:
-			arch.write("\n" + temp[:temp.index(".")] + "," + str(self.coamnda))
+			arch.write("\n" + temp[:temp.index(".")] + "," + str(self.comanda))
 
 	def calculoComanda(self, con):
 		total = sum(con)
