@@ -1,5 +1,4 @@
 import datetime
-import re
 
 class MainSystem():
 	def __init__(self, spreadsheet="reportes.csv"):
@@ -31,25 +30,33 @@ class MainSystem():
 			return "Total: " + str(total) + "\nPropina Sugerida: " + str(int(total * 0.1)) + "\nTotal Sugerido: " + str(int(total * 1.1))
 		return {"Total":str(total), "Propina":str(int(total*0.1)), "Sugerido": str(int(total * 1.1))}
 
-	def cierreDeCaja(self, dineroCaja, gastos, nomina, dia=None):
-		r = re.compile("[0-9][0-9]-")
+	def cierreDeCaja(self, dineroCaja, gastos, nomina, dia=""):
 		ventas = 0
 		totalClientes = 0
 		totalPropina = 0
 		totalVentasPropina = 0
+		totalMesas = 0
 		if dia == "":
 			dia = self.dia
+		dia = [x.lstrip("0") for x in dia.split("-")]
 		if gastos == "":
 			gastos = 0
 		if nomina == "":
 			nomina = 0
-		with open("Comandas\\" + self.dia + ".csv", "r") as arch:
-			for line in arch.read():
-				line = line.split(",")
-				totalClientes += int(line[1])
-				ventas += int(line[2])
-				totalPropina += int(line[3])
-				totalVentasPropina += int(line[4])
+		try:
+			with open("Comandas\\" + dia[0] + "-" + dia[1] + "-" + dia[2] + "-" + ".csv", "r") as arch:
+				for line in arch.read():
+					totalMesas += 1
+					line = line.split(",")
+					totalClientes += int(line[1])
+					ventas += int(line[2])
+					totalPropina += int(line[3])
+					totalVentasPropina += int(line[4])
+		except FileNotFoundError:
+			return "Archivo no encontrado"
+		
+		with open("Reportes\\Reporte" + dia[1] + "_" + dia[2] + ".csv","a") as reporte:
+			pass
 
 
 	def __bool__(self):
