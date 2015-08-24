@@ -2,6 +2,11 @@
 
 El sistema de cobro y cierre de cajas de TeruTeru
 
+Instalación:
+Instalar la versión que corresponda al sistema operativo: https://www.python.org/downloads/release/python-343/
+Para ejecutar el programa abrir el archivo TeruGUI.pyw. Se tiene que seleccionar la ruta de instalación de pythonw
+dentro de C:/python34 (Para windows), 
+
 Como se usa:
 
 El sistema es parecido a la versión anterior.
