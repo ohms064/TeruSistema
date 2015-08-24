@@ -25,17 +25,32 @@ class MainSystem():
 		with open("Comandas\\" + self.dia + ".csv", "a") as arch:
 			arch.write("\n" + temp[:temp.index(".")] + "," + str(self.comanda))
 
-	def calculoComanda(self, con):
+	def calculoComanda(self, con, string=False):
 		total = sum(con)
-		return "Total: " + str(total) + "\nPropina Sugerida: " + str(int(total * 0.1)) +\
-		 "\nTotal Sugerido: " + str(int(total * 1.1))
+		if string:
+			return "Total: " + str(total) + "\nPropina Sugerida: " + str(int(total * 0.1)) + "\nTotal Sugerido: " + str(int(total * 1.1))
+		return {"Total":str(total), "Propina":str(int(total*0.1)), "Sugerido": str(int(total * 1.1))}
 
-	def cierreDeCaja(self, dineroCaja, dia=None):
-		if dia is None:
+	def cierreDeCaja(self, dineroCaja, gastos, nomina, dia=None):
+		r = re.compile("[0-9][0-9]-")
+		ventas = 0
+		totalClientes = 0
+		totalPropina = 0
+		totalVentasPropina = 0
+		if dia == "":
 			dia = self.dia
+		if gastos == "":
+			gastos = 0
+		if nomina == "":
+			nomina = 0
 		with open("Comandas\\" + self.dia + ".csv", "r") as arch:
 			for line in arch.read():
 				line = line.split(",")
+				totalClientes += int(line[1])
+				ventas += int(line[2])
+				totalPropina += int(line[3])
+				totalVentasPropina += int(line[4])
+
 
 	def __bool__(self):
 		return self.error
