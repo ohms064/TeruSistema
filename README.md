@@ -7,8 +7,8 @@ El sistema es parecido a la versión anterior.
 Al abrir el programa aparcerá una pequeña ventana con dos botones: "Nueva Mesa" y "Cerrar Caja".
 "Nueva Mesa" abre la misma interfaz que en la versión anterior (a excepción del botón "Cerrar Caja"), se puede
 utilizar el cuadro de consumo para agregar los precios de lo que se tiene en la comanda separado por espacios, 
-al dar click en "Sumar" el resultado se sustituirá en el cuadro de "Total" en la parte superior y la respectiva
-propina en el recuadro "Propina", si se diera click en el botón "Añadir" el valor total de "Consumo" se sumará
+al dar click en "Calcular" el resultado se sustituirá en el cuadro de "Total" en la parte superior y la respectiva
+propina en el recuadro "Propina", si se diera click en el botón "Sumar" el valor total de "Consumo" se sumará
 al valor de "Total" con su respectiva propina.
 Para poder cobrar una comanda se requiere añadir el número de clientes a "Clientes" y el dinero con el que está
 pagando y dar click en "Aceptar", se nos mostrará el recibo con el cambio que se le debe dar al cliente y dos botnes:

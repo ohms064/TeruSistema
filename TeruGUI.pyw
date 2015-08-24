@@ -92,7 +92,7 @@ class MainGUI(tk.Frame):
 		self.textoConsumo = tk.Text(self.master, width=24, height=5)
 		self.textoConsumo.place(x=110, y=130)
 		tk.Button(self.master, text="Añadir", command=self.agregar).place(x=260, y=220)
-		tk.Button(self.master, text="Sumar", command=self.consumo).place(x=200, y=220)
+		tk.Button(self.master, text="Calcular", command=self.consumo).place(x=200, y=220)
 		tk.Button(self.master, text="Borrar", command=self.clearConsumo).place(x=140,y=220)
 
 	def callSystem(self):
