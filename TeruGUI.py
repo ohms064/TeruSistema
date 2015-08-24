@@ -8,7 +8,6 @@ class Instanciador(tk.Frame):
 		self.master.geometry("170x75")
 		self.pack()
 		self.contador = 0
-		self.ventanas = dict()
 		self.sistema = SistemaTeru.MainSystem()
 		self.textContador = tk.StringVar()
 		self.textContador.set("Mesas: " + str(self.contador))
@@ -22,7 +21,8 @@ class Instanciador(tk.Frame):
 	def nuevaMesa(self):
 		self.contador += 1
 		self.textContador.set("Mesas: " + str(self.contador))
-		self.ventanas[self.contador] = MainGUI(self.sistema, self.contador, tk.Toplevel(self))
+		MainGUI(self.sistema, self.contador, tk.Toplevel(self))
+
 
 	def confirmacionCierre(self):
 		self.cierreWindow = tk.Toplevel(self)
@@ -103,7 +103,7 @@ class MainGUI(tk.Frame):
 		self.resultWindow.geometry("250x180")
 		if self.sistema:
 			tk.Label(self.resultWindow, text="Error!").place(x=60,y=10)	
-			tk.Button(self.resultWindow, text="Aceptar", command=self.resultWindow.destroy). place(x=100,y=120)
+			tk.Button(self.resultWindow, text="Aceptar", command=self.show). place(x=100,y=120)
 		else:
 			tk.Label(self.resultWindow, text=self.sistema.comanda.cobro()).place(x=60,y=10)
 			tk.Button(self.resultWindow, text="Cancelar", command=self.show). place(x=50,y=120)
