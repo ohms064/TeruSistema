@@ -30,7 +30,7 @@ class MainSystem():
 			return "Total: " + str(total) + "\nPropina Sugerida: " + str(int(total * 0.1)) + "\nTotal Sugerido: " + str(int(total * 1.1))
 		return {"Total":str(total), "Propina":str(int(total*0.1)), "Sugerido": str(int(total * 1.1))}
 
-	def cierreDeCaja(self, dineroCaja, gastos, nomina, dia=""):
+	def cierreDeCaja(self, dineroCaja, dineroInicial, gastos, nomina, propinaEfectivo, dia=""):
 		ventas = 0
 		totalClientes = 0
 		totalPropina = 0
@@ -44,20 +44,24 @@ class MainSystem():
 		if nomina == "":
 			nomina = 0
 		try:
-			with open("Comandas\\" + dia[0] + "-" + dia[1] + "-" + dia[2] + "-" + ".csv", "r") as arch:
-				for line in arch.read():
-					totalMesas += 1
-					line = line.split(",")
-					totalClientes += int(line[1])
-					ventas += int(line[2])
-					totalPropina += int(line[3])
-					totalVentasPropina += int(line[4])
+			with open("Comandas\\" + str(dia[0]) + "-" + str(dia[1]) + "-" + str(dia[2]) + ".csv", "r") as arch:
+				for line in arch:
+					if not line.startswith("hora") and not (line + " ").isspace():
+						line = line.split(",")
+						totalMesas += 1
+						totalClientes += int(line[1])
+						ventas += int(line[2])
+						totalPropina += int(line[3])
+						totalVentasPropina += int(line[4])
 		except FileNotFoundError:
-			return "Archivo no encontrado"
+			print("Archivo no encontrado " + str(dia[0]) + "-" + str(dia[1]) + "-" + str(dia[2]) + ".csv")
 		
 		with open("Reportes\\Reporte" + dia[1] + "_" + dia[2] + ".csv","a") as reporte:
-			pass
-
+			if reporte.tell() == 0:
+				reporte.write("Dia, Total Mesas, Total Clientes, Ventas, Propina en Comandas, Propina Contada, Gastos, Nomina, Neto" + "\n")
+			neto = (int(dineroInicial) + int(ventas)) - int(gastos) - int(nomina) - (int(totalPropina) - int(propinaEfectivo))
+			reporte.write(str(dia[0]) + "," + str(totalMesas) + "," + str(totalClientes) + "," + str(ventas) + "," + str(totalPropina)\
+				+ "," + str(propinaEfectivo) + "," + str(gastos) + "," + str(nomina) + "," + str(neto) + "\n")
 
 	def __bool__(self):
 		return self.error

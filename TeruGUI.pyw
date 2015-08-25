@@ -17,6 +17,7 @@ class Instanciador(tk.Frame):
 		self.gastos = tk.StringVar()
 		self.nomina = tk.StringVar()
 		self.propina = tk.StringVar()
+		self.dineroInicial = tk.StringVar()
 		self.dia = tk.StringVar()
 		self.textContador.set("Mesas: " + str(self.contador))
 		self.folioLabel = tk.Label(self.master, textvariable=self.textContador).place(x=60, y=10)
@@ -32,29 +33,30 @@ class Instanciador(tk.Frame):
 	def confirmacionCierre(self):
 		self.cierreWindow = tk.Toplevel(self)
 		self.cierreWindow.wm_title("Cierre")
-		self.cierreWindow.geometry("280x220")
+		self.cierreWindow.geometry("280x250")
 		tk.Label(self.cierreWindow, text="Fecha (dd-mm-año):").place(x=10,y=10)
 		tk.Entry(self.cierreWindow, textvariable=self.dia).place(x=130, y=10)
 		tk.Label(self.cierreWindow, text="Nota: Dejar vacío si se quiere el día de hoy").place(x=30,y=30)
 		tk.Label(self.cierreWindow, text="Dinero en caja:").place(x=45,y=60)
 		tk.Entry(self.cierreWindow, textvariable=self.dinero).place(x=130, y=60)
-		tk.Label(self.cierreWindow, text="Gastos:").place(x=85,y=90)
-		tk.Entry(self.cierreWindow, textvariable=self.gastos).place(x=130, y=90)
-		tk.Label(self.cierreWindow, text="Nómina(Total):").place(x=45,y=120)
-		tk.Entry(self.cierreWindow, textvariable=self.nomina).place(x=130, y=120)
-		tk.Label(self.cierreWindow, text="Propina:").place(x=80,y=150)
-		tk.Entry(self.cierreWindow, textvariable=self.propina).place(x=130, y=150)
+		tk.Label(self.cierreWindow, text="Dinero Inicial:").place(x=50,y=90)
+		tk.Entry(self.cierreWindow, textvariable=self.dineroInicial).place(x=130, y=90)
+		tk.Label(self.cierreWindow, text="Gastos:").place(x=85,y=120)
+		tk.Entry(self.cierreWindow, textvariable=self.gastos).place(x=130, y=120)
+		tk.Label(self.cierreWindow, text="Nómina(Total):").place(x=45,y=150)
+		tk.Entry(self.cierreWindow, textvariable=self.nomina).place(x=130, y=150)
+		tk.Label(self.cierreWindow, text="Propina:").place(x=80,y=180)
+		tk.Entry(self.cierreWindow, textvariable=self.propina).place(x=130, y=180)
 
-		tk.Button(self.cierreWindow, text="Cancelar", command=self.cierreWindow.destroy).place(x=50,y=180)
-		tk.Button(self.cierreWindow, text="Aceptar").place(x=150,y=180)
+		tk.Button(self.cierreWindow, text="Cancelar", command=self.cierreWindow.destroy).place(x=50,y=210)
+		tk.Button(self.cierreWindow, text="Aceptar", command=self.cerrarCaja).place(x=150,y=210)
 
 	def cerrarCaja(self):
 		if self.dinero.get().isdigit():
-			try:
-				self.sistema.cierreDeCaja(self.dinero.get(), self.gastos.get(), self.nomina.get(), self.propina.get(), self.dia.get())
-			except:
-				pass
-		
+			self.sistema.cierreDeCaja(self.dinero.get(), self.dineroInicial.get(), self.gastos.get(), self.nomina.get(), self.propina.get(), self.dia.get())
+
+			self.cierreWindow.destroy()
+		|
 
 class MainGUI(tk.Frame):
 	"""docstring for MainGUI"""
@@ -112,8 +114,10 @@ class MainGUI(tk.Frame):
 			tk.Button(self.resultWindow, text="Aceptar", command=self.aceptarComanda). place(x=150,y=120)
 
 	def clearComanda(self):
-		for i in self.strVar.keys():
-			self.strVar[i].set("")
+			self.numClientes.set("")
+			self.dinRecibido.set("")
+			self.propina.set("")
+			self.total.set("")
 		
 	def clearConsumo(self):
 		self.textoConsumo.delete('1.0', '2.0')
