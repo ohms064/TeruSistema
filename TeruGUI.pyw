@@ -1,7 +1,11 @@
 import tkinter as tk
 import SistemaTeru
 
+
 class Instanciador(tk.Frame):
+	"""
+		Ventana principal donde se sacaran nuevas comandas y se hará el cierre de caja
+	"""
 	def __init__(self, master=None):
 		tk.Frame.__init__(self, master)
 		self.master.title("Teru Sistema")
@@ -16,7 +20,6 @@ class Instanciador(tk.Frame):
 		self.dinero = tk.StringVar()
 		self.gastos = tk.StringVar()
 		self.nomina = tk.StringVar()
-		self.propina = tk.StringVar()
 		self.dineroInicial = tk.StringVar()
 		self.dia = tk.StringVar()
 		self.textContador.set("Mesas: " + str(self.contador))
@@ -25,12 +28,17 @@ class Instanciador(tk.Frame):
 		tk.Button(self.master, text="Cierre de caja", command=self.confirmacionCierre).place(x=45,y=80)
 
 	def nuevaMesa(self):
+		"""
+			Se abre una nueva ventana para cobrar una mesa
+		"""
 		self.contador += 1
 		self.textContador.set("Mesas: " + str(self.contador))
-		MainGUI(self.sistema, self.contador, tk.Toplevel(self))
-
+		MesaGUI(self.sistema, self.contador, tk.Toplevel(self))
 
 	def confirmacionCierre(self):
+		"""
+		Accion para el boton "Cierre de Caja", nos pide los datos de cierre de caja y hacer la acción
+		"""
 		self.cierreWindow = tk.Toplevel(self)
 		self.cierreWindow.wm_title("Cierre")
 		self.cierreWindow.geometry("280x250")
@@ -45,21 +53,21 @@ class Instanciador(tk.Frame):
 		tk.Entry(self.cierreWindow, textvariable=self.gastos).place(x=130, y=120)
 		tk.Label(self.cierreWindow, text="Nómina(Total):").place(x=45,y=150)
 		tk.Entry(self.cierreWindow, textvariable=self.nomina).place(x=130, y=150)
-		tk.Label(self.cierreWindow, text="Propina:").place(x=80,y=180)
-		tk.Entry(self.cierreWindow, textvariable=self.propina).place(x=130, y=180)
 
-		tk.Button(self.cierreWindow, text="Cancelar", command=self.cierreWindow.destroy).place(x=50,y=210)
-		tk.Button(self.cierreWindow, text="Aceptar", command=self.cerrarCaja).place(x=150,y=210)
+		tk.Button(self.cierreWindow, text="Cancelar", command=self.cierreWindow.destroy).place(x=50,y=180)
+		tk.Button(self.cierreWindow, text="Aceptar", command=self.cerrarCaja).place(x=150,y=180)
 
 	def cerrarCaja(self):
+		"""
+		Llama al sistema para cerrar caja con los datos introducidos en la ventana CerrarCaja
+		"""
 		if self.dinero.get().isdigit():
-			self.sistema.cierreDeCaja(self.dinero.get(), self.dineroInicial.get(), self.gastos.get(), self.nomina.get(), self.propina.get(), self.dia.get())
-
+			self.sistema.cierreDeCaja(self.dinero.get(), self.dineroInicial.get(), self.gastos.get(), self.nomina.get(), self.dia.get())
 			self.cierreWindow.destroy()
-		|
+		
 
-class MainGUI(tk.Frame):
-	"""docstring for MainGUI"""
+class MesaGUI(tk.Frame):
+	"""Aquí es donde se se hace la comanda para una mesa"""
 	def __init__(self, sistema=SistemaTeru.MainSystem(), folio="0", master=None):
 		tk.Frame.__init__(self, master)
 		self.folio = folio
@@ -74,6 +82,7 @@ class MainGUI(tk.Frame):
 		self.dinRecibido = tk.StringVar()
 		self.propina = tk.StringVar()
 		self.total = tk.StringVar()
+		self.tarjeta = tk.IntVar()
 
 		tk.Label(self.master, text="Clientes:").place(x=50, y=10)
 		tk.Entry(self.master, textvariable=self.numClientes).place(x=110, y=10)
@@ -86,6 +95,7 @@ class MainGUI(tk.Frame):
 
 		tk.Label(self.master, text="Dinero recibido:").place(x=10, y=70)
 		tk.Entry(self.master, textvariable=self.dinRecibido).place(x=110, y=70)
+		tk.Checkbutton(self.master, text="Tarjeta:", variable=self.tarjeta).place(x=250, y=70)
 
 		tk.Button(self.master, text="Aceptar", command=self.callSystem).place(x=185,y=95)
 		tk.Button(self.master, text="Borrar", command=self.clearComanda).place(x=125,y=95)
@@ -101,7 +111,7 @@ class MainGUI(tk.Frame):
 		if self.propina.get() == "":
 			self.propina.set("0")
 		self.master.withdraw()
-		self.sistema.nuevaComanda(self.numClientes.get(), self.total.get(), self.dinRecibido.get(), self.propina.get())
+		self.sistema.nuevaComanda(self.numClientes.get(), self.total.get(), self.dinRecibido.get(), self.propina.get(), bool(self.tarjeta.get()))
 		self.resultWindow = tk.Toplevel(self)
 		self.resultWindow.wm_title("Comanda")
 		self.resultWindow.geometry("250x180")
