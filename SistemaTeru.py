@@ -1,10 +1,11 @@
 import datetime
 
 class MainSystem():
-	def __init__(self, spreadsheet="reportes.csv"):
-		self.spreadsheet = spreadsheet
+	def __init__(self):
 		fecha = datetime.datetime.now()
 		self.dia = str(fecha.day) + "-" + str(fecha.month) + "-" + str(fecha.year)
+		self.reporteCadena = ""
+		self.dineroCaja = ""
 		with open("Comandas\\" + self.dia + ".csv", "a+") as arch:
 			if (arch.tell() == 0):
 				arch.write("hora,#Clientes,total,propina,total + propina,dineroRecibido,cambio")
@@ -33,42 +34,62 @@ class MainSystem():
 		return {"Total":str(total), "Propina":str(int(total*0.1)), "Sugerido": str(int(total * 1.1))}
 
 	def cierreDeCaja(self, dineroCaja, dineroInicial, gastos, nomina, dia=""):
-		ventas = 0
+		self.dineroCaja = dineroCaja
+		self.reporteCadena = ""
+		ventasEfectivo = 0
+		ventasTarjeta = 0
 		totalClientes = 0
 		totalPropinaEfectivo = 0
 		totalPropinaTarjeta = 0
 		totalVentasPropina = 0
 		totalMesas = 0
 		if dia == "":
-			dia = self.dia
-		dia = [x.lstrip("0") for x in dia.split("-")]
+			diaFunc = self.dia
+		else:
+			diaFunc = dia
+		diaFunc = [x.lstrip("0") for x in diaFunc.split("-")]
 		if gastos == "":
 			gastos = 0
 		if nomina == "":
 			nomina = 0
 		try:
-			with open("Comandas\\" + str(dia[0]) + "-" + str(dia[1]) + "-" + str(dia[2]) + ".csv", "r") as arch:
+			with open("Comandas\\" + str(diaFunc[0]) + "-" + str(diaFunc[1]) + "-" + str(diaFunc[2]) + ".csv", "r") as arch:
 				for line in arch:
 					if not line.startswith("hora") and not (line + " ").isspace():
 						line = line.split(",")
 						totalMesas += 1
 						totalClientes += int(line[1])
-						ventas += int(line[2])
-						if line[-1] == "TARJETA":
+						if line[-1].rstrip("\n") == "TARJETA":
+							ventasTarjeta += int(line[2])
 							totalPropinaTarjeta += int(line[3])
 						else:
+							ventasEfectivo += int(line[2])
 							totalPropinaEfectivo += int(line[3])
 						totalVentasPropina += int(line[4])
 		except FileNotFoundError:
-			return "Archivo no encontrado " + str(dia[0]) + "-" + str(dia[1]) + "-" + str(dia[2]) + ".csv"
+			return "Archivo no encontrado " + str(diaFunc[0]) + "-" + str(diaFunc[1]) + "-" + str(diaFunc[2]) + ".csv"
+		
+		neto = (int(dineroInicial) + int(ventasEfectivo)) - int(gastos) - int(nomina) - int(totalPropinaTarjeta)
+		diffDinero = int(self.dineroCaja) - neto
+		self.reporteCadena = str(diaFunc[0]) + "-" + str(diaFunc[1]) + "," + str(totalMesas) + "," + str(totalClientes) + "," +\
+		str(dineroInicial) + "," + str(ventasEfectivo) + "," + str(ventasTarjeta) + "," + str(gastos) + "," +\
+		str(nomina) + "," + str(neto) + "," + str(self.dineroCaja) + "," + str(diffDinero)
+
+		self.totalPropinas = totalPropinaTarjeta + totalPropinaEfectivo
+		return (self.reporteCadena, self.totalPropinas)
+
+	def commitCierre(self, llevo, dia=""):
+		if dia == "":
+			diaFunc = self.dia
+		else:
+			diaFunc = dia
+		diaFunc = [x.lstrip("0") for x in diaFunc.split("-")]
 		try:
-			with open("Reportes\\Reporte" + dia[1] + "_" + dia[2] + ".csv","a") as reporte:
+			with open("Reportes\\Reporte" + diaFunc[1] + "_" + diaFunc[2] + ".csv","a") as reporte:
 				if reporte.tell() == 0:
-					reporte.write("Dia,Total Mesas,Total Clientes,Ventas,Propina Efectivo,Propina Tarjeta,Gastos,Nomina,Neto" + "\n")
-				neto = (int(dineroInicial) + int(ventas)) - int(gastos) - int(nomina) - int(totalPropinaTarjeta)
-				reporteCadena = str(dia[0]) + "," + str(totalMesas) + "," + str(totalClientes) + "," + str(ventas) + "," + str(totalPropinaEfectivo)\
-					+ "," + str(totalPropinaTarjeta) + "," + str(gastos) + "," + str(nomina) + "," + str(neto) + "\n"
-				reporte.write(reporteCadena)
+					reporte.write("Dia,Total Mesas,Total Clientes,Caja,Cobro Efectivo,Terminal,Gastos,Sueldo,Neto,Dinero,Sobra/Falta,Llevo,Dejo,Propinas\n")
+				self.reporteCadena += "," + llevo + "," + str(int(self.dineroCaja) - int(llevo)) + "," + str(self.totalPropinas) + "\n"
+				reporte.write(self.reporteCadena)
 		except PermissionError:
 			print("Favor de cerrar el archivo del reporte")
 
@@ -111,3 +132,5 @@ class Comanda(object):
 
 if __name__ == '__main__':
 	print("Porfavor abir TeruGUI")
+	sistema = MainSystem()
+	sistema.cierreDeCaja("1234", "12", "2", "20")
