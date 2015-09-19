@@ -29,7 +29,7 @@ class MesaGUI(tk.Frame):
 		tk.Label(self.master, text="Propina:").place(x=50, y=30)
 		tk.Entry(self.master, textvariable=self.propina).place(x=110, y=30)
 
-		tk.Label(self.master, text="Total:").place(x=65, y=50)
+		tk.Label(self.master, text="Consumo:").place(x=65, y=50)
 		tk.Entry(self.master, textvariable=self.total).place(x=110, y=50)
 
 		tk.Label(self.master, text="Dinero recibido:").place(x=10, y=70)
