@@ -2,7 +2,10 @@ import tkinter as tk
 import SistemaTeru
 		
 class MesaGUI(tk.Frame):
-	"""Aquí es donde se se hace la comanda para una mesa"""
+	"""
+	Aquí es donde se se hace la comanda para una mesa
+	Esta clase es llamada desde Instanciador y puede instanciar tantas MesaGUI como sea necesario.
+	"""
 	def __init__(self, sistema=SistemaTeru.MainSystem(), nombreMesa="", master=None):
 		tk.Frame.__init__(self, master)
 		self.nombreMesa = nombreMesa
@@ -13,6 +16,9 @@ class MesaGUI(tk.Frame):
 		self.createWidgets()
 
 	def createWidgets(self):
+		"""
+		Este método es llamado siempre desde init, se crean todos los widgets dentro de la ventana
+		"""
 		self.numClientes = tk.StringVar()
 		self.dinRecibido = tk.StringVar()
 		self.propina = tk.StringVar()
@@ -47,10 +53,19 @@ class MesaGUI(tk.Frame):
 		tk.Button(self.master, text="Borrar", command=self.clearConsumo).place(x=140,y=220)
 
 	def cambiarMesa(self):
+		"""
+		Se el asigna el nombre a la mesa en caso de que no exista o se quiera cambiar.
+		El nombre aparece en el título de la ventana.
+		"""
 		if self.nombreMesa.get() != "":
 			self.master.title("Comanda: " + str(self.nombreMesa.get()))
+			self.nombreMesa.set("")
 
 	def confirmarComanda(self):
+		"""
+		Se confirma que la comanda sea correcta.
+		Se existe algún error se abrirá una ventana indicando que hay un error.(Cualquier error)
+		"""
 		if self.propina.get() == "":
 			self.propina.set("0")
 		self.master.withdraw()
@@ -67,15 +82,24 @@ class MesaGUI(tk.Frame):
 			tk.Button(self.resultWindow, text="Aceptar", command=self.aceptarComanda). place(x=150,y=120)
 
 	def clearComanda(self):
-			self.numClientes.set("")
-			self.dinRecibido.set("")
-			self.propina.set("")
-			self.total.set("")
+		"""
+		Se limpian los datos de la comanda.
+		"""
+		self.numClientes.set("")
+		self.dinRecibido.set("")
+		self.propina.set("")
+		self.total.set("")
 		
 	def clearConsumo(self):
+		"""
+		Se limpia los datos de consumo.
+		"""
 		self.textoConsumo.delete('1.0', '2.0')
 
 	def consumo(self):
+		"""
+		Se obitene todos los valores escritos en consumo separados por espacios, se suman todos.
+		"""
 		cons = self.textoConsumo.get("1.0","end").split()
 		try:
 			cons = [int(x) for x in cons]
@@ -90,6 +114,9 @@ class MesaGUI(tk.Frame):
 			tk.Button(self.consWindow, text="Aceptar", command=self.consWindow.destroy).place(x=75,y=90)
 		
 	def agregar(self):
+		"""
+		Lo mismo que consumo pero se suma la cantida o lo que ya haya en Consumo.
+		"""
 		cons = self.textoConsumo.get("1.0","end").split()
 		try:
 			cons = [int(x) for x in cons]
@@ -107,22 +134,33 @@ class MesaGUI(tk.Frame):
 			tk.Button(self.consWindow, text="Aceptar", command=self.consWindow.destroy).place(x=75,y=90)
 
 	def aceptarConsumo(self):
+		"""
+		Se confirma el consumo.
+		"""
 		self.consWindow.destroy()
 		self.master.destroy()
 		self.clearConsumo()
 
 	def aceptarComanda(self):
+		"""
+		Se confirma la comanda.
+		"""
 		self.sistema.commitComanda()
 		self.resultWindow.destroy()
 		self.clearComanda()
 
 	def show(self):
+		"""
+		Se regresa a MesaGUI
+		"""
 		self.resultWindow.destroy()
 		self.master.update()
 		self.master.deiconify()
 
 class CierreGUI(tk.Frame):
-	"""docstring for cierreGUI"""
+	"""
+	En esta ventana se maneja todo lo conciernente al cierre de caja.
+	"""
 	def __init__(self, sistema=SistemaTeru.MainSystem(), master=None, padre=None):
 		tk.Frame.__init__(self, master)		
 		self.padre = padre
@@ -134,6 +172,9 @@ class CierreGUI(tk.Frame):
 		self.createWidgets()
 
 	def createWidgets(self):
+		"""
+		Se crean todos los widgets de la ventana.
+		"""
 		self.dinero = tk.StringVar()
 		self.gastos = tk.StringVar()
 		self.nomina = tk.StringVar()
@@ -177,20 +218,27 @@ class CierreGUI(tk.Frame):
 			tk.Label(self.reporteWindow, text=cadReporte).place(x=80, y=10)
 			tk.Label(self.reporteWindow, text="Llevo: ").place(x=60, y=180)
 			tk.Entry(self.reporteWindow, textvariable=self.dineroLlevo).place(x=100, y=180)
-			tk.Button(self.reporteWindow, text="Cancelar", command=self.reporteWindow.destroy).place(x=50,y=210)
+			tk.Button(self.reporteWindow, text="Cancelar", command=self.cancelarReporte).place(x=50,y=210)
 			tk.Button(self.reporteWindow, text="Aceptar", command=self.aceptarCierre).place(x=150,y=210)
 
 	def aceptarCierre(self):
+		"""
+		Se confirma el cierre.
+		"""
 		self.sistema.commitCierre(self.dineroLlevo.get(), self.dia.get())
 		print(self.dia.get())
 		self.reporteWindow.destroy()
 		self.showMain()
 
 	def showMain(self):
+		"""
+		Se retorna a la ventana padre.
+		"""
 		self.padre.abrirVentana()
 		self.master.destroy()
 
 	def cancelarReporte(self):
+
 		self.reporteWindow.destroy()
 		self.master.update()
 		self.master.deiconify()
