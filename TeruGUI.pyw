@@ -45,6 +45,10 @@ class MesaGUI(tk.Frame):
 		tk.Button(self.master, text="Aceptar", command=self.confirmarComanda).place(x=185,y=95)
 		tk.Button(self.master, text="Borrar", command=self.clearComanda).place(x=125,y=95)
 
+		tk.Label(self.master, text="Mesa:").place(x=350,y=110)
+		self.labelMesa = tk.Label(self.master, text=self.nombreMesa.get()[:2], font=("Times", 50))
+		self.labelMesa.place(x=380,y=130)
+
 		tk.Label(self.master, text="Consumo:").place(x=40, y=130)
 		self.textoConsumo = tk.Text(self.master, width=24, height=5)
 		self.textoConsumo.place(x=110, y=130)
@@ -59,6 +63,7 @@ class MesaGUI(tk.Frame):
 		"""
 		if self.nombreMesa.get() != "":
 			self.master.title("Comanda: " + str(self.nombreMesa.get()))
+			self.labelMesa.config(text=self.nombreMesa.get()[:2])
 			self.nombreMesa.set("")
 
 	def confirmarComanda(self):
@@ -262,7 +267,7 @@ class Instanciador(tk.Frame):
 		self.textContador.set("Mesas: " + str(self.contador))
 		self.folioLabel = tk.Label(self.master, textvariable=self.textContador).place(x=60, y=10)
 		tk.Label(self.master, text="Nombre Mesa:").place(x=10,y=40)
-		tk.Entry(self.master, text="Nombre Mesa:", width=10, textvariable=self.nombreMesa).place(x=100,y=40)
+		tk.Entry(self.master, width=10, textvariable=self.nombreMesa).place(x=100,y=40)
 		tk.Button(self.master, text="Nueva Mesa", command=self.nuevaMesa).place(x=50,y=70)
 		tk.Button(self.master, text="Cierre de caja", command=self.datosCierre).place(x=45,y=110)
 
