@@ -33,16 +33,18 @@ class MainSystem():
 			return "Total: " + str(total) + "\nPropina Sugerida: " + str(int(total * 0.1)) + "\nTotal Sugerido: " + str(int(total * 1.1))
 		return {"Total":str(total), "Propina":str(int(total*0.1)), "Sugerido": str(int(total * 1.1))}
 
-	def cierreDeCaja(self, dineroCaja, dineroInicial, gastos, nomina, dia=""):
-		self.dineroCaja = dineroCaja
+	def cierreDeCaja(self, dineroCaja, dineroInicial, gastos, nomina,prestamos="", dia=""):
+		self.dineroCaja = int(dineroCaja)
 		self.reporteCadena = ""
+		totalClientes = 0
 		ventasEfectivo = 0
 		ventasTarjeta = 0
-		totalClientes = 0
+		
 		totalPropinaEfectivo = 0
 		totalPropinaTarjeta = 0
 		totalVentasPropina = 0
 		totalMesas = 0
+		dineroInicial = int(dineroInicial)
 		if dia == "":
 			diaFunc = self.dia
 		else:
@@ -50,10 +52,21 @@ class MainSystem():
 		diaFunc = [x.lstrip("0") for x in diaFunc.split("-")]
 		if gastos == "":
 			gastos = 0
+		else:
+			gastos = int(gastos)
+
 		if nomina == "":
 			nomina = 0
+		else:
+			nomina = int(nomina)
+
+		if prestamos == "":
+			prestamos = 0
+		else:
+			prestamos = int(prestamos)
 		try:
 			with open("Comandas\\" + str(diaFunc[0]) + "-" + str(diaFunc[1]) + "-" + str(diaFunc[2]) + ".csv", "r") as arch:
+				#Leemos todos los datos recopilados del día.
 				for line in arch:
 					if not line.startswith("hora") and not (line + " ").isspace():
 						line = line.split(",")
@@ -69,8 +82,10 @@ class MainSystem():
 		except FileNotFoundError:
 			return "Archivo no encontrado " + str(diaFunc[0]) + "-" + str(diaFunc[1]) + "-" + str(diaFunc[2]) + ".csv"
 		
-		neto = (int(dineroInicial) + int(ventasEfectivo)) - int(gastos) - int(nomina) - int(totalPropinaTarjeta)
-		diffDinero = int(self.dineroCaja) - neto
+		neto = dineroInicial + ventasEfectivo - gastos - nomina - totalPropinaTarjeta
+		netoEfectivo = self.dineroCaja - nomina - totalPropinaTarjeta
+		diffDinero = netoEfectivo - neto
+
 		self.reporteCadena = str(diaFunc[0]) + "-" + str(diaFunc[1]) + "," + str(totalMesas) + "," + str(totalClientes) + "," +\
 		str(dineroInicial) + "," + str(ventasEfectivo) + "," + str(ventasTarjeta) + "," + str(gastos) + "," +\
 		str(nomina) + "," + str(neto) + "," + str(self.dineroCaja) + "," + str(diffDinero)
