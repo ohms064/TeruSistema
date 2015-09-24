@@ -1,4 +1,4 @@
-import datetime
+﻿import datetime
 
 class MainSystem():
 	def __init__(self):
@@ -87,7 +87,7 @@ class MainSystem():
 		diffDinero = netoEfectivo - neto
 
 		self.reporteCadena = str(diaFunc[0]) + "-" + str(diaFunc[1]) + "," + str(totalMesas) + "," + str(totalClientes) + "," +\
-		str(dineroInicial) + "," + str(ventasEfectivo) + "," + str(ventasTarjeta) + "," + str(gastos) + "," +\
+		str(dineroInicial) + "," + str(ventasEfectivo) + "," + str(ventasTarjeta + totalPropinaTarjeta) + "," + str(gastos) + "," +\
 		str(nomina) + "," + str(neto) + "," + str(self.dineroCaja) + "," + str(diffDinero)
 
 		self.totalPropinas = totalPropinaTarjeta + totalPropinaEfectivo
@@ -102,7 +102,7 @@ class MainSystem():
 		try:
 			with open("Reportes\\Reporte" + diaFunc[1] + "_" + diaFunc[2] + ".csv","a") as reporte:
 				if reporte.tell() == 0:
-					reporte.write("Dia,Total Mesas,Total Clientes,Caja,Cobro Efectivo,Terminal,Gastos,Sueldo,Neto,Dinero,Sobra/Falta,Llevo,Dejo,Propinas\n")
+					reporte.write("Dia,Total Mesas,Total Clientes,Caja,Cobro Efectivo,Terminal,Gastos,Sueldo,Neto,Dinero,Sobra/Falta,Llevo,Dejo,Propinas Efectivo, Propinas Tarjeta, Total Propinas\n")
 				self.reporteCadena += "," + llevo + "," + str(int(self.dineroCaja) - int(llevo)) + "," + str(self.totalPropinas) + "\n"
 				reporte.write(self.reporteCadena)
 		except PermissionError:

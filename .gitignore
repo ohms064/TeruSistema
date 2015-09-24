@@ -5,6 +5,12 @@ __pycache__/
 # C extensions
 *.so
 
+# Carpetas
+Comandas/*
+!Comandas/*.txt
+Reportes/*
+*Reportes/*.txt
+
 # Distribution / packaging
 .Python
 env/
