@@ -1,5 +1,7 @@
 ﻿import datetime
 
+mes = ["?","Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto", "Septiembre","Octubre","Noviembre","Diciembre"]
+
 class MainSystem():
 	def __init__(self):
 		fecha = datetime.datetime.now()
@@ -40,8 +42,8 @@ class MainSystem():
 		ventasEfectivo = 0
 		ventasTarjeta = 0
 		
-		totalPropinaEfectivo = 0
-		totalPropinaTarjeta = 0
+		self.totalPropinaEfectivo = 0
+		self.totalPropinaTarjeta = 0
 		totalVentasPropina = 0
 		totalMesas = 0
 		dineroInicial = int(dineroInicial)
@@ -74,24 +76,22 @@ class MainSystem():
 						totalClientes += int(line[1])
 						if line[-1].rstrip("\n") == "TARJETA":
 							ventasTarjeta += int(line[2])
-							totalPropinaTarjeta += int(line[3])
+							self.totalPropinaTarjeta += int(line[3])
 						else:
 							ventasEfectivo += int(line[2])
-							totalPropinaEfectivo += int(line[3])
+							self.totalPropinaEfectivo += int(line[3])
 						totalVentasPropina += int(line[4])
 		except FileNotFoundError:
 			return "Archivo no encontrado " + str(diaFunc[0]) + "-" + str(diaFunc[1]) + "-" + str(diaFunc[2]) + ".csv"
 		
-		neto = dineroInicial + ventasEfectivo - gastos - nomina - totalPropinaTarjeta
-		netoEfectivo = self.dineroCaja - nomina - totalPropinaTarjeta
+		neto = dineroInicial + ventasEfectivo - gastos - nomina - self.totalPropinaTarjeta
+		netoEfectivo = self.dineroCaja - nomina - self.totalPropinaTarjeta
 		diffDinero = netoEfectivo - neto
 
 		self.reporteCadena = str(diaFunc[0]) + "-" + str(diaFunc[1]) + "," + str(totalMesas) + "," + str(totalClientes) + "," +\
-		str(dineroInicial) + "," + str(ventasEfectivo) + "," + str(ventasTarjeta + totalPropinaTarjeta) + "," + str(gastos) + "," +\
+		str(dineroInicial) + "," + str(ventasEfectivo) + "," + str(ventasTarjeta + self.totalPropinaTarjeta) + "," + str(gastos) + "," +\
 		str(nomina) + "," + str(neto) + "," + str(self.dineroCaja) + "," + str(diffDinero)
-
-		self.totalPropinas = totalPropinaTarjeta + totalPropinaEfectivo
-		return (self.reporteCadena, self.totalPropinas)
+		return (self.reporteCadena, self.totalPropinaTarjeta + self.totalPropinaEfectivo)
 
 	def commitCierre(self, llevo, dia=""):
 		if dia == "":
@@ -100,10 +100,10 @@ class MainSystem():
 			diaFunc = dia
 		diaFunc = [x.lstrip("0") for x in diaFunc.split("-")]
 		try:
-			with open("Reportes\\Reporte" + diaFunc[1] + "_" + diaFunc[2] + ".csv","a") as reporte:
+			with open("Reportes\\Reporte-" + mes[int(diaFunc[1])] + "_" + diaFunc[2] + ".csv","a") as reporte:
 				if reporte.tell() == 0:
 					reporte.write("Dia,Total Mesas,Total Clientes,Caja,Cobro Efectivo,Terminal,Gastos,Sueldo,Neto,Dinero,Sobra/Falta,Llevo,Dejo,Propinas Efectivo, Propinas Tarjeta, Total Propinas\n")
-				self.reporteCadena += "," + llevo + "," + str(int(self.dineroCaja) - int(llevo)) + "," + str(self.totalPropinas) + "\n"
+				self.reporteCadena += "," + llevo + "," + str(int(self.dineroCaja) - int(llevo)) + "," + str(self.totalPropinaTarjeta) + "," + str(self.totalPropinaEfectivo) + "," + str(self.totalPropinaTarjeta + self.totalPropinaEfectivo) + "\n"
 				reporte.write(self.reporteCadena)
 		except PermissionError:
 			print("Favor de cerrar el archivo del reporte")

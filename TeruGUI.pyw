@@ -1,4 +1,4 @@
-import tkinter as tk
+﻿import tkinter as tk
 import SistemaTeru
 		
 class MesaGUI(tk.Frame):
@@ -35,7 +35,7 @@ class MesaGUI(tk.Frame):
 		tk.Label(self.master, text="Propina:").place(x=50, y=30)
 		tk.Entry(self.master, textvariable=self.propina).place(x=110, y=30)
 
-		tk.Label(self.master, text="Consumo:").place(x=65, y=50)
+		tk.Label(self.master, text="Consumo:").place(x=40, y=50)
 		tk.Entry(self.master, textvariable=self.total).place(x=110, y=50)
 
 		tk.Label(self.master, text="Dinero recibido:").place(x=10, y=70)
@@ -216,7 +216,7 @@ class CierreGUI(tk.Frame):
 			reporte = self.sistema.cierreDeCaja(self.dinero.get(), self.dineroInicial.get(), self.gastos.get(), self.nomina.get(), self.dia.get())
 			cadReporte = reporte[0].split(",")
 			cadReporte = "Total Mesas: " + cadReporte[1] + "\nTotal Clientes: " + cadReporte[2] + \
-			"\nCaja: " + cadReporte[3] + "\nCobro Efectivo: " + cadReporte[4] + "\nTerminal: " + cadReporte[5] + \
+			"\nDinero Inicial: " + cadReporte[3] + "\nCobro Efectivo: " + cadReporte[4] + "\nTerminal: " + cadReporte[5] + \
 			"\nGastos: " + cadReporte[6] + "\nSueldo: " + cadReporte[7] + "\nNeto: " + cadReporte[8] + "\nDinero: " + cadReporte[9] + \
 			"\nSobra/Falta: " + cadReporte[10] + "\nPropinas: " + str(reporte[1])
 			
