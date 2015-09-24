@@ -1,4 +1,3 @@
 import os
-os.system("git fetch")
-os.system("git checkout -- SistemaTeru.py")
-os.system("git checkout -- TeruGUI.pyw")
+os.system("git pull")
+os.system("git log -1 --pretty=%B")
