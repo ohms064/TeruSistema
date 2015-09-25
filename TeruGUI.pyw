@@ -56,6 +56,7 @@ class MesaGUI(tk.Frame):
 		tk.Button(self.master, text="Calcular", command=self.consumo).place(x=200, y=220)
 		tk.Button(self.master, text="Borrar", command=self.clearConsumo).place(x=140,y=220)
 
+
 	def cambiarMesa(self):
 		"""
 		Se el asigna el nombre a la mesa en caso de que no exista o se quiera cambiar.
@@ -270,6 +271,14 @@ class Instanciador(tk.Frame):
 		tk.Entry(self.master, width=10, textvariable=self.nombreMesa).place(x=100,y=40)
 		tk.Button(self.master, text="Nueva Mesa", command=self.nuevaMesa).place(x=50,y=70)
 		tk.Button(self.master, text="Cierre de caja", command=self.datosCierre).place(x=45,y=110)
+		tk.Button(self.master, text="Estado Actual", command=self.estadoActual).place(x=45, y=150)
+
+	def estadoActual(self):
+		estado = self.sistema.getState()
+		self.estadoWindow = tk.Toplevel(self)
+		self.estadoWindow.wm_title("Estado Actual")
+		self.estadoWindow.geometry("250x180")
+		tk.Label(self.estadoWindow, text=estado).place(x=80, y=10)
 
 	def nuevaMesa(self):
 		"""

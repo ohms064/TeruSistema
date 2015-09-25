@@ -6,6 +6,7 @@ class MainSystem():
 	def __init__(self):
 		fecha = datetime.datetime.now()
 		self.dia = str(fecha.day) + "-" + str(fecha.month) + "-" + str(fecha.year)
+		print(self.dia)
 		self.reporteCadena = ""
 		self.dineroCaja = ""
 		with open("Comandas\\" + self.dia + ".csv", "a+") as arch:
@@ -35,7 +36,7 @@ class MainSystem():
 			return "Total: " + str(total) + "\nPropina Sugerida: " + str(int(total * 0.1)) + "\nTotal Sugerido: " + str(int(total * 1.1))
 		return {"Total":str(total), "Propina":str(int(total*0.1)), "Sugerido": str(int(total * 1.1))}
 
-	def cierreDeCaja(self, dineroCaja, dineroInicial, gastos, nomina,prestamos="", dia=""):
+	def cierreDeCaja(self, dineroCaja, dineroInicial, gastos="", nomina="",prestamos="", dia=""):
 		self.dineroCaja = int(dineroCaja)
 		self.reporteCadena = ""
 		totalClientes = 0
@@ -48,10 +49,10 @@ class MainSystem():
 		totalMesas = 0
 		dineroInicial = int(dineroInicial)
 		if dia == "":
-			diaFunc = self.dia
+			diaFunc = self.dia.split("-")
 		else:
 			diaFunc = dia
-		diaFunc = [x.lstrip("0") for x in diaFunc.split("-")]
+		diaFunc = [x.lstrip("0") for x in diaFunc]
 		if gastos == "":
 			gastos = 0
 		else:
@@ -95,10 +96,10 @@ class MainSystem():
 
 	def commitCierre(self, llevo, dia=""):
 		if dia == "":
-			diaFunc = self.dia
+			diaFunc = self.dia.split("-")
 		else:
 			diaFunc = dia
-		diaFunc = [x.lstrip("0") for x in diaFunc.split("-")]
+		diaFunc = [x.lstrip("0") for x in diaFunc]
 		try:
 			with open("Reportes\\Reporte-" + mes[int(diaFunc[1])] + "_" + diaFunc[2] + ".csv","a") as reporte:
 				if reporte.tell() == 0:
@@ -111,6 +112,41 @@ class MainSystem():
 	def __bool__(self):
 		return self.error
 
+	def getState(self):
+		"""
+		Nos retorna el estado actual del sistema.
+		El orden es fecha, totalMesas, totalClientes, ventasEfectivo, ventasTerminal, propinasTotal.
+		"""
+		totalClientes = 0
+		ventasEfectivo = 0
+		ventasTarjeta = 0
+		
+		totalPropinaEfectivo = 0
+		totalPropinaTarjeta = 0
+		totalVentasPropina = 0
+		totalMesas = 0
+		diaFunc = self.dia.split("-")
+		try:
+			with open("Comandas\\" + str(diaFunc[0]) + "-" + str(diaFunc[1]) + "-" + str(diaFunc[2]) + ".csv", "r") as arch:
+				#Leemos todos los datos recopilados del día.
+				for line in arch:
+					if not line.startswith("hora") and not (line + " ").isspace():
+						line = line.split(",")
+						totalMesas += 1
+						totalClientes += int(line[1])
+						if line[-1].rstrip("\n") == "TARJETA":
+							ventasTarjeta += int(line[2])
+							totalPropinaTarjeta += int(line[3])
+						else:
+							ventasEfectivo += int(line[2])
+							totalPropinaEfectivo += int(line[3])
+						totalVentasPropina += int(line[4])
+		except FileNotFoundError:
+			return "Archivo no encontrado " + str(diaFunc[0]) + "-" + str(diaFuncdiaFunc[1]) + "-" + str(diaFunc[2]) + ".csv"
+		
+		return "Fecha: " + (diaFunc[0]) + "-" + str(diaFunc[1]) + "\nTotal Mesas: " + str(totalMesas) + "\nTotal Clientes: " + str(totalClientes) + "\nVentas Efectivo: " +\
+		 str(ventasEfectivo) + "\nVentas Terminal: " + str(ventasTarjeta + totalPropinaTarjeta) + "\nPropinas: " + str(totalPropinaTarjeta + totalPropinaEfectivo)
+		 
 class Comanda(object):
 	"""
 	TODO:
