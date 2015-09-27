@@ -36,7 +36,7 @@ class MainSystem():
 			return "Total: " + str(total) + "\nPropina Sugerida: " + str(int(total * 0.1)) + "\nTotal Sugerido: " + str(int(total * 1.1))
 		return {"Total":str(total), "Propina":str(int(total*0.1)), "Sugerido": str(int(total * 1.1))}
 
-	def cierreDeCaja(self, dineroCaja, dineroInicial, gastos="", nomina="",prestamos="", dia=""):
+	def cierreDeCaja(self, dineroCaja, dineroInicial, gastos="", nomina="", dia=""):
 		self.dineroCaja = int(dineroCaja)
 		self.reporteCadena = ""
 		totalClientes = 0
@@ -62,11 +62,6 @@ class MainSystem():
 			nomina = 0
 		else:
 			nomina = int(nomina)
-
-		if prestamos == "":
-			prestamos = 0
-		else:
-			prestamos = int(prestamos)
 		try:
 			with open("Comandas\\" + str(diaFunc[0]) + "-" + str(diaFunc[1]) + "-" + str(diaFunc[2]) + ".csv", "r") as arch:
 				#Leemos todos los datos recopilados del día.
