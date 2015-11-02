@@ -79,10 +79,10 @@ class MainSystem():
 						totalVentasPropina += int(line[4])
 		except FileNotFoundError:
 			return "Archivo no encontrado " + str(diaFunc[0]) + "-" + str(diaFunc[1]) + "-" + str(diaFunc[2]) + ".csv"
-		
+
+		#El cálculo se hace con el dinero en caja después de haber entregado las propinas y la nómina
 		neto = dineroInicial + ventasEfectivo - gastos - nomina - self.totalPropinaTarjeta
-		netoEfectivo = self.dineroCaja - nomina - self.totalPropinaTarjeta
-		diffDinero = netoEfectivo - neto
+		diffDinero = self.dineroCaja - neto
 
 		self.reporteCadena = str(diaFunc[0]) + "-" + str(diaFunc[1]) + "," + str(totalMesas) + "," + str(totalClientes) + "," +\
 		str(dineroInicial) + "," + str(ventasEfectivo) + "," + str(ventasTarjeta + self.totalPropinaTarjeta) + "," + str(gastos) + "," +\
@@ -90,6 +90,9 @@ class MainSystem():
 		return (self.reporteCadena, self.totalPropinaTarjeta + self.totalPropinaEfectivo)
 
 	def commitCierre(self, llevo, dia=""):
+		"""
+		Se guarda el cierre en el archivo de reportes
+		"""
 		if dia == "":
 			diaFunc = self.dia.split("-")
 		else:
@@ -140,7 +143,7 @@ class MainSystem():
 			return "Archivo no encontrado " + str(diaFunc[0]) + "-" + str(diaFuncdiaFunc[1]) + "-" + str(diaFunc[2]) + ".csv"
 		
 		return "Fecha: " + (diaFunc[0]) + "-" + str(diaFunc[1]) + "\nTotal Mesas: " + str(totalMesas) + "\nTotal Clientes: " + str(totalClientes) + "\nVentas Efectivo: " +\
-		 str(ventasEfectivo) + "\nVentas Terminal: " + str(ventasTarjeta + totalPropinaTarjeta) + "\nPropinas: " + str(totalPropinaTarjeta + totalPropinaEfectivo)
+		 str(ventasEfectivo) + "\nVentas Terminal: " + str(ventasTarjeta + totalPropinaTarjeta) + "\nPropinas Efectivo : " + str(totalPropinaEfectivo) + "\nPropinas Tarjeta: " + str(totalPropinaTarjeta)
 		 
 class Comanda(object):
 	"""

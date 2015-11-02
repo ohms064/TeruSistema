@@ -217,8 +217,8 @@ class CierreGUI(tk.Frame):
 			reporte = self.sistema.cierreDeCaja(self.dinero.get(), self.dineroInicial.get(), self.gastos.get(), self.nomina.get(), self.dia.get())
 			cadReporte = reporte[0].split(",")
 			cadReporte = "Total Mesas: " + cadReporte[1] + "\nTotal Clientes: " + cadReporte[2] + \
-			"\nDinero Inicial: " + cadReporte[3] + "\nCobro Efectivo: " + cadReporte[4] + "\nTerminal: " + cadReporte[5] + \
-			"\nGastos: " + cadReporte[6] + "\nSueldo: " + cadReporte[7] + "\nNeto: " + cadReporte[8] + "\nDinero: " + cadReporte[9] + \
+			"\nDinero Inicial: " + cadReporte[3] + "\Ventas Efectivo: " + cadReporte[4] + "\nTerminal: " + cadReporte[5] + \
+			"\nGastos: " + cadReporte[6] + "\nNomina: " + cadReporte[7] + "\nNeto: " + cadReporte[8] + "\nDinero: " + cadReporte[9] + \
 			"\nSobra/Falta: " + cadReporte[10] + "\nPropinas: " + str(reporte[1])
 			
 			tk.Label(self.reporteWindow, text=cadReporte).place(x=80, y=10)
