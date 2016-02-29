@@ -167,7 +167,7 @@ class CierreGUI(tk.Frame):
 	"""
 	En esta ventana se maneja todo lo conciernente al cierre de caja.
 	"""
-	def __init__(self, sistema=SistemaTeru.MainSystem(), master=None, padre=None):
+	def __init__(self, sistema=SistemaTeru.MainSystem(), master=None, padre=None, tipoCierre = None):
 		tk.Frame.__init__(self, master)		
 		self.padre = padre
 		self.sistema = sistema
@@ -176,6 +176,10 @@ class CierreGUI(tk.Frame):
 		self.master.geometry("280x250")
 		self.pack()
 		self.createWidgets()
+		if type(tipoCierre) is not None:
+			self.tipoCierre = tipoCierre
+		else:
+			self.tipoCierre = sistema.cierreDeCaja
 
 	def createWidgets(self):
 		"""
@@ -214,7 +218,7 @@ class CierreGUI(tk.Frame):
 			self.reporteWindow.wm_title("Reporte del día")
 			self.reporteWindow.geometry("280x280")
 
-			reporte = self.sistema.cierreDeCaja(self.dinero.get(), self.dineroInicial.get(), self.gastos.get(), self.nomina.get(), self.dia.get())
+			reporte = self.tipoCierre(self.dinero.get(), self.dineroInicial.get(), self.gastos.get(), self.nomina.get(), self.dia.get())
 			cadReporte = reporte[0].split(",")
 			cadReporte = "Total Mesas: " + cadReporte[1] + "\nTotal Clientes: " + cadReporte[2] + \
 			"\nDinero Inicial: " + cadReporte[3] + "\Ventas Efectivo: " + cadReporte[4] + "\nTerminal: " + cadReporte[5] + \
@@ -292,10 +296,57 @@ class Instanciador(tk.Frame):
 		"""
 		Accion para el boton "Cierre de Caja", nos pide los datos de cierre de caja y hacer la acción
 		"""
-		CierreGUI(self.sistema, tk.Toplevel(self), self)		
+		CierreMenu(self.sistema, tk.Toplevel(self), self)		
 
 	def withdraw(self):
 		self.master.withdraw()
+
+	def abrirVentana(self):
+		self.master.update()
+		self.master.deiconify()
+
+class CierreMenu(tk.Frame):
+	"""
+		Ventana donde se seleccionará el tipo de cierre.
+	"""
+	def __init__(self, sistema=SistemaTeru.MainSystem(), master=None, padre=None):
+		tk.Frame.__init__(self, master)		
+		self.padre = padre
+		self.sistema = sistema
+		self.padre.withdraw()
+		self.master.wm_title("Cierre")
+		self.master.geometry("170x180")
+		self.pack()
+		self.createWidgets()
+	
+	def createWidgets(self):
+		tk.Button(self.master, text="Cierre Total", command=self.cierreTotal).place(x=50,y=30)
+		tk.Button(self.master, text="Primer Cierre", command=self.primerCierre).place(x=50,y=70)
+		tk.Button(self.master, text="Segundo Cierre", command=self.SegundoCierre).place(x=50,y=110)
+		tk.Button(self.master, text="Cancelar", command=self.cancelar).place(x=50,y=140)
+
+	def cierreTotal(self):
+		CierreGUI(self.sistema, tk.Toplevel(self), self)
+
+	def primerCierre(self):
+		CierreGUI(self.sistema, tk.Toplevel(self), self, self.sistema.PrimerCierreDeCaja)
+
+	def SegundoCierre(self):
+		CierreGUI(self.sistema, tk.Toplevel(self), self, self.sistema.SegundoCierreDeCaja)
+
+	def showMain(self):
+		"""
+		Se retorna a la ventana padre.
+		"""
+		self.padre.abrirVentana()
+		self.master.destroy()
+
+	def withdraw(self):
+		self.master.withdraw()
+
+	def cancelar(self):
+		self.master.destroy()
+		self.padre.abrirVentana()
 
 	def abrirVentana(self):
 		self.master.update()

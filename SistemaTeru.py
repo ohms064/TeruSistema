@@ -1,12 +1,12 @@
-﻿import datetime
+import datetime
 
 mes = ["?","Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto", "Septiembre","Octubre","Noviembre","Diciembre"]
 
 class MainSystem():
 	def __init__(self):
+		self.delimitadorTurno = "\n---------------Segundo Turno -----------------------------"
 		fecha = datetime.datetime.now()
 		self.dia = str(fecha.day) + "-" + str(fecha.month) + "-" + str(fecha.year)
-		print(self.dia)
 		self.reporteCadena = ""
 		self.dineroCaja = ""
 		with open("Comandas\\" + self.dia + ".csv", "a+") as arch:
@@ -28,6 +28,8 @@ class MainSystem():
 	def commitComanda(self):
 		temp = str(datetime.datetime.now().time())
 		with open("Comandas\\" + self.dia + ".csv", "a") as arch:
+			if int(temp[:temp.index(":")] ) >= 15:
+				arch.write(self.delimitadorTurno)				
 			arch.write("\n" + temp[:temp.index(".")] + "," + str(self.comanda))
 
 	def calculoComanda(self, con, string=False):
@@ -66,6 +68,118 @@ class MainSystem():
 			with open("Comandas\\" + str(diaFunc[0]) + "-" + str(diaFunc[1]) + "-" + str(diaFunc[2]) + ".csv", "r") as arch:
 				#Leemos todos los datos recopilados del día.
 				for line in arch:
+					if not line.startswith("hora") and not (line + " ").isspace() and line != self.delimitadorTurno:
+						line = line.split(",")
+						totalMesas += 1
+						totalClientes += int(line[1])
+						if line[-1].rstrip("\n") == "TARJETA":
+							ventasTarjeta += int(line[2])
+							self.totalPropinaTarjeta += int(line[3])
+						else:
+							ventasEfectivo += int(line[2])
+							self.totalPropinaEfectivo += int(line[3])
+						totalVentasPropina += int(line[4])
+		except FileNotFoundError:
+			return "Archivo no encontrado " + str(diaFunc[0]) + "-" + str(diaFunc[1]) + "-" + str(diaFunc[2]) + ".csv"
+
+		#El cálculo se hace con el dinero en caja después de haber entregado las propinas y la nómina
+		neto = dineroInicial + ventasEfectivo - gastos - nomina - self.totalPropinaTarjeta
+		diffDinero = self.dineroCaja - neto
+
+		self.reporteCadena = str(diaFunc[0]) + "-" + str(diaFunc[1]) + "," + str(totalMesas) + "," + str(totalClientes) + "," +\
+		str(dineroInicial) + "," + str(ventasEfectivo) + "," + str(ventasTarjeta + self.totalPropinaTarjeta) + "," + str(gastos) + "," +\
+		str(nomina) + "," + str(neto) + "," + str(self.dineroCaja) + "," + str(diffDinero)
+		return (self.reporteCadena, self.totalPropinaTarjeta + self.totalPropinaEfectivo)
+
+	def PrimerCierreDeCaja(self, dineroCaja, dineroInicial, gastos="", nomina="", dia=""):
+		self.dineroCaja = int(dineroCaja)
+		self.reporteCadena = ""
+		totalClientes = 0
+		ventasEfectivo = 0
+		ventasTarjeta = 0
+		
+		self.totalPropinaEfectivo = 0
+		self.totalPropinaTarjeta = 0
+		totalVentasPropina = 0
+		totalMesas = 0
+		dineroInicial = int(dineroInicial)
+		if dia == "":
+			diaFunc = self.dia.split("-")
+		else:
+			diaFunc = dia
+		diaFunc = [x.lstrip("0") for x in diaFunc]
+		if gastos == "":
+			gastos = 0
+		else:
+			gastos = int(gastos)
+
+		if nomina == "":
+			nomina = 0
+		else:
+			nomina = int(nomina)
+		try:
+			with open("Comandas\\" + str(diaFunc[0]) + "-" + str(diaFunc[1]) + "-" + str(diaFunc[2]) + ".csv", "r") as arch:
+				#Leemos todos los datos recopilados del día.
+				for line in arch:
+					if line == self.delimitadorTurno:
+						break
+					if not line.startswith("hora") and not (line + " ").isspace():
+						line = line.split(",")
+						totalMesas += 1
+						totalClientes += int(line[1])
+						if line[-1].rstrip("\n") == "TARJETA":
+							ventasTarjeta += int(line[2])
+						else:
+							ventasEfectivo += int(line[2])
+						totalVentasPropina += int(line[4])
+		except FileNotFoundError:
+			return "Archivo no encontrado " + str(diaFunc[0]) + "-" + str(diaFunc[1]) + "-" + str(diaFunc[2]) + ".csv"
+
+		#El cálculo se hace con el dinero en caja después de haber entregado las propinas y la nómina
+		neto = dineroInicial + ventasEfectivo - gastos - nomina - self.totalPropinaTarjeta
+		diffDinero = self.dineroCaja - neto
+
+		self.reporteCadena = str(diaFunc[0]) + "-" + str(diaFunc[1]) + "," + str(totalMesas) + "," + str(totalClientes) + "," +\
+		str(dineroInicial) + "," + str(ventasEfectivo) + "," + str(ventasTarjeta + self.totalPropinaTarjeta) + "," + str(gastos) + "," +\
+		str(nomina) + "," + str(neto) + "," + str(self.dineroCaja) + "," + str(diffDinero)
+		return (self.reporteCadena, self.totalPropinaTarjeta + self.totalPropinaEfectivo)
+
+	def SegundoCierreDeCaja(self, dineroCaja, dineroInicial, gastos="", nomina="", dia=""):
+		self.dineroCaja = int(dineroCaja)
+		self.reporteCadena = ""
+		totalClientes = 0
+		ventasEfectivo = 0
+		ventasTarjeta = 0
+		
+		self.totalPropinaEfectivo = 0
+		self.totalPropinaTarjeta = 0
+		totalVentasPropina = 0
+		totalMesas = 0
+		dineroInicial = int(dineroInicial)
+		if dia == "":
+			diaFunc = self.dia.split("-")
+		else:
+			diaFunc = dia
+		diaFunc = [x.lstrip("0") for x in diaFunc]
+		if gastos == "":
+			gastos = 0
+		else:
+			gastos = int(gastos)
+
+		if nomina == "":
+			nomina = 0
+		else:
+			nomina = int(nomina)
+		try:
+			with open("Comandas\\" + str(diaFunc[0]) + "-" + str(diaFunc[1]) + "-" + str(diaFunc[2]) + ".csv", "r") as arch:
+				#Leemos todos los datos recopilados del día.
+				line = arch.readline()
+				while line != self.delimitadorTurno:
+					line = arch.readline()
+				line = arch.readline()
+				for line in arch:
+					if line == self.delimitadorTurno:
+						break
 					if not line.startswith("hora") and not (line + " ").isspace():
 						line = line.split(",")
 						totalMesas += 1
