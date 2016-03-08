@@ -14,6 +14,15 @@ class MainSystem():
 				arch.write("hora,#Clientes,total,propina,total + propina,dineroRecibido,cambio")
 
 	def nuevaComanda(self, numClientes, total, dineroRecibido, propina=0, tarjeta=False):
+		"""
+		Se agrega una nueva transacción.
+		In:
+		numCleintes: Número de cleintes en la mesa.
+		total: El total del consumo
+		dineroRecibido: Cuanto dinero se recibió
+		propina(opcional): Cuanto se agregó de propina, esta propina se guarda en caja.
+		tarjeta(opcional): Si el pago fué con tarjeta.
+		"""
 		self.error = False
 		try:
 			if tarjeta:
@@ -23,20 +32,44 @@ class MainSystem():
 			self.error = True
 
 	def nuevaPropina(self, propina):
+		"""
+		Se agrega propina a la camanda.
+		In:
+		propina: Valor de la propina actual.
+		"""
 		self.comanda.propina = int(propina)
 
 	def commitComanda(self):
+		"""
+		Se guarda la información de la comanda.
+		"""
 		temp = str(datetime.datetime.now().time())
 		with open("Comandas\\" + self.dia + ".csv", "a") as arch:
 			arch.write("\n" + temp[:temp.index(".")] + "," + str(self.comanda))
 
 	def calculoComanda(self, con, string=False):
+		"""
+		Se calcula el total de una comanda y se regresa los valores esperados.
+		In:
+		con: Lista con el consumo
+		string: Si la salida es una cadena o diccionario.
+		Out:
+			Una cadena o diccionario con los totales, propinas y total con propina.
+		"""
 		total = sum(con)
 		if string:
 			return "Total: " + str(total) + "\nPropina Sugerida: " + str(int(total * 0.1)) + "\nTotal Sugerido: " + str(int(total * 1.1))
 		return {"Total":str(total), "Propina":str(int(total*0.1)), "Sugerido": str(int(total * 1.1))}
 
 	def cierreDeCaja(self, dineroCaja, dineroInicial, gastos="", nomina="", dia=""):
+		"""
+		Función que almacena la información de cierre de caja
+		In:
+		dineroCaja: Dinero que se encuentra en caja a la hora de cierre
+		gastos (opcional): Dinero que se ha gastado durante el día.
+		nomina (opcional): Dinero que se les pagó a los empleados
+		dia (opcional): Dia del que se quiere hacer cierre de caja, en caso de no enviarse se tomará el actual.
+		"""
 		self.dineroCaja = int(dineroCaja)
 		self.reporteCadena = ""
 		totalClientes = 0
@@ -91,7 +124,10 @@ class MainSystem():
 
 	def commitCierre(self, llevo, dia=""):
 		"""
-		Se guarda el cierre en el archivo de reportes
+		Se guarda el cierre en el archivo de reportes.
+		In: 
+		llevo: dinero que se saca de la caja para guardarse.
+		dia (opcional): Dia del que se quiere hacer cierre de caja, en caso de no enviarse se tomará el actual.
 		"""
 		if dia == "":
 			diaFunc = self.dia.split("-")
