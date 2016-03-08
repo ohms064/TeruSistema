@@ -138,7 +138,7 @@ class MainSystem():
 			with open("Reportes\\Reporte-" + mes[int(diaFunc[1])] + "_" + diaFunc[2] + ".csv","a") as reporte:
 				if reporte.tell() == 0:
 					reporte.write("Dia,Total Mesas,Total Clientes,Caja,Cobro Efectivo,Terminal,Gastos,Sueldo,Neto,Dinero,Sobra/Falta,Llevo,Dejo,Propinas Efectivo, Propinas Tarjeta, Total Propinas\n")
-				self.reporteCadena += "," + llevo + "," + str(int(self.dineroCaja) - int(llevo)) + "," + str(self.totalPropinaTarjeta) + "," + str(self.totalPropinaEfectivo) + "," + str(self.totalPropinaTarjeta + self.totalPropinaEfectivo) + "\n"
+				self.reporteCadena += "," + llevo + "," + str(int(self.dineroCaja) - int(llevo)) + "," + str(self.totalPropinaEfectivo) + "," + str(self.totalPropinaTarjeta) + "," + str(self.totalPropinaTarjeta + self.totalPropinaEfectivo) + "\n"
 				reporte.write(self.reporteCadena)
 		except PermissionError:
 			print("Favor de cerrar el archivo del reporte")
