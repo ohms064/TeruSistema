@@ -1,4 +1,4 @@
-﻿import tkinter as tk
+import tkinter as tk
 import SistemaTeru
 		
 class MesaGUI(tk.Frame):
@@ -176,6 +176,7 @@ class CierreGUI(tk.Frame):
 		self.master.geometry("280x250")
 		self.pack()
 		self.createWidgets()
+		self.master.protocol("WM_DELETE_WINDOW", self.showMain)
 
 	def createWidgets(self):
 		"""
@@ -263,6 +264,7 @@ class Instanciador(tk.Frame):
 	def createWidgets(self):
 		self.contador = 0
 		self.sistema = SistemaTeru.MainSystem()
+		self.clientesDB = SistemaTeru.ClienteTeru()
 		self.textContador = tk.StringVar()
 		self.nombreMesa = tk.StringVar()
 		self.textContador.set("Mesas: " + str(self.contador))
@@ -301,7 +303,13 @@ class Instanciador(tk.Frame):
 		self.master.update()
 		self.master.deiconify()
 
+	def onCloseWindow(self):
+		self.clientesDB.cerrar()
+		self.master.destroy()
+
+
 if __name__ == '__main__':
 	root = tk.Tk()
 	app = Instanciador(master=root)
+	root.protocol("WM_DELETE_WINDOW", app.onCloseWindow)
 	app.mainloop()

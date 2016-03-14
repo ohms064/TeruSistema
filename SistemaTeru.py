@@ -1,4 +1,6 @@
 ﻿import datetime
+import sqlite3
+import json
 
 mes = ["?","Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto", "Septiembre","Octubre","Noviembre","Diciembre"]
 
@@ -214,6 +216,43 @@ class Comanda(object):
 		return str(self.numClientes) + "," + str(self.total) + "," + \
 		 str(self.propina) + "," + str(self.propina + self.total)  + "," + \
 		 str(self.dineroRecibido) + "," + str(self.dineroRecibido - self.propina - self.total)
+
+class ClienteTeru:
+	def __init__(self):
+		self.conexion = sqlite3.connect('Datos\\clientes.db')
+		self.c = self.conexion.cursor()
+		try:
+			self.c.execute('''CREATE TABLE cleintes\
+				( id INTEGER PRIMARY KEY, nombre VARCHAR, consumo REAL, visitas, INTEGER, , ultimaVisita VARCHAR, correo VARCHAR, nick VARCHAR)''')
+			#Permite ejecutar sentencias sql en triples comillas
+			#PRIMARY KEY ya crea de forma consecutiva los valores por default
+		except:
+			print ("Saltandose la creacion de la tabla por que ya existe")
+	
+	def insertar(self, nombre, consumo=0, visitas=0, ultimaVisita="0/0/0",correo="", nick=""):
+		self.c.execute('''INSERT INTO clientes(nombre,consumo,visitas,ultimaVisita,correo)\
+			VALUES('%s',%f,%f,'%s',%s)'''%(nombre, consumo, visitas, ultimaVisita, correo,nick))
+
+	def confirmar(self):
+		self.conexion.commit()
+
+	def rewind(self):
+		self.c.rollback()
+
+	def buscarID(self,ide):
+		return self.c.execute('''SELECT * FROM clientes WHERE id=%f'''%(ide)).fetchone()
+
+	def buscarNombre(self, nombre):
+		return self.c.execute('''SELECT * FROM clientes WHERE nombre=%s'''%(nombre)).fetchone()
+
+	def buscarNick(self, nombre):
+		return self.c.execute('''SELECT * FROM clientes WHERE nick=%s'''%(nick)).fetchone()
+
+	def cerrar(self):
+		self.conexion.close()
+
+	def numClientes(self):
+		return self.c.lastrowid()
 
 if __name__ == '__main__':
 	print("Porfavor abir TeruGUI")
