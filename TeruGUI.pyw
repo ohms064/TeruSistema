@@ -24,6 +24,7 @@ class MesaGUI(tk.Frame):
 		self.propina = tk.StringVar()
 		self.total = tk.StringVar()
 		self.tarjeta = tk.IntVar()
+		self.idCliente = tk.StringVar()
 
 		tk.Label(self.master, text="Clientes:").place(x=50, y=10)
 		tk.Entry(self.master, textvariable=self.numClientes).place(x=110, y=10)
@@ -42,19 +43,22 @@ class MesaGUI(tk.Frame):
 		tk.Entry(self.master, textvariable=self.dinRecibido).place(x=110, y=70)
 		tk.Checkbutton(self.master, text="Tarjeta:", variable=self.tarjeta).place(x=250, y=70)
 
-		tk.Button(self.master, text="Aceptar", command=self.confirmarComanda).place(x=185,y=95)
-		tk.Button(self.master, text="Borrar", command=self.clearComanda).place(x=125,y=95)
+		tk.Label(self.master, text="ID Cliente:").place(x=40, y=90)
+		tk.Entry(self.master, textvariable=self.idCliente).place(x=110, y=90)
+
+		tk.Button(self.master, text="Aceptar", command=self.confirmarComanda).place(x=185,y=115)
+		tk.Button(self.master, text="Borrar", command=self.clearComanda).place(x=125,y=115)
 
 		tk.Label(self.master, text="Mesa:").place(x=350,y=110)
 		self.labelMesa = tk.Label(self.master, text=self.nombreMesa.get()[:2], font=("Times", 50))
 		self.labelMesa.place(x=380,y=130)
 
-		tk.Label(self.master, text="Consumo:").place(x=40, y=130)
+		tk.Label(self.master, text="Consumo:").place(x=40, y=150)
 		self.textoConsumo = tk.Text(self.master, width=24, height=5)
-		self.textoConsumo.place(x=110, y=130)
-		tk.Button(self.master, text="Añadir", command=self.agregar).place(x=260, y=220)
-		tk.Button(self.master, text="Calcular", command=self.consumo).place(x=200, y=220)
-		tk.Button(self.master, text="Borrar", command=self.clearConsumo).place(x=140,y=220)
+		self.textoConsumo.place(x=110, y=150)
+		tk.Button(self.master, text="Añadir", command=self.agregar).place(x=260, y=240)
+		tk.Button(self.master, text="Calcular", command=self.consumo).place(x=200, y=240)
+		tk.Button(self.master, text="Borrar", command=self.clearConsumo).place(x=140,y=240)
 
 
 	def cambiarMesa(self):
@@ -233,7 +237,6 @@ class CierreGUI(tk.Frame):
 		Se confirma el cierre.
 		"""
 		self.sistema.commitCierre(self.dineroLlevo.get(), self.dia.get())
-		print(self.dia.get())
 		self.reporteWindow.destroy()
 		self.showMain()
 
@@ -264,7 +267,7 @@ class Instanciador(tk.Frame):
 	def createWidgets(self):
 		self.contador = 0
 		self.sistema = SistemaTeru.MainSystem()
-		self.clientesDB = SistemaTeru.ClienteTeru()
+		self.clientesDB = SistemaTeru.ClienteDB()
 		self.textContador = tk.StringVar()
 		self.nombreMesa = tk.StringVar()
 		self.textContador.set("Mesas: " + str(self.contador))

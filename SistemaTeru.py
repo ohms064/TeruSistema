@@ -8,7 +8,6 @@ class MainSystem():
 	def __init__(self):
 		fecha = datetime.datetime.now()
 		self.dia = str(fecha.day) + "-" + str(fecha.month) + "-" + str(fecha.year)
-		print(self.dia)
 		self.reporteCadena = ""
 		self.dineroCaja = ""
 		with open("Comandas\\" + self.dia + ".csv", "a+") as arch:
@@ -32,6 +31,9 @@ class MainSystem():
 			self.comanda = Comanda(int(numClientes), int(total), int(dineroRecibido), int(propina), tarjeta)
 		except ValueError:
 			self.error = True
+
+	def llamarCliente(self, id):
+		pass
 
 	def nuevaPropina(self, propina):
 		"""
@@ -217,21 +219,23 @@ class Comanda(object):
 		 str(self.propina) + "," + str(self.propina + self.total)  + "," + \
 		 str(self.dineroRecibido) + "," + str(self.dineroRecibido - self.propina - self.total)
 
-class ClienteTeru:
+class ClienteDB:
 	def __init__(self):
-		self.conexion = sqlite3.connect('Datos\\clientes.db')
+		self.conexion = sqlite3.connect('Datos\\clientesTeru.db')
 		self.c = self.conexion.cursor()
-		try:
-			self.c.execute('''CREATE TABLE cleintes\
-				( id INTEGER PRIMARY KEY, nombre VARCHAR, consumo REAL, visitas, INTEGER, , ultimaVisita VARCHAR, correo VARCHAR, nick VARCHAR)''')
-			#Permite ejecutar sentencias sql en triples comillas
-			#PRIMARY KEY ya crea de forma consecutiva los valores por default
-		except:
-			print ("Saltandose la creacion de la tabla por que ya existe")
+		
+		self.c.execute('''CREATE TABLE IF NOT EXISTS clientesTeru \
+			( id INTEGER PRIMARY KEY, nombre VARCHAR, consumo REAL, visitas INTEGER, ultimaVisita VARCHAR, correo VARCHAR, nick VARCHAR)''')
+		#Permite ejecutar sentencias sql en triples comillas
+		#PRIMARY KEY ya crea de forma consecutiva los valores por default
 	
-	def insertar(self, nombre, consumo=0, visitas=0, ultimaVisita="0/0/0",correo="", nick=""):
-		self.c.execute('''INSERT INTO clientes(nombre,consumo,visitas,ultimaVisita,correo)\
-			VALUES('%s',%f,%f,'%s',%s)'''%(nombre, consumo, visitas, ultimaVisita, correo,nick))
+	def insertar(self, nombre, consumo=0, correo="", nick="", ultimaVisita="0-0-0", visitas=1):
+		if ultimaVisita == "0-0-0":
+			fecha = datetime.datetime.now()
+			ultimaVisita = str(fecha.day) + "-" + str(fecha.month) + "-" + str(fecha.year)
+		sql = '''INSERT INTO clientesTeru(nombre, consumo, visitas, ultimaVisita, correo, nick) \
+		VALUES ('%s', %f, %f, '%s', '%s', '%s')'''%(nombre, consumo, visitas, ultimaVisita, correo, nick)
+		self.c.execute(sql)
 
 	def confirmar(self):
 		self.conexion.commit()
@@ -240,13 +244,28 @@ class ClienteTeru:
 		self.c.rollback()
 
 	def buscarID(self,ide):
-		return self.c.execute('''SELECT * FROM clientes WHERE id=%f'''%(ide)).fetchone()
+		"""
+		Busca en la tabla por ID y retorna el primer valor encontrado
+		"""
+		return ClienteTeru(self.c.execute('''SELECT * FROM clientesTeru WHERE id=%f'''%(ide)).fetchone())
 
 	def buscarNombre(self, nombre):
-		return self.c.execute('''SELECT * FROM clientes WHERE nombre=%s'''%(nombre)).fetchone()
+		"""
+		Busca en la tabla por nombre y retorna el primer valor encontrado
+		"""
+		return ClienteTeru(self.c.execute('''SELECT * FROM clientesTeru WHERE nombre=%s'''%(nombre)).fetchone())
 
-	def buscarNick(self, nombre):
-		return self.c.execute('''SELECT * FROM clientes WHERE nick=%s'''%(nick)).fetchone()
+	def buscarNick(self, nick):
+		"""
+		Busca en la tabla por nick y retorna el primer valor encontrado
+		"""
+		return ClienteTeru(self.c.execute('''SELECT * FROM clientesTeru WHERE nick=%s'''%(nick)).fetchone())
+
+	def buscarCorreo(self, correo):
+		"""
+		Busca en la tabla por correo y retorna el primer valor encontrado
+		"""
+		return ClienteTeru(self.c.execute('''SELECT * FROM clientesTeru WHERE correo=%s'''%(correo)).fetchone())
 
 	def cerrar(self):
 		self.conexion.close()
@@ -254,7 +273,49 @@ class ClienteTeru:
 	def numClientes(self):
 		return self.c.lastrowid()
 
+	def drop(self):
+		self.c.execute('drop table clientesTeru')
+
+	def __enter__(self):
+		return self
+
+	def __exit__(self, exc_type, exc_value, traceback):
+		self.cerrar()
+
+	def __len__(self):
+		query = self.c.execute('''SELECT * FROM clientesTeru''')
+		return len([x for x in query])
+
+	def __str__(self):
+		s = ""
+		for query in self.c.execute('''SELECT * FROM clientesTeru'''):
+			s += str(ClienteTeru(query)) + "\n"
+		return s
+
+class ClienteTeru:
+	def __init__(self, sql):
+		"""
+		Recibe los datos de una consulta de ClienteDB y sólo ClienteDB a menos que los datos se envíen 
+		en una tupla como sigue: id, nombre, consumo, visitas, ultimaVisita, correo, nick
+		"""
+		self.id = sql[0]
+		self.nombre = sql[1]
+		self.consumo = sql[2]
+		self.visitas = sql[3]
+		self.ultimaVisita = sql[4]
+		self.correo = sql[5]
+		self.nick = sql[6]
+		self.sql = sql
+
+	def __str__(self):
+		return "ID: " + str(self.id) + " nombre: " + str(self.nombre) + " Consumo: " + str(self.consumo) + " visitas: " + str(self.visitas) + " ultimaVisita: " + str(self.ultimaVisita) + " correo: " + str(self.correo) + " nick: " + str(self.nick)
+
 if __name__ == '__main__':
 	print("Porfavor abir TeruGUI")
 	sistema = MainSystem()
 	sistema.cierreDeCaja("1234", "12", "2", "20")
+
+	with ClienteDB() as c:
+		c.insertar("Omar", 100, "otokonoko064@gmail.com", "oms064")
+		a = c.buscarID(1)
+		c.confirmar()
