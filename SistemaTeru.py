@@ -13,6 +13,22 @@ class MainSystem():
 		with open("Comandas\\" + self.dia + ".csv", "a+") as arch:
 			if (arch.tell() == 0):
 				arch.write("hora,#Clientes,total,propina,total + propina,dineroRecibido,cambio")
+		try:				
+			with open("Datos\\.conf", "r") as archConf:
+				self.conf = json.load(archConf)
+				if self.conf["fecha"] != self.dia:
+					self.conf["visitas"] = 0
+					self.conf["fecha"] = self.dia	
+		except (FileNotFoundError, ValueError) as err:
+			with open("Datos\\.conf", "w") as archConf:
+				self.conf = {"fecha" : self.dia, "promoVisitas" : 5, "visitas" : 0}
+				json.dump(self.conf, archConf, indent=3)
+		except:
+			with open("error", "w") as archError:
+				archError.write(sys.exc_info()[0])
+				self.conf = {"fecha" : self.dia, "promoVisitas" : 5, "visitas" : 0}
+		finally:
+			print(self.conf)
 
 	def nuevaComanda(self, numClientes, total, dineroRecibido, propina=0, tarjeta=False):
 		"""
@@ -185,6 +201,10 @@ class MainSystem():
 		return "Fecha: " + (diaFunc[0]) + "-" + str(diaFunc[1]) + "\nTotal Mesas: " + str(totalMesas) + "\nTotal Clientes: " + str(totalClientes) + "\nVentas Efectivo: " +\
 		 str(ventasEfectivo) + "\nVentas Terminal: " + str(ventasTarjeta + totalPropinaTarjeta) + "\nPropinas Efectivo : " + str(totalPropinaEfectivo) + "\nPropinas Tarjeta: " + str(totalPropinaTarjeta)
 		 
+	def __del__(self):
+		with open("Datos\\.conf", "w") as archConf:
+			json.dump(self.conf, archConf, indent=3)
+
 class Comanda(object):
 	"""
 	TODO:

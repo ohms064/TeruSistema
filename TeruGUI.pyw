@@ -6,7 +6,7 @@ class MesaGUI(tk.Frame):
 	Aquí es donde se se hace la comanda para una mesa
 	Esta clase es llamada desde Instanciador y puede instanciar tantas MesaGUI como sea necesario.
 	"""
-	def __init__(self, sistema=SistemaTeru.MainSystem(), nombreMesa="", master=None):
+	def __init__(self, sistema, nombreMesa="", master=None):
 		tk.Frame.__init__(self, master)
 		self.nombreMesa = nombreMesa
 		self.master.title("Comanda: " + str(self.nombreMesa.get()))
@@ -171,7 +171,7 @@ class CierreGUI(tk.Frame):
 	"""
 	En esta ventana se maneja todo lo conciernente al cierre de caja.
 	"""
-	def __init__(self, sistema=SistemaTeru.MainSystem(), master=None, padre=None):
+	def __init__(self, sistema, master=None, padre=None):
 		tk.Frame.__init__(self, master)		
 		self.padre = padre
 		self.sistema = sistema
@@ -265,12 +265,11 @@ class Instanciador(tk.Frame):
 		self.createWidgets()
 
 	def createWidgets(self):
-		self.contador = 0
 		self.sistema = SistemaTeru.MainSystem()
 		self.clientesDB = SistemaTeru.ClienteDB()
 		self.textContador = tk.StringVar()
 		self.nombreMesa = tk.StringVar()
-		self.textContador.set("Mesas: " + str(self.contador))
+		self.textContador.set("Mesas: " + str(self.sistema.conf["visitas"]))
 		self.folioLabel = tk.Label(self.master, textvariable=self.textContador).place(x=60, y=10)
 		tk.Label(self.master, text="Nombre Mesa:").place(x=10,y=40)
 		tk.Entry(self.master, width=10, textvariable=self.nombreMesa).place(x=100,y=40)
@@ -289,8 +288,8 @@ class Instanciador(tk.Frame):
 		"""
 			Se abre una nueva ventana para cobrar una mesa
 		"""
-		self.contador += 1
-		self.textContador.set("Mesas: " + str(self.contador))
+		self.sistema.conf["visitas"] += 1
+		self.textContador.set("Mesas: " + str(self.sistema.conf["visitas"]))
 		MesaGUI(self.sistema, self.nombreMesa, tk.Toplevel(self))
 
 	def datosCierre(self):
@@ -309,6 +308,7 @@ class Instanciador(tk.Frame):
 	def onCloseWindow(self):
 		self.clientesDB.cerrar()
 		self.master.destroy()
+		del self.sistema
 
 
 if __name__ == '__main__':
