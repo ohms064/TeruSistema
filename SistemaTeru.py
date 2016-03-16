@@ -10,23 +10,28 @@ class MainSystem():
 		self.dia = str(fecha.day) + "-" + str(fecha.month) + "-" + str(fecha.year)
 		self.reporteCadena = ""
 		self.dineroCaja = ""
+		self.clientesDB = ClienteDB()
 		with open("Comandas\\" + self.dia + ".csv", "a+") as arch:
 			if (arch.tell() == 0):
 				arch.write("hora,#Clientes,total,propina,total + propina,dineroRecibido,cambio")
 		try:				
-			with open("Datos\\.conf", "r") as archConf:
+			with open("Datos\\conf.json", "r") as archConf:
 				self.conf = json.load(archConf)
-				if self.conf["fecha"] != self.dia:
+				if self.conf["fecha"] != self.dia:#Si cambio la fecha
 					self.conf["visitas"] = 0
 					self.conf["fecha"] = self.dia	
+					if self.conf["fecha"].split("-")[1] != self.dia.split("-")[1]:#Cambio de mes
+						self.clientesDB.resetVisitas()
+						self.clientesDB.resetConsumo()
+					
 		except (FileNotFoundError, ValueError) as err:
-			with open("Datos\\.conf", "w") as archConf:
-				self.conf = {"fecha" : self.dia, "promoVisitas" : 5, "visitas" : 0}
+			with open("Datos\\conf.json", "w") as archConf:
+				self.conf = {"fecha" : self.dia, "promoVisitas" : 5, "visitas" : 0, "tutorialInicio":True, "tutorialClientes":True}
 				json.dump(self.conf, archConf, indent=3)
 		except:
 			with open("error", "w") as archError:
 				archError.write(sys.exc_info()[0])
-				self.conf = {"fecha" : self.dia, "promoVisitas" : 5, "visitas" : 0}
+				self.conf = {"fecha" : self.dia, "promoVisitas" : 5, "visitas" : 0, "tutorialInicio":False, "tutorialClientes":False}
 		finally:
 			print(self.conf)
 
@@ -202,7 +207,9 @@ class MainSystem():
 		 str(ventasEfectivo) + "\nVentas Terminal: " + str(ventasTarjeta + totalPropinaTarjeta) + "\nPropinas Efectivo : " + str(totalPropinaEfectivo) + "\nPropinas Tarjeta: " + str(totalPropinaTarjeta)
 		 
 	def __del__(self):
-		with open("Datos\\.conf", "w") as archConf:
+		self.clientesDB.cerrar()
+		with open("Datos\\conf.json", "w") as archConf:
+			self.conf["tutorialInicio"] = False
 			json.dump(self.conf, archConf, indent=3)
 
 class Comanda(object):
@@ -244,18 +251,39 @@ class ClienteDB:
 		self.conexion = sqlite3.connect('Datos\\clientesTeru.db')
 		self.c = self.conexion.cursor()
 		
-		self.c.execute('''CREATE TABLE IF NOT EXISTS clientesTeru \
-			( id INTEGER PRIMARY KEY, nombre VARCHAR, consumo REAL, visitas INTEGER, ultimaVisita VARCHAR, correo VARCHAR, nick VARCHAR)''')
-		#Permite ejecutar sentencias sql en triples comillas
-		#PRIMARY KEY ya crea de forma consecutiva los valores por default
+		self.c.execute("CREATE TABLE IF NOT EXISTS clientesTeru \
+			( id INTEGER PRIMARY KEY, nombre VARCHAR, consumo REAL, visitas INTEGER, ultimaVisita VARCHAR, correo VARCHAR, nick VARCHAR, fechaIngreso VARCHAR)")
 	
-	def insertar(self, nombre, consumo=0, correo="", nick="", ultimaVisita="0-0-0", visitas=1):
+	def insertar(self, nombre, consumo=0, correo="", nick="", ultimaVisita="0-0-0", visitas=1, fechaIngreso="0-0-0"):
 		if ultimaVisita == "0-0-0":
 			fecha = datetime.datetime.now()
 			ultimaVisita = str(fecha.day) + "-" + str(fecha.month) + "-" + str(fecha.year)
-		sql = '''INSERT INTO clientesTeru(nombre, consumo, visitas, ultimaVisita, correo, nick) \
-		VALUES ('%s', %f, %f, '%s', '%s', '%s')'''%(nombre, consumo, visitas, ultimaVisita, correo, nick)
+		if fechaIngreso == "0-0-0":
+			fecha = datetime.datetime.now()
+			fechaIngreso = str(fecha.day) + "-" + str(fecha.month) + "-" + str(fecha.year)
+
+		sql = "INSERT INTO clientesTeru(nombre, consumo, visitas, ultimaVisita, correo, nick, fechaIngreso) \
+		VALUES ('{}', {}, {}, '{}', '{}', '{}', '{}')".format(nombre, consumo, visitas, ultimaVisita, correo, nick, fechaIngreso)
 		self.c.execute(sql)
+
+	def actualizar(self, identificador, nombre="", nick="", correo=""):
+		"""
+		Función para actualizar los datos de un cliente con un identificador.
+		"""	
+		if nombre == "" and nick == "" and correo == "":#Seguramente esto se puede mejorar usando **args
+			return
+		sql = "UPDATE clientesTeru SET "
+		if nombre != "":
+			sql += "nombre = '{}', ".format(nombre)
+		if nick != "":
+			sql += "nick = '{}', ".format(nick)
+		if correo != "":
+			sql = "correo = '{}', ".format(correo)
+		sql = sql[0:-1] + " WHERE id={}".format(identificador)
+		self.c.execute(sql)
+
+	def borrar(self, identificador):
+		self.c.execute("DELETE FROM clientesTeru WHERE id={}".format(identificador))
 
 	def confirmar(self):
 		self.conexion.commit()
@@ -267,34 +295,52 @@ class ClienteDB:
 		"""
 		Busca en la tabla por ID y retorna el primer valor encontrado
 		"""
-		return ClienteTeru(self.c.execute('''SELECT * FROM clientesTeru WHERE id=%f'''%(ide)).fetchone())
+		return ClienteTeru(self.c.execute("SELECT * FROM clientesTeru WHERE id='{}'".format(ide)).fetchone())
 
 	def buscarNombre(self, nombre):
 		"""
 		Busca en la tabla por nombre y retorna el primer valor encontrado
 		"""
-		return ClienteTeru(self.c.execute('''SELECT * FROM clientesTeru WHERE nombre=%s'''%(nombre)).fetchone())
+		return ClienteTeru(self.c.execute("SELECT * FROM clientesTeru WHERE nombre='{}'".format(nombre)).fetchone())
 
 	def buscarNick(self, nick):
 		"""
 		Busca en la tabla por nick y retorna el primer valor encontrado
 		"""
-		return ClienteTeru(self.c.execute('''SELECT * FROM clientesTeru WHERE nick=%s'''%(nick)).fetchone())
+		return ClienteTeru(self.c.execute("SELECT * FROM clientesTeru WHERE nick='{}'".format(nick)).fetchone())
+
+	def resetVisitas(self):
+		"""
+		Resetea a todos los clientes su valor de visitas a 0. Esto para que se haga cada mes.
+		"""
+		self.c.execute(" UPDATE clientesTeru SET visitas = 0")
+
+	def resetConsumo(self):
+		"""
+		Resetea a todos los clientes su valor de visitas a 0. Esto para que se haga cada mes.
+		"""
+		self.c.execute(" UPDATE clientesTeru SET consumo = 0")
+
+	def incVisitas(self, identificador):
+		"""
+		Se incrementa el valor de las visitas por 1.
+		"""
+		self.c.execute(" UPDATE clientesTeru SET visitas = visitas + 1 WHERE id={}".formatidentificador)		
 
 	def buscarCorreo(self, correo):
 		"""
 		Busca en la tabla por correo y retorna el primer valor encontrado
 		"""
-		return ClienteTeru(self.c.execute('''SELECT * FROM clientesTeru WHERE correo=%s'''%(correo)).fetchone())
+		return ClienteTeru(self.c.execute("SELECT * FROM clientesTeru WHERE correo='{}'".format(correo)).fetchone())
 
 	def cerrar(self):
 		self.conexion.close()
 
-	def numClientes(self):
-		return self.c.lastrowid()
-
 	def drop(self):
 		self.c.execute('drop table clientesTeru')
+
+	def __len__(self):
+		return self.c.lastrowid()
 
 	def __enter__(self):
 		return self
@@ -303,14 +349,18 @@ class ClienteDB:
 		self.cerrar()
 
 	def __len__(self):
-		query = self.c.execute('''SELECT * FROM clientesTeru''')
+		query = self.c.execute("SELECT * FROM clientesTeru")
 		return len([x for x in query])
 
 	def __str__(self):
 		s = ""
-		for query in self.c.execute('''SELECT * FROM clientesTeru'''):
+		for query in self.c.execute("SELECT * FROM clientesTeru"):
 			s += str(ClienteTeru(query)) + "\n"
 		return s
+
+	def __iter__(self):
+		for query in self.c.execute("SELECT * FROM clientesTeru "):
+			yield ClienteTeru(query)
 
 class ClienteTeru:
 	def __init__(self, sql):
@@ -318,17 +368,27 @@ class ClienteTeru:
 		Recibe los datos de una consulta de ClienteDB y sólo ClienteDB a menos que los datos se envíen 
 		en una tupla como sigue: id, nombre, consumo, visitas, ultimaVisita, correo, nick
 		"""
-		self.id = sql[0]
-		self.nombre = sql[1]
-		self.consumo = sql[2]
-		self.visitas = sql[3]
-		self.ultimaVisita = sql[4]
-		self.correo = sql[5]
-		self.nick = sql[6]
-		self.sql = sql
+		try:
+			self.id = sql[0]
+			self.nombre = sql[1]
+			self.consumo = sql[2]
+			self.visitas = sql[3]
+			self.ultimaVisita = sql[4]
+			self.correo = sql[5]
+			self.nick = sql[6]
+			self.fechaIngreso = sql[7]
+		except TypeError as et:
+			self.id = "¡ERROR! No se encontró información"
+			self.nombre = self.id
+			self.consumo = self.id
+			self.visitas = self.id
+			self.ultimaVisita = self.id
+			self.correo = self.id
+			self.nick = self.id
+			self.fechaIngreso = self.id
 
 	def __str__(self):
-		return "ID: " + str(self.id) + " nombre: " + str(self.nombre) + " Consumo: " + str(self.consumo) + " visitas: " + str(self.visitas) + " ultimaVisita: " + str(self.ultimaVisita) + " correo: " + str(self.correo) + " nick: " + str(self.nick)
+		return str(self.id) + "," + str(self.nombre) + "," + str(self.consumo) + "," + str(self.visitas) + " ," + str(self.ultimaVisita) + "," + str(self.correo) + "," + str(self.nick)
 
 if __name__ == '__main__':
 	print("Porfavor abir TeruGUI")
@@ -336,6 +396,4 @@ if __name__ == '__main__':
 	sistema.cierreDeCaja("1234", "12", "2", "20")
 
 	with ClienteDB() as c:
-		c.insertar("Omar", 100, "otokonoko064@gmail.com", "oms064")
-		a = c.buscarID(1)
-		c.confirmar()
+		c.drop()

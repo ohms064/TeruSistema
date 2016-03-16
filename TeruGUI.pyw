@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import messagebox as mb
 import SistemaTeru
 		
 class MesaGUI(tk.Frame):
@@ -260,13 +261,13 @@ class Instanciador(tk.Frame):
 	def __init__(self, master=None):
 		tk.Frame.__init__(self, master)
 		self.master.title("Teru Sistema")
-		self.master.geometry("170x180")
+		self.master.geometry("170x220")
 		self.pack()
+		master.protocol("WM_DELETE_WINDOW", self.onCloseWindow)
+		self.sistema = SistemaTeru.MainSystem()
 		self.createWidgets()
 
 	def createWidgets(self):
-		self.sistema = SistemaTeru.MainSystem()
-		self.clientesDB = SistemaTeru.ClienteDB()
 		self.textContador = tk.StringVar()
 		self.nombreMesa = tk.StringVar()
 		self.textContador.set("Mesas: " + str(self.sistema.conf["visitas"]))
@@ -276,6 +277,7 @@ class Instanciador(tk.Frame):
 		tk.Button(self.master, text="Nueva Mesa", command=self.nuevaMesa).place(x=50,y=70)
 		tk.Button(self.master, text="Cierre de caja", command=self.datosCierre).place(x=45,y=110)
 		tk.Button(self.master, text="Estado Actual", command=self.estadoActual).place(x=45, y=150)
+		tk.Button(self.master, text="Clientes", command=self.abrirClientesGUI).place(x=55, y=190)
 
 	def estadoActual(self):
 		estado = self.sistema.getState()
@@ -283,6 +285,12 @@ class Instanciador(tk.Frame):
 		self.estadoWindow.wm_title("Estado Actual")
 		self.estadoWindow.geometry("250x180")
 		tk.Label(self.estadoWindow, text=estado).place(x=80, y=10)
+
+	def abrirClientesGUI(self):
+		"""
+		Acción para el botón "Clientes" cuya ventana es para hacer acciones sobre la tabla de clientes
+		"""
+		ClientesGUI(self.sistema, tk.Toplevel(self), self)
 
 	def nuevaMesa(self):
 		"""
@@ -306,9 +314,119 @@ class Instanciador(tk.Frame):
 		self.master.deiconify()
 
 	def onCloseWindow(self):
-		self.clientesDB.cerrar()
-		self.master.destroy()
 		del self.sistema
+		self.master.destroy()
+		
+class ClientesGUI(tk.Frame):
+	"""
+	En esta ventana se verán todas las acciones relacionados con la base de datos de los clientes.
+	"""
+	def __init__(self, sistema, master=None, padre=None):
+		tk.Frame.__init__(self, master)		
+		self.padre = padre
+		self.sistema = sistema
+		self.padre.withdraw()
+		self.master.wm_title("Clientes")
+		self.master.geometry("400x130")
+		self.pack()
+		self.createWidgets()
+		self.master.protocol("WM_DELETE_WINDOW", self.showMain)
+
+	def createWidgets(self):
+		self.id = tk.StringVar()
+		self.nick = tk.StringVar()
+		self.correo = tk.StringVar()
+		self.nombre = tk.StringVar()
+		self.visitas = tk.StringVar()
+		self.ultimaVisita = tk.StringVar()
+		self.consumo = tk.StringVar()
+		self.fechaIngreso = tk.StringVar()
+
+		#Sección de la izquierda
+		tk.Label(self.master, text="ID: ").place(x=30, y=10)
+		tk.Entry(self.master, width=30, textvariable=self.id).place(x=60, y=10)
+		tk.Label(self.master, text="Nick: ").place(x=20, y=30)
+		tk.Entry(self.master, width=30, textvariable=self.nick).place(x=60, y=30)
+		tk.Label(self.master, text="Correo: ").place(x=10, y=50)
+		tk.Entry(self.master, width=30, textvariable=self.correo).place(x=60, y=50)
+		tk.Label(self.master, text="Nombre: ").place(x=3, y=70)
+		tk.Entry(self.master, width=30, textvariable=self.nombre).place(x=60, y=70)
+
+		#Sección de la derecha
+		tk.Label(self.master, text="Visitas: ").place(x=280, y=10)
+		tk.Label(self.master, textvariable=self.visitas, bd=1).place(x=330, y=10)
+		tk.Label(self.master, text="Ultima Visita: ").place(x=250, y=30)
+		tk.Label(self.master, textvariable=self.ultimaVisita).place(x=330, y=30)
+		tk.Label(self.master, text="Consumo:").place(x=265, y=50)
+		tk.Label(self.master, textvariable=self.consumo).place(x=330, y=50)
+		tk.Label(self.master, text="Ingreso:").place(x=275, y=70)
+		tk.Label(self.master, textvariable=self.fechaIngreso).place(x=330, y=70)
+
+		#Sección de abajo
+		tk.Button(self.master, text="Buscar", command=self.busqueda).place(x=10, y=100)
+		tk.Button(self.master, text="Insertar", command=self.insertar).place(x=65, y=100)
+		tk.Button(self.master, text="Borrar", command=self.borrar).place(x=125, y=100)
+		tk.Button(self.master, text="Actualizar", command=self.actualizar).place(x=180, y=100)
+		tk.Button(self.master, text="Limpiar Campos", command=self.cls).place(x=270, y=100)
+		
+
+	def busqueda(self, identificador=0):
+		if identificador:
+			query = self.sistema.clientesDB.buscarID(identificador)
+		elif self.id.get():
+			query = self.sistema.clientesDB.buscarID(self.id.get())
+		elif self.nick.get():
+			query = self.sistema.clientesDB.buscarNick(self.nick.get())
+		elif self.correo.get():
+			query = self.sistema.clientesDB.buscarCorreo(self.correo.get())
+		elif self.nombre.get():
+			query = self.sistema.clientesDB.buscarNombre(self.nombre.get())
+		else:
+			mb.showinfo("Error", "No se ingresaron datos")
+		self.id.set(query.id)
+		self.nick.set(query.nick)
+		self.correo.set(query.correo)
+		self.nombre.set(query.nombre)
+		self.visitas.set(query.visitas)
+		self.ultimaVisita.set(query.ultimaVisita)
+		self.consumo.set(query.consumo)
+		self.fechaIngreso.set(query.fechaIngreso)
+
+	def insertar(self):
+		answer = mb.askquestion("Insertar", "¿Son correctos los datos?", icon="warning")
+		if answer == "yes":
+			self.sistema.clientesDB.insertar(nombre=self.nombre.get(), correo=self.correo.get(), nick=self.nick.get())
+			self.sistema.clientesDB.confirmar()
+			self.busqueda(len(self.sistema.clientesDB))
+
+	def borrar(self):
+		self.busqueda(self.id.get())
+		answer = mb.askquestion("Borrar", "Los datos se perderán permanentemente. Favor de revisar.")
+		if answer == "yes":
+			self.sistema.clientesDB.borrar(self.id.get())
+			self.sistema.clientesDB.confirmar()
+			self.cls()
+
+	def actualizar(self):
+		pass
+
+	def cls(self):
+		self.id.set("")
+		self.nick.set("")
+		self.correo.set("")
+		self.nombre.set("")
+		self.visitas.set("")
+		self.ultimaVisita.set("")
+		self.consumo.set("")
+
+	def showMain(self):
+		"""
+		Se retorna a la ventana padre.
+		"""
+		self.padre.abrirVentana()
+		self.master.destroy()
+
+
 
 
 if __name__ == '__main__':

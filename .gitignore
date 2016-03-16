@@ -61,3 +61,7 @@ docs/_build/
 
 # PyBuilder
 target/
+
+# My Stuff
+*.db
+conf.json
