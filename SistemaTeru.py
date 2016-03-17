@@ -285,8 +285,8 @@ class ClienteDB:
 		if nick != "":
 			sql += "nick = '{}', ".format(nick)
 		if correo != "":
-			sql = "correo = '{}', ".format(correo)
-		sql = sql[0:-1] + " WHERE id={}".format(identificador)
+			sql += "correo = '{}', ".format(correo)
+		sql = sql[0:-2] + " WHERE id={}".format(identificador)
 		self.c.execute(sql)
 
 	def borrar(self, identificador):
@@ -347,17 +347,13 @@ class ClienteDB:
 		self.c.execute('drop table clientesTeru')
 
 	def __len__(self):
-		return self.c.lastrowid()
+		return self.c.lastrowid
 
 	def __enter__(self):
 		return self
 
 	def __exit__(self, exc_type, exc_value, traceback):
 		self.cerrar()
-
-	def __len__(self):
-		query = self.c.execute("SELECT * FROM clientesTeru")
-		return len([x for x in query])
 
 	def __str__(self):
 		s = ""

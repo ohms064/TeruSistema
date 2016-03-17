@@ -370,19 +370,31 @@ class ClientesGUI(tk.Frame):
 		tk.Button(self.master, text="Limpiar Campos", command=self.cls).place(x=270, y=100)
 		
 
-	def busqueda(self, identificador=0):
-		if identificador:
-			query = self.sistema.clientesDB.buscarID(identificador)
-		elif self.id.get():
-			query = self.sistema.clientesDB.buscarID(self.id.get())
-		elif self.nick.get():
-			query = self.sistema.clientesDB.buscarNick(self.nick.get())
-		elif self.correo.get():
-			query = self.sistema.clientesDB.buscarCorreo(self.correo.get())
-		elif self.nombre.get():
-			query = self.sistema.clientesDB.buscarNombre(self.nombre.get())
-		else:
-			mb.showinfo("Error", "No se ingresaron datos")
+	def busqueda(self, identificador=""):
+		"""
+		Función para el botón de Buscar que funciona de la siguiente manera:
+		En esta función si se envía como argumento el identificador se utilizará este ID
+		para hacer la busqueda. De no ser así se hará el busqueda con la siguiente jerarquía:
+			id -> nick -> correo -> nombre
+		Es decir que si no se tiene escrito el id en su campo se buscará por nick y así sucesivamente.
+		"""
+		try:
+			if identificador:
+				query = self.sistema.clientesDB.buscarID(identificador)
+			elif self.id.get():
+				query = self.sistema.clientesDB.buscarID(self.id.get())
+			elif self.nick.get():
+				query = self.sistema.clientesDB.buscarNick(self.nick.get())
+			elif self.correo.get():
+				query = self.sistema.clientesDB.buscarCorreo(self.correo.get())
+			elif self.nombre.get():
+				query = self.sistema.clientesDB.buscarNombre(self.nombre.get())
+			else:
+				mb.showinfo("Error", "No se ingresaron datos", parent=self.master)
+				return
+		except:
+			mb.showinfo(sys.exc_info()[0])
+			return
 		self.id.set(query.id)
 		self.nick.set(query.nick)
 		self.correo.set(query.correo)
@@ -393,22 +405,94 @@ class ClientesGUI(tk.Frame):
 		self.fechaIngreso.set(query.fechaIngreso)
 
 	def insertar(self):
-		answer = mb.askquestion("Insertar", "¿Son correctos los datos?", icon="warning")
+		"""
+		Función para el botón de insertar que funciona de la siguiente manera:
+		Se ingresará nick, correo y/o nombre, con esto se creará un nuevo cliente con un nuevo ID.
+		"""
+		if self.nombre.get() == "" and self.nick.get() == "" and self.correo.get() == "":
+			mb.showinfo("Warning", "¡No se agregó ningún dato!", parent=self.master)
+			return
+
+		answer = mb.askquestion("Insertar", "¿Son correctos los datos?", icon="warning", parent=self.master)
 		if answer == "yes":
-			self.sistema.clientesDB.insertar(nombre=self.nombre.get(), correo=self.correo.get(), nick=self.nick.get())
-			self.sistema.clientesDB.confirmar()
+			try:
+				self.sistema.clientesDB.insertar(nombre=self.nombre.get(), correo=self.correo.get(), nick=self.nick.get())
+				self.sistema.clientesDB.confirmar()
+			except:
+				mb.showinfo(sys.exc_info()[0])
+				return
 			self.busqueda(len(self.sistema.clientesDB))
 
 	def borrar(self):
+		"""
+		Función para el botón de borrar que funciona de la siguiente manera:
+		Se ingresará únicamente el ID, lo demás será ignorado. Se borrará el cliente con este ID.
+		"""
+		if self.id.get() == "":
+			mb.showinfo("Advertencia", "¡Se debe ingresar un ID!", parent=self.master)
+			return
 		self.busqueda(self.id.get())
-		answer = mb.askquestion("Borrar", "Los datos se perderán permanentemente. Favor de revisar.")
+		if self.id.get() == "¡ERROR! No se encontró información":
+			mb.showinfo("¡Error!", "No se encontraron coincidencias. No se continuará con el proceso.", parent=self.master)
+			self.cls()
+			return
+		answer = mb.askquestion("Borrar", "Los datos se perderán permanentemente. Favor de revisar.", parent=self.master)
 		if answer == "yes":
-			self.sistema.clientesDB.borrar(self.id.get())
-			self.sistema.clientesDB.confirmar()
+			try:
+				self.sistema.clientesDB.borrar(self.id.get())
+				self.sistema.clientesDB.confirmar()
+			except:
+				mb.showinfo(sys.exc_info()[0])
+				return
 			self.cls()
 
 	def actualizar(self):
-		pass
+		"""
+		Función para el botón que actualiza los datos de la siguiente manera:
+		Se ingresa el ID (el cliente con este ID será modificado) y se ingresa solamente los datos que se quieran
+		cambiar. Una vez hecho esto al dar click en Actualizar se nos mostrará los cambios que se harán y nos
+		preguntará si es correcto.
+		"""
+		#Primero vemos que exista el ID
+		if self.id.get() == "":
+			mb.showinfo("Advertencia", "¡Se debe ingresar un ID!", parent=self.master)
+			return
+		#No tiene caso hacer nada si ningún valor se ha introducido
+		if self.nick.get() == nick or self.nombre.get() == nombre or self.correo.get() == correo:
+			mb.showinfo("Advertencia", "Todos los datos son iguales. ¡No se cambió nada!", parent=self.master)
+			return
+		#Variables auxiliares que son los nuevos valores potenciales
+		nick = self.nick.get().strip()
+		nombre = self.nombre.get().strip()
+		correo = self.correo.get().strip()
+		#Se hace una busqueda para poder mostrar los valores originales
+		self.busqueda(self.id.get())
+		#Si no se encontró el ID se nos indicará
+		if self.id.get() == "¡ERROR! No se encontró información":
+			mb.showinfo("¡Error!", "No se encontraron coincidencias. No se continuará con el proceso.", parent=self.master)
+			self.cls()
+			return
+		#Para cada valor potencial, si tiene escrito algo se escribirá en el campo de la siguiente manera: {ORIGNAL} -> {NUEVO}
+		if nick:
+			self.nick.set(self.nick.get() + " -> " + nick)
+		if nombre:
+			self.nombre.set(self.nombre.get() + " -> " + nombre)
+		if correo:
+			self.correo.set(self.correo.get() + " -> " + correo)
+		#Se nos preguntará si continuamos con el proceso
+		answer = mb.askquestion("Actualizar", "¿Son correctos los datos a actualizar?")
+		if answer == "yes":
+			try:#Puede que la base de datos estuviera bloqueada
+				self.sistema.clientesDB.actualizar(self.id.get(), nombre=nombre, nick=nick, correo=correo)
+				self.sistema.clientesDB.confirmar()
+			except:
+				mb.showinfo(sys.exc_info()[0])
+				return
+			self.busqueda(self.id.get())
+		else:
+			self.nick.set(nick)
+			self.nombre.set(nombre)
+			self.correo.set(correo)
 
 	def cls(self):
 		self.id.set("")
@@ -418,6 +502,7 @@ class ClientesGUI(tk.Frame):
 		self.visitas.set("")
 		self.ultimaVisita.set("")
 		self.consumo.set("")
+		self.fechaIngreso.set("")
 
 	def showMain(self):
 		"""
