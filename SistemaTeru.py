@@ -13,7 +13,7 @@ class MainSystem():
 		self.clientesDB = ClienteDB()
 		with open("Comandas\\" + self.dia + ".csv", "a+") as arch:
 			if (arch.tell() == 0):
-				arch.write("hora,#Clientes,total,propina,total + propina,dineroRecibido,cambio")
+				arch.write("hora,#Clientes,total,propina,total + propina,dineroRecibido,cambio, idCliente")
 		try:				
 			with open("Datos\\conf.json", "r") as archConf:
 				self.conf = json.load(archConf)
@@ -35,7 +35,7 @@ class MainSystem():
 		finally:
 			print(self.conf)
 
-	def nuevaComanda(self, numClientes, total, dineroRecibido, propina=0, tarjeta=False):
+	def nuevaComanda(self, numClientes, total, dineroRecibido, propina=0, tarjeta=False, idCliente=""):
 		"""
 		Se agrega una nueva transacción.
 		In:
@@ -44,12 +44,14 @@ class MainSystem():
 		dineroRecibido: Cuanto dinero se recibió
 		propina(opcional): Cuanto se agregó de propina, esta propina se guarda en caja.
 		tarjeta(opcional): Si el pago fué con tarjeta.
+		idCliente(opcional): El id del cliente.
 		"""
 		self.error = False
 		try:
 			if tarjeta:
 				dineroRecibido="0"
-			self.comanda = Comanda(int(numClientes), int(total), int(dineroRecibido), int(propina), tarjeta)
+			cliente = self.clientesDB.buscarID(idCliente)
+			self.comanda = Comanda(int(numClientes), int(total), int(dineroRecibido), int(propina), tarjeta, cliente)
 		except ValueError:
 			self.error = True
 
@@ -67,10 +69,18 @@ class MainSystem():
 	def commitComanda(self):
 		"""
 		Se guarda la información de la comanda.
+		TODO:
+		Comanda deberá convertirse en una tabla para una base de datos y esta función ya no estará en el MainSystem
+		sino que en una clase llamada ComandaDB. Por lo mientras se tendrá ésto así.
 		"""
 		temp = str(datetime.datetime.now().time())
 		with open("Comandas\\" + self.dia + ".csv", "a") as arch:
 			arch.write("\n" + temp[:temp.index(".")] + "," + str(self.comanda))
+		if self.comanda.cliente:
+			self.clientesDB.incVisitas(self.comanda.cliente.id)
+			self.clientesDB.incConsumo(self.comanda.cliente.id, self.comanda.total)
+			
+			self.clientesDB.confirmar()
 
 	def calculoComanda(self, con, string=False):
 		"""
@@ -217,12 +227,13 @@ class Comanda(object):
 	TODO:
 		Eventualmente sería bueno agregarle consumo para que se puedan tener varias comandas al mismo tiempo	
 	"""
-	def __init__(self, numClientes, total, dineroRecibido, propina, tarjeta=False):
+	def __init__(self, numClientes, total, dineroRecibido, propina, tarjeta=False, cliente=""):
 		self.numClientes = numClientes
 		self.total = total
 		self.propina = propina
 		self.dineroRecibido = dineroRecibido
 		self.tarjeta = tarjeta
+		self.cliente = cliente
 
 	def agregarPropina(self, propina=0):
 		self.propina += propina
@@ -230,21 +241,22 @@ class Comanda(object):
 	def cobro(self):
 		if self.tarjeta:
 			return "Num. Clientes: " + str(self.numClientes) + "\nTotal: " + str(self.total) + "\nPropina: " + str(self.propina) +\
-		 	"\nTotal con Propina: " + str(self.total + self.propina) + "\nPAGO CON TARJETA"
+		 	"\nTotal con Propina: " + str(self.total + self.propina) + "\nPAGO CON TARJETA\n" + self.cliente.beautifulString()
 		return "Num. Clientes: " + str(self.numClientes) + "\nTotal: " + str(self.total) + "\nPropina: " + str(self.propina) +\
 		 "\nTotal con Propina: " + str(self.total + self.propina) + "\nDinero Recibido: " + str(self.dineroRecibido) +\
-		 "\nCambio: " + str(self.dineroRecibido - self.propina - self.total)
+		 "\nCambio: " + str(self.dineroRecibido - self.propina - self.total) + "\n" + self.cliente.beautifulString()
 
 	def __str__(self):
-		""" Formato: #Clientes, total, propina, total + propina, dineroRecibido, cambio """
+		""" Formato: #Clientes, total, propina, total + propina, dineroRecibido, cambio, idCliente, nick """
 		if self.tarjeta:
 			return str(self.numClientes) + "," + str(self.total) + "," + \
 		 str(self.propina) + "," + str(self.propina + self.total)  + "," + \
-		 "TARJETA" + ",TARJETA" 
+		 "TARJETA,TARJETA,"+ str(self.cliente.id) + "," + str(self.cliente.nick )
 
 		return str(self.numClientes) + "," + str(self.total) + "," + \
 		 str(self.propina) + "," + str(self.propina + self.total)  + "," + \
-		 str(self.dineroRecibido) + "," + str(self.dineroRecibido - self.propina - self.total)
+		 str(self.dineroRecibido) + "," + str(self.dineroRecibido - self.propina - self.total)\
+		  + "," + str(self.cliente.id) + "," + str(self.cliente.nick)
 
 class ClienteDB:
 	def __init__(self):
@@ -332,7 +344,11 @@ class ClienteDB:
 		"""
 		Se incrementa el valor de las visitas por 1.
 		"""
-		self.c.execute(" UPDATE clientesTeru SET visitas = visitas + 1 WHERE id={}".formatidentificador)		
+		self.c.execute(" UPDATE clientesTeru SET visitas = visitas + 1 WHERE id={}".format(identificador))
+
+	def incConsumo(self, identificador, consumo):
+		print("Consumo: " + str(consumo))
+		self.c.execute(" UPDATE clientesTeru SET consumo = consumo + {} WHERE id={}".format(consumo, identificador))		
 
 	def buscarCorreo(self, correo):
 		"""
@@ -390,8 +406,16 @@ class ClienteTeru:
 			self.nick = self.id
 			self.fechaIngreso = self.id
 
+	def beautifulString(self):
+		if self.id != "¡ERROR! No se encontró información":
+			return "ID: " + str(self.id) + "\nNombre: " + str(self.nombre) + "\nVisitas: " + str(self.visitas) + "\nCorreo: " + str(self.correo) + "\nNick: " + str(self.nick)
+		return ""
+
 	def __str__(self):
 		return str(self.id) + "," + str(self.nombre) + "," + str(self.consumo) + "," + str(self.visitas) + " ," + str(self.ultimaVisita) + "," + str(self.correo) + "," + str(self.nick)
+
+	def __bool__(self):
+		return self.id != "¡ERROR! No se encontró información"
 
 if __name__ == '__main__':
 	print("Porfavor abir TeruGUI")

@@ -80,17 +80,14 @@ class MesaGUI(tk.Frame):
 		if self.propina.get() == "":
 			self.propina.set("0")
 		self.master.withdraw()
-		self.sistema.nuevaComanda(self.numClientes.get(), self.total.get(), self.dinRecibido.get(), self.propina.get(), bool(self.tarjeta.get()))
-		self.resultWindow = tk.Toplevel(self)
-		self.resultWindow.wm_title("Comanda")
-		self.resultWindow.geometry("250x180")
+		self.sistema.nuevaComanda(self.numClientes.get(), self.total.get(), self.dinRecibido.get(), self.propina.get(), bool(self.tarjeta.get()), self.idCliente.get())
 		if self.sistema:
-			tk.Label(self.resultWindow, text="Error!").place(x=60,y=10)	
-			tk.Button(self.resultWindow, text="Aceptar", command=self.show). place(x=100,y=120)
+			mb.showinfo("¡Error!", "Se ha producido un error.")
 		else:
-			tk.Label(self.resultWindow, text=self.sistema.comanda.cobro()).place(x=60,y=10)
-			tk.Button(self.resultWindow, text="Cancelar", command=self.show). place(x=50,y=120)
-			tk.Button(self.resultWindow, text="Aceptar", command=self.aceptarComanda). place(x=150,y=120)
+			if mb.askokcancel("Comanda", self.sistema.comanda.cobro()):
+				self.aceptarComanda()
+			else:
+				self.show()
 
 	def clearComanda(self):
 		"""
@@ -157,14 +154,12 @@ class MesaGUI(tk.Frame):
 		Se confirma la comanda.
 		"""
 		self.sistema.commitComanda()
-		self.resultWindow.destroy()
 		self.clearComanda()
 
 	def show(self):
 		"""
 		Se regresa a MesaGUI
 		"""
-		self.resultWindow.destroy()
 		self.master.update()
 		self.master.deiconify()
 
