@@ -1,6 +1,7 @@
 ﻿import datetime
 import sqlite3
 import json
+import os
 
 mes = ["?","Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto", "Septiembre","Octubre","Noviembre","Diciembre"]
 
@@ -14,7 +15,8 @@ class MainSystem():
 		with open("Comandas\\" + self.dia + ".csv", "a+") as arch:
 			if (arch.tell() == 0):
 				arch.write("hora,#Clientes,total,propina,total + propina,dineroRecibido,cambio")
-		try:				
+		try:
+			os.makedirs("Datos", exist_ok=True)			
 			with open("Datos\\conf.json", "r") as archConf:
 				self.conf = json.load(archConf)
 				if self.conf["fecha"] != self.dia:#Si cambio la fecha
