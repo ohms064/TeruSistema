@@ -11,12 +11,12 @@ class MainSystem():
 		self.dia = str(fecha.day) + "-" + str(fecha.month) + "-" + str(fecha.year)
 		self.reporteCadena = ""
 		self.dineroCaja = ""
+		os.makedirs("Datos", exist_ok=True)
 		self.clientesDB = ClienteDB()
 		with open("Comandas\\" + self.dia + ".csv", "a+") as arch:
 			if (arch.tell() == 0):
 				arch.write("hora,#Clientes,total,propina,total + propina,dineroRecibido,cambio")
 		try:
-			os.makedirs("Datos", exist_ok=True)			
 			with open("Datos\\conf.json", "r") as archConf:
 				self.conf = json.load(archConf)
 				if self.conf["fecha"] != self.dia:#Si cambio la fecha
