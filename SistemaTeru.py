@@ -26,12 +26,12 @@ class MainSystem():
 					
 		except (FileNotFoundError, ValueError) as err:
 			with open("Datos\\conf.json", "w") as archConf:
-				self.conf = {"fecha" : self.dia, "promoVisitas" : 5, "visitas" : 0, "tutorialInicio":True, "tutorialClientes":True}
+				self.conf = {"fecha" : self.dia, "promoVisitas" : 5, "visitas" : 0, "firstRun": True}
 				json.dump(self.conf, archConf, indent=3)
 		except:
 			with open("error", "w") as archError:
 				archError.write(sys.exc_info()[0])
-				self.conf = {"fecha" : self.dia, "promoVisitas" : 5, "visitas" : 0, "tutorialInicio":False, "tutorialClientes":False}
+				self.conf = {"fecha" : self.dia, "promoVisitas" : 5, "visitas" : 0, "firstRun": True}
 		finally:
 			print(self.conf)
 
@@ -252,7 +252,14 @@ class ClienteDB:
 		self.c = self.conexion.cursor()
 		
 		self.c.execute("CREATE TABLE IF NOT EXISTS clientesTeru \
-			( id INTEGER PRIMARY KEY, nombre VARCHAR, consumo REAL, visitas INTEGER, ultimaVisita VARCHAR, correo VARCHAR, nick VARCHAR, fechaIngreso VARCHAR)")
+			( id INTEGER PRIMARY KEY, \
+			nombre VARCHAR, \
+			consumo REAL, \
+			visitas INTEGER, \
+			ultimaVisita VARCHAR, \
+			correo VARCHAR, \
+			nick VARCHAR, \
+			fechaIngreso VARCHAR)")
 	
 	def insertar(self, nombre, consumo=0, correo="", nick="", ultimaVisita="0-0-0", visitas=1, fechaIngreso="0-0-0"):
 		if ultimaVisita == "0-0-0":
@@ -392,8 +399,3 @@ class ClienteTeru:
 
 if __name__ == '__main__':
 	print("Porfavor abir TeruGUI")
-	sistema = MainSystem()
-	sistema.cierreDeCaja("1234", "12", "2", "20")
-
-	with ClienteDB() as c:
-		c.drop()
