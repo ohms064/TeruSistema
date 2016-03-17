@@ -81,7 +81,7 @@ class MainSystem():
 		if self.comanda.cliente:
 			self.clientesDB.incVisitas(self.comanda.cliente.id)
 			self.clientesDB.incConsumo(self.comanda.cliente.id, self.comanda.total)
-			
+			self.actualizarUltimaVisita(self.comanda.cliente.id, self.dia)
 			self.clientesDB.confirmar()
 
 	def calculoComanda(self, con, string=False):
@@ -349,8 +349,10 @@ class ClienteDB:
 		self.c.execute(" UPDATE clientesTeru SET visitas = visitas + 1 WHERE id={}".format(identificador))
 
 	def incConsumo(self, identificador, consumo):
-		print("Consumo: " + str(consumo))
-		self.c.execute(" UPDATE clientesTeru SET consumo = consumo + {} WHERE id={}".format(consumo, identificador))		
+		self.c.execute(" UPDATE clientesTeru SET consumo = consumo + {} WHERE id={}".format(consumo, identificador))	
+
+	def actualizarUltimaVisita(self, identificador, fecha):
+		self.c.execute(" UPDATE clientesTeru SET ultimaVisita = {} WHERE id={}".format(fecha, identificador))			
 
 	def buscarCorreo(self, correo):
 		"""
