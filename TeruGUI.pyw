@@ -320,7 +320,6 @@ class ClientesGUI(tk.Frame):
 		tk.Frame.__init__(self, master)		
 		self.padre = padre
 		self.sistema = sistema
-		self.padre.withdraw()
 		self.master.wm_title("Clientes")
 		self.master.geometry("400x130")
 		self.pack()
@@ -453,8 +452,8 @@ class ClientesGUI(tk.Frame):
 			mb.showinfo("Advertencia", "¡Se debe ingresar un ID!", parent=self.master)
 			return
 		#No tiene caso hacer nada si ningún valor se ha introducido
-		if self.nick.get() == nick or self.nombre.get() == nombre or self.correo.get() == correo:
-			mb.showinfo("Advertencia", "Todos los datos son iguales. ¡No se cambió nada!", parent=self.master)
+		if self.nick.get() == "" and self.nombre.get() == "" and self.correo.get() == "":
+			mb.showinfo("Advertencia", "¡No se ingresó ningún cambio!", parent=self.master)
 			return
 		#Variables auxiliares que son los nuevos valores potenciales
 		nick = self.nick.get().strip()
@@ -503,7 +502,6 @@ class ClientesGUI(tk.Frame):
 		"""
 		Se retorna a la ventana padre.
 		"""
-		self.padre.abrirVentana()
 		self.master.destroy()
 
 
