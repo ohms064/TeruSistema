@@ -64,4 +64,5 @@ target/
 
 # My Stuff
 *.db
+*.db-journal
 conf.json

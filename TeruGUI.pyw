@@ -7,13 +7,15 @@ class MesaGUI(tk.Frame):
 	Aquí es donde se se hace la comanda para una mesa
 	Esta clase es llamada desde Instanciador y puede instanciar tantas MesaGUI como sea necesario.
 	"""
-	def __init__(self, sistema, nombreMesa="", master=None):
+	def __init__(self, sistema, nombreMesa="", master=None, padre=None):
 		tk.Frame.__init__(self, master)
 		self.nombreMesa = nombreMesa
+		self.padre = padre
 		self.master.title("Comanda: " + str(self.nombreMesa.get()))
 		self.master.geometry("480x270")
 		self.pack()
 		self.sistema = sistema
+		self.master.protocol("WM_DELETE_WINDOW", self.onCloseWindow)
 		self.createWidgets()
 
 	def createWidgets(self):
@@ -163,6 +165,10 @@ class MesaGUI(tk.Frame):
 		self.master.update()
 		self.master.deiconify()
 
+	def onCloseWindow(self):
+		self.padre.reducirMesa()
+		self.master.destroy()
+
 class CierreGUI(tk.Frame):
 	"""
 	En esta ventana se maneja todo lo conciernente al cierre de caja.
@@ -293,7 +299,7 @@ class Instanciador(tk.Frame):
 		"""
 		self.sistema.conf["visitas"] += 1
 		self.textContador.set("Mesas: " + str(self.sistema.conf["visitas"]))
-		MesaGUI(self.sistema, self.nombreMesa, tk.Toplevel(self))
+		MesaGUI(self.sistema, self.nombreMesa, tk.Toplevel(self), self)
 
 	def datosCierre(self):
 		"""
@@ -307,6 +313,10 @@ class Instanciador(tk.Frame):
 	def abrirVentana(self):
 		self.master.update()
 		self.master.deiconify()
+
+	def reducirMesa(self):
+		self.sistema.conf["visitas"] -= 1
+		self.textContador.set("Mesas: " + str(self.sistema.conf["visitas"]))
 
 	def onCloseWindow(self):
 		del self.sistema

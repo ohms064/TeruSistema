@@ -15,7 +15,7 @@ class MainSystem():
 		self.clientesDB = ClienteDB()
 		with open("Comandas\\" + self.dia + ".csv", "a+") as arch:
 			if (arch.tell() == 0):
-				arch.write("hora,#Clientes,total,propina,total + propina,dineroRecibido,cambio, idCliente")
+				arch.write("hora,#Clientes,total,propina,total + propina,idCliente, nickCliente,dineroRecibido,cambio")
 		try:
 			with open("Datos\\conf.json", "r") as archConf:
 				self.conf = json.load(archConf)
@@ -54,6 +54,7 @@ class MainSystem():
 				dineroRecibido="0"
 			cliente = self.clientesDB.buscarID(idCliente)
 			self.comanda = Comanda(int(numClientes), int(total), int(dineroRecibido), int(propina), tarjeta, cliente)
+
 		except ValueError:
 			self.error = True
 
@@ -81,7 +82,7 @@ class MainSystem():
 		if self.comanda.cliente:
 			self.clientesDB.incVisitas(self.comanda.cliente.id)
 			self.clientesDB.incConsumo(self.comanda.cliente.id, self.comanda.total)
-			self.actualizarUltimaVisita(self.comanda.cliente.id, self.dia)
+			self.clientesDB.actualizarUltimaVisita(self.comanda.cliente.id, self.dia)
 			self.clientesDB.confirmar()
 
 	def calculoComanda(self, con, string=False):
@@ -249,16 +250,26 @@ class Comanda(object):
 		 "\nCambio: " + str(self.dineroRecibido - self.propina - self.total) + "\n" + self.cliente.beautifulString()
 
 	def __str__(self):
-		""" Formato: #Clientes, total, propina, total + propina, dineroRecibido, cambio, idCliente, nick """
-		if self.tarjeta:
-			return str(self.numClientes) + "," + str(self.total) + "," + \
-		 str(self.propina) + "," + str(self.propina + self.total)  + "," + \
-		 "TARJETA,TARJETA,"+ str(self.cliente.id) + "," + str(self.cliente.nick )
+		""" Formato: #Clientes, total, propina, total + propina, idCliente, nick, dineroRecibido, cambio"""
+		if self.cliente:
+			if self.tarjeta:
+				return str(self.numClientes) + "," + str(self.total) + "," + \
+			 str(self.propina) + "," + str(self.propina + self.total)  + "," + \
+			 str(self.cliente.id) + "," + str(self.cliente.nick) + ",TARJETA,TARJETA"
 
-		return str(self.numClientes) + "," + str(self.total) + "," + \
-		 str(self.propina) + "," + str(self.propina + self.total)  + "," + \
-		 str(self.dineroRecibido) + "," + str(self.dineroRecibido - self.propina - self.total)\
-		  + "," + str(self.cliente.id) + "," + str(self.cliente.nick)
+			return str(self.numClientes) + "," + str(self.total) + "," + \
+			 str(self.propina) + "," + str(self.propina + self.total)  + "," + \
+			 str(self.dineroRecibido) + "," + str(self.dineroRecibido - self.propina - self.total)\
+			  + "," + str(self.cliente.id) + "," + str(self.cliente.nick)
+		else:
+			if self.tarjeta:
+				return str(self.numClientes) + "," + str(self.total) + "," + \
+			 str(self.propina) + "," + str(self.propina + self.total)  + ",,," + \
+			 "TARJETA,TARJETA"
+
+			return str(self.numClientes) + "," + str(self.total) + "," + \
+			 str(self.propina) + "," + str(self.propina + self.total)  + ",,," + \
+			 str(self.dineroRecibido) + "," + str(self.dineroRecibido - self.propina - self.total)
 
 class ClienteDB:
 	def __init__(self):
@@ -411,7 +422,7 @@ class ClienteTeru:
 			self.fechaIngreso = self.id
 
 	def beautifulString(self):
-		if self.id != "¡ERROR! No se encontró información":
+		if self:
 			return "ID: " + str(self.id) + "\nNombre: " + str(self.nombre) + "\nVisitas: " + str(self.visitas) + "\nCorreo: " + str(self.correo) + "\nNick: " + str(self.nick)
 		return ""
 
