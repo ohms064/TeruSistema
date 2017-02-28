@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox as mb
-import SistemaTeru
+from Sistema.SistemaTeru import *
 		
 class MesaGUI(tk.Frame):
 	"""
@@ -17,6 +17,7 @@ class MesaGUI(tk.Frame):
 		self.sistema = sistema
 		self.master.protocol("WM_DELETE_WINDOW", self.onCloseWindow)
 		self.createWidgets()
+		self.pedido = Pedido()
 
 	def createWidgets(self):
 		"""
@@ -56,12 +57,6 @@ class MesaGUI(tk.Frame):
 		self.labelMesa = tk.Label(self.master, text=self.nombreMesa.get()[:2], font=("Times", 50))
 		self.labelMesa.place(x=380,y=130)
 
-		tk.Label(self.master, text="Consumo:").place(x=40, y=150)
-		self.textoConsumo = tk.Text(self.master, width=24, height=5)
-		self.textoConsumo.place(x=110, y=150)
-		tk.Button(self.master, text="Añadir", command=self.agregar).place(x=260, y=240)
-		tk.Button(self.master, text="Calcular", command=self.consumo).place(x=200, y=240)
-		tk.Button(self.master, text="Borrar", command=self.clearConsumo).place(x=140,y=240)
 
 
 	def cambiarMesa(self):
@@ -262,10 +257,10 @@ class Instanciador(tk.Frame):
 	def __init__(self, master=None):
 		tk.Frame.__init__(self, master)
 		self.master.title("Teru Sistema")
-		self.master.geometry("170x220")
+		self.master.geometry("170x260")
 		self.pack()
 		master.protocol("WM_DELETE_WINDOW", self.onCloseWindow)
-		self.sistema = SistemaTeru.MainSystem()
+		self.sistema = MainSystem()
 		self.createWidgets()
 
 	def createWidgets(self):
@@ -279,6 +274,7 @@ class Instanciador(tk.Frame):
 		tk.Button(self.master, text="Cierre de caja", command=self.datosCierre).place(x=45,y=110)
 		tk.Button(self.master, text="Estado Actual", command=self.estadoActual).place(x=45, y=150)
 		tk.Button(self.master, text="Clientes", command=self.abrirClientesGUI).place(x=55, y=190)
+		tk.Button(self.master, text="Platillos", command=self.abrirPlatillosGUI).place(x=55, y=230)
 
 	def estadoActual(self):
 		estado = self.sistema.getState()
@@ -286,6 +282,9 @@ class Instanciador(tk.Frame):
 		self.estadoWindow.wm_title("Estado Actual")
 		self.estadoWindow.geometry("250x180")
 		tk.Label(self.estadoWindow, text=estado).place(x=80, y=10)
+
+	def abrirPlatillosGUI(self):
+		pass
 
 	def abrirClientesGUI(self):
 		"""
@@ -514,7 +513,26 @@ class ClientesGUI(tk.Frame):
 		"""
 		self.master.destroy()
 
+class PlatillosGUI(tk.Frame):
+	def __init__(self, sistema, master=None, padre=None):
+		tk.Frame.__init__(self, master)		
+		self.padre = padre
+		self.sistema = sistema
+		self.master.wm_title("Platillos")
+		self.master.geometry("400x130")
+		self.pack()
+		self.createWidgets()
+		self.master.protocol("WM_DELETE_WINDOW", self.showMain)
 
+	def createWidgets(self):
+		tk.Listbox(self.master)
+		pass
+
+	def showMain(self):
+		"""
+		Se retorna a la ventana padre.
+		"""
+		self.master.destroy()
 
 
 if __name__ == '__main__':
