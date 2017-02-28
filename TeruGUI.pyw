@@ -17,7 +17,7 @@ class MesaGUI(tk.Frame):
 		self.sistema = sistema
 		self.master.protocol("WM_DELETE_WINDOW", self.onCloseWindow)
 		self.createWidgets()
-		self.pedido = Pedido()
+		self.pedido = Pedido()		
 
 	def createWidgets(self):
 		"""
@@ -77,12 +77,12 @@ class MesaGUI(tk.Frame):
 		if self.propina.get() == "":
 			self.propina.set("0")
 		self.master.withdraw()
-		self.sistema.nuevaComanda(self.numClientes.get(), self.total.get(), self.dinRecibido.get(), self.propina.get(), bool(self.tarjeta.get()), self.idCliente.get())
+		comanda = self.sistema.nuevaComanda(self.numClientes.get(), self.total.get(), self.dinRecibido.get(), self.propina.get(), bool(self.tarjeta.get()), self.idCliente.get())
 		if self.sistema:
-			mb.showinfo("¡Error!", "Se ha producido un error.")
+			mb.showinfo("¡Error!", "Se ha producido un error. TeruGUI 82.")
 		else:
-			if mb.askokcancel("Comanda", self.sistema.comanda.cobro()):
-				self.aceptarComanda()
+			if mb.askokcancel("Comanda", comanda.cobro()):
+				self.aceptarComanda(comanda)
 			else:
 				self.show()
 
@@ -94,49 +94,7 @@ class MesaGUI(tk.Frame):
 		self.dinRecibido.set("")
 		self.propina.set("")
 		self.total.set("")
-		
-	def clearConsumo(self):
-		"""
-		Se limpia los datos de consumo.
-		"""
-		self.textoConsumo.delete('1.0', '2.0')
-
-	def consumo(self):
-		"""
-		Se obitene todos los valores escritos en consumo separados por espacios, se suman todos.
-		"""
-		cons = self.textoConsumo.get("1.0","end").split()
-		try:
-			cons = [int(x) for x in cons]
-			cons = self.sistema.calculoComanda(cons)
-			self.total.set(cons["Total"])
-			self.propina.set(cons["Propina"])
-		except ValueError:
-			self.consWindow = tk.Toplevel(self)
-			self.consWindow.wm_title("Resultado")
-			self.consWindow.geometry("200x150")
-			tk.Label(self.consWindow, text="Error!").place(x=30, y=20)
-			tk.Button(self.consWindow, text="Aceptar", command=self.consWindow.destroy).place(x=75,y=90)
-		
-	def agregar(self):
-		"""
-		Lo mismo que consumo pero se suma la cantida o lo que ya haya en Consumo.
-		"""
-		cons = self.textoConsumo.get("1.0","end").split()
-		try:
-			cons = [int(x) for x in cons]
-			if self.total.get() == "":
-				cons = self.sistema.calculoComanda(cons)
-			else:
-				cons = self.sistema.calculoComanda(cons + [int(self.total.get())])
-			self.total.set(cons["Total"])
-			self.propina.set(cons["Propina"])
-		except ValueError:
-			self.consWindow = tk.Toplevel(self)
-			self.consWindow.wm_title("Resultado")
-			self.consWindow.geometry("200x150")
-			tk.Label(self.consWindow, text="Error!").place(x=30, y=20)
-			tk.Button(self.consWindow, text="Aceptar", command=self.consWindow.destroy).place(x=75,y=90)
+	
 
 	def aceptarConsumo(self):
 		"""
@@ -146,11 +104,11 @@ class MesaGUI(tk.Frame):
 		self.master.destroy()
 		self.clearConsumo()
 
-	def aceptarComanda(self):
+	def aceptarComanda(self, comanda):
 		"""
 		Se confirma la comanda.
 		"""
-		self.sistema.commitComanda()
+		self.sistema.commitComanda(comanda)
 		self.clearComanda()
 
 	def show(self):

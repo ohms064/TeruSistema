@@ -40,7 +40,7 @@ class MainSystem():
 
 	def nuevaComanda(self, numClientes, total, dineroRecibido, propina=0, tarjeta=False, idCliente=""):
 		"""
-		Se agrega una nueva transacción.
+		Se crea una nueva transacción.
 		In:
 		numCleintes: Número de cleintes en la mesa.
 		total: El total del consumo
@@ -54,10 +54,12 @@ class MainSystem():
 			if tarjeta:
 				dineroRecibido="0"
 			cliente = self.clientesDB.buscarID(idCliente)
-			self.comanda = Comanda(int(numClientes), int(total), int(dineroRecibido), int(propina), tarjeta, cliente)
+			comanda = Comanda(int(numClientes), int(total), int(dineroRecibido), int(propina), tarjeta, cliente)
+			return comanda
 
 		except ValueError:
 			self.error = True
+			return None
 
 	def llamarCliente(self, id):
 		pass
@@ -70,7 +72,7 @@ class MainSystem():
 		"""
 		self.comanda.propina = int(propina)
 
-	def commitComanda(self):
+	def commitComanda(self, comanda):
 		"""
 		Se guarda la información de la comanda.
 		TODO:
@@ -79,11 +81,11 @@ class MainSystem():
 		"""
 		temp = str(datetime.datetime.now().time())
 		with open("Comandas\\" + self.dia + ".csv", "a") as arch:
-			arch.write("\n" + temp[:temp.index(".")] + "," + str(self.comanda))
-		if self.comanda.cliente:
-			self.clientesDB.incVisitas(self.comanda.cliente.id)
-			self.clientesDB.incConsumo(self.comanda.cliente.id, self.comanda.total)
-			self.clientesDB.actualizarUltimaVisita(self.comanda.cliente.id, self.dia)
+			arch.write("\n" + temp[:temp.index(".")] + "," + str(comanda))
+		if comanda.cliente:
+			self.clientesDB.incVisitas(comanda.cliente.id)
+			self.clientesDB.incConsumo(comanda.cliente.id, comanda.total)
+			self.clientesDB.actualizarUltimaVisita(comanda.cliente.id, self.dia)
 			self.clientesDB.confirmar()
 
 	def calculoComanda(self, con, string=False):

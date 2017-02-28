@@ -1,4 +1,5 @@
 import sqlite3
+import datetime
 class ClienteTeru:
 	def __init__(self, sql):
 		"""
