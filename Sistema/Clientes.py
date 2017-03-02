@@ -37,8 +37,8 @@ class ClienteTeru:
 		return self.id != "¡ERROR! No se encontró información"
 
 class ClienteDB:
-	def __init__(self):
-		self.conexion = sqlite3.connect('Datos\\clientesTeru.db')
+	def __init__(self, conexion):
+		self.conexion = conexion
 		self.c = self.conexion.cursor()
 		
 		self.c.execute("""CREATE TABLE IF NOT EXISTS clientesTeru 

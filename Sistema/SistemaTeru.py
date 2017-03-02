@@ -1,4 +1,5 @@
-﻿import datetime
+﻿import sqlite3
+import datetime
 import json
 import os
 from Sistema.Pedido import *
@@ -13,7 +14,11 @@ class MainSystem():
 		self.reporteCadena = ""
 		self.dineroCaja = ""
 		os.makedirs("Datos", exist_ok=True)
-		self.clientesDB = ClienteDB()
+
+		self.conexion = sqlite3.connect('Datos\\Teru.db')
+		self.clientesDB = ClienteDB(self.conexion)
+		self.platillosDB = PlatilloDB(self.conexion)
+
 		with open("Comandas\\" + self.dia + ".csv", "a+") as arch:
 			if (arch.tell() == 0):
 				arch.write("hora,#Clientes,total,propina,total + propina,idCliente, nickCliente,dineroRecibido,cambio")

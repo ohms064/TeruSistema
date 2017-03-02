@@ -1,6 +1,8 @@
 import tkinter as tk
+from tkinter import font
 from tkinter import messagebox as mb
 from Sistema.SistemaTeru import *
+import sys
 		
 class MesaGUI(tk.Frame):
 	"""
@@ -242,7 +244,7 @@ class Instanciador(tk.Frame):
 		tk.Label(self.estadoWindow, text=estado).place(x=80, y=10)
 
 	def abrirPlatillosGUI(self):
-		pass
+		PlatillosGUI(self.sistema, tk.Toplevel(self), self)
 
 	def abrirClientesGUI(self):
 		"""
@@ -477,14 +479,104 @@ class PlatillosGUI(tk.Frame):
 		self.padre = padre
 		self.sistema = sistema
 		self.master.wm_title("Platillos")
-		self.master.geometry("400x130")
+		self.master.geometry("530x360")
 		self.pack()
 		self.createWidgets()
+		self.populateListbox()
 		self.master.protocol("WM_DELETE_WINDOW", self.showMain)
 
 	def createWidgets(self):
-		tk.Listbox(self.master)
-		pass
+		self.nuevoId = tk.StringVar()
+		self.nuevoNombre = tk.StringVar()
+		self.nuevoPrecio = tk.StringVar()
+		self.nuevaCategoria = tk.StringVar()
+
+		tk.Label(self.master, text="Platillos").place(x=30, y=10)
+		my_font = font.Font(family="Monaco", size=9)
+
+		frame = tk.Frame(self.master)
+
+		scrollbar = tk.Scrollbar(frame, orient=tk.VERTICAL)
+		self.listbox = tk.Listbox(frame, width=65, height = 10, font=my_font, yscrollcommand=scrollbar.set)
+		scrollbar.config(command=self.listbox.yview)
+		scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+		self.listbox.pack(side=tk.LEFT, fill=tk.BOTH, expand=1)
+		frame.place(x=30, y=30)
+		
+		tk.Label(self.master, text="Nuevo Platillo").place(x=30, y=210)
+
+		tk.Label(self.master, text="Id").place(x=30, y=230)
+		tk.Entry(self.master, width=30, textvariable=self.nuevoId).place(x=90, y=230)
+
+		tk.Label(self.master, text="Nombre").place(x=30, y=250)
+		tk.Entry(self.master, width=30, textvariable=self.nuevoNombre).place(x=90, y=250)
+
+		tk.Label(self.master, text="Precio").place(x=30, y=270)
+		tk.Entry(self.master, width=30, textvariable=self.nuevoPrecio).place(x=90, y=270)
+
+		tk.Label(self.master, text="Categoría").place(x=30, y=290)
+		tk.Entry(self.master, width=30, textvariable=self.nuevaCategoria).place(x=90, y=290)
+
+		tk.Button(self.master, text="Insertar", command=self.insertar).place(x=220, y=320)
+		#tk.Button(self.master, text="Buscar", command=self.busqueda).place(x=110, y=320) #No tiene caso
+		tk.Button(self.master, text="Borrar", command=self.borrar).place(x=110, y=320) 
+
+	def populateListbox(self):
+		self.platillos = self.sistema.platillosDB.buscarTodos()
+		for p in self.platillos:
+			print(str(p))
+			self.listbox.insert(tk.END, str(p))
+
+	def cls(self):
+		self.nuevoId.set("")
+		self.nuevoNombre.set("")
+		self.nuevoPrecio.set("")
+		self.nuevaCategoria.set("")
+
+	def clearListbox(self):
+		self.listbox.delete(0, tk.END)
+
+	def insertar(self):
+		if self.nuevoNombre.get() == "" or self.nuevoPrecio.get() == "" or self.nuevaCategoria.get() == "":
+			mb.showinfo("Warning", "¡Faltan datos!", parent=self.master)
+			return
+
+		answer = mb.askquestion("Insertar", "¿Son correctos los datos?", icon="warning", parent=self.master)
+		nuevoPlatillo = Platillo(self.nuevoNombre.get(), self.nuevoPrecio.get(), self.nuevaCategoria.get())
+		if answer == "yes":
+			try:
+				self.sistema.platillosDB.insertar(nuevoPlatillo)
+				self.sistema.platillosDB.confirmar()
+			except:
+				mb.showinfo(sys.exc_info()[0])
+				return
+		self.clearListbox()
+		self.populateListbox()
+
+	def borrar(self):
+		"""
+		Función para el botón de borrar que funciona de la siguiente manera:
+		Se ingresará únicamente el ID, lo demás será ignorado. Se borrará el cliente con este ID.
+		"""
+		if self.nuevoId.get() == "":
+			mb.showinfo("Advertencia", "¡Se debe ingresar un ID!", parent=self.master)
+			return
+		self.busqueda(self.nuevoId.get())
+		if self.nuevoId.get() == "¡ERROR! No se encontró información":
+			mb.showinfo("¡Error!", "No se encontraron coincidencias. No se continuará con el proceso.", parent=self.master)
+			self.cls()
+			return
+		answer = mb.askquestion("Borrar", "Los datos se perderán permanentemente. Favor de revisar.", parent=self.master)
+		if answer == "yes":
+			try:
+				self.sistema.platillosDB.borrar(self.nuevoId.get())
+				self.sistema.platillosDB.confirmar()
+			except:
+				mb.showinfo("Error", sys.exc_info()[0])
+				return
+			self.cls()
+			self.clearListbox()
+			self.populateListbox()
 
 	def showMain(self):
 		"""
@@ -492,9 +584,36 @@ class PlatillosGUI(tk.Frame):
 		"""
 		self.master.destroy()
 
+	def busqueda(self, identificador=""):
+		"""
+		Función para el botón de Buscar que funciona de la siguiente manera:
+		En esta función si se envía como argumento el identificador se utilizará este ID
+		para hacer la busqueda. De no ser así se hará el busqueda con la siguiente jerarquía:
+			id -> nick -> correo -> nombre
+		Es decir que si no se tiene escrito el id en su campo se buscará por nick y así sucesivamente.
+		"""
+		try:
+			if identificador:
+				query = self.sistema.platillosDB.buscarID(identificador)
+			elif self.nuevoId.get():
+				query = self.sistema.platillosDB.buscarID(int(self.nuevoId.get()))
+			else:
+				mb.showinfo("Error", "No se ingresaron datos", parent=self.master)
+				return
+		except ValueError:
+			mb.showerror("Dato incorrecto", "Favor de escribir un número")
+			return
+
+
+		self.nuevoId.set(query.idPlatillo)
+		self.nuevoNombre.set(query.nombre)
+		self.nuevaCategoria.set(query.categoria)
+		self.nuevoPrecio.set(query.precio)
+
 
 if __name__ == '__main__':
 	root = tk.Tk()
 	app = Instanciador(master=root)
 	root.protocol("WM_DELETE_WINDOW", app.onCloseWindow)
 	app.mainloop()
+
