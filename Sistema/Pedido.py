@@ -8,17 +8,49 @@ class Pedido(object):
 	def __init__(self):
 		self.orden = list()
 
+	def obtenerString(self, index):
+		if type(index) is int:
+			s = self.orden[index]
+		elif type(index) is list:
+			s = index
+		else:
+			return ""
+		return str(s[0]) + " " + str(s[1]) + "\n"
+
 	def obtenerTotal(self):
 		total = 0
 		for i in orden:
-			total += i.precio
+			total += i[0].precio * i[1]
 		return total
 
-	def agregar(self, platillo):
-		self.orden.append(platillo)
+	def agregar(self, platillo, cantidad=1):
+		index = self.contiene(platillo)
+		if index != -1:
+			self.orden[index][1] += 1
+		else:
+			s = [platillo, cantidad]
+			self.orden.append(s)
+		return index
+
+	def contiene(self, platillo):
+		for p in enumerate(self.orden):
+			if p[1][0] == platillo:
+				return p[0]
+		return -1
+
+	def get(self, index, platillo=True):
+		if platillo:
+			return self.orden[index][1]
+		return self.orden[index]
 
 	def __float__(self):
 		return ObtenerTotal()
+
+	def __str__(self):
+		out = ""
+		for s in self.orden:
+			out += str(s[0]) + " " + str(s[1]) + "\n"
+		return out
 
 class Platillo(object):
 	"""
@@ -74,10 +106,10 @@ class PlatilloDB:
 		"""
 		sql = self.c.execute("SELECT * FROM platillosTeru WHERE id='{}'".format(identificador)).fetchone()
 		try:
-			cliente = Platillo(*sql)
+			platillo = Platillo(*sql)
 		except TypeError:
-			cliente = Platillo("¡ERROR! No se encontró información", "", "", "¡ERROR! No se encontró información")
-		return cliente
+			platillo = Platillo("¡ERROR! No se encontró información", "", "", "¡ERROR! No se encontró información")
+		return platillo
 
 	def confirmar(self):
 		self.conexion.commit()
@@ -86,7 +118,7 @@ class PlatilloDB:
 		"""
 		Crea una lista con todos los platillos guardados en la base de datos.
 		"""
-		query = self.c.execute("SELECT * FROM platillosTeru").fetchall()
+		query = self.c.execute("SELECT * FROM platillosTeru")
 		output = list()
 		for result in query:
 			try:
@@ -96,3 +128,22 @@ class PlatilloDB:
 		return output
 	def __len__(self):
 		return self.c.lastrowid
+
+	def getCategories(self):
+		sql = self.c.execute("SELECT DISTINCT categoria FROM platillosTeru ORDER BY categoria")
+		categories = list()
+		for category in sql:
+			categories.append(category[0])
+		return categories
+
+	def buscarCategoria(self, categoria):
+		sql = self.c.execute("SELECT * FROM platillosTeru WHERE categoria LIKE '{}'".format(categoria)) 
+		#TODO: Like es más lento, buscar porque no funciona =
+		platillos = list()
+		for s in sql:
+			try:
+				platillos.append( Platillo(*s))
+			except TypeError:
+				pass
+		return platillos
+

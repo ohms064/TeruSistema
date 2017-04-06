@@ -66,3 +66,5 @@ target/
 *.db
 *.db-journal
 conf.json
+Datos/Teru.db-shm
+Datos/Teru.db-wal

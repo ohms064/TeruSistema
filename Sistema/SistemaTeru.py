@@ -15,9 +15,7 @@ class MainSystem():
 		self.dineroCaja = ""
 		os.makedirs("Datos", exist_ok=True)
 
-		self.conexion = sqlite3.connect('Datos\\Teru.db')
-		self.clientesDB = ClienteDB(self.conexion)
-		self.platillosDB = PlatilloDB(self.conexion)
+		self.beginDB()
 
 		with open("Comandas\\" + self.dia + ".csv", "a+") as arch:
 			if (arch.tell() == 0):
@@ -68,6 +66,12 @@ class MainSystem():
 
 	def llamarCliente(self, id):
 		pass
+
+	def beginDB(self):
+		self.conexion = sqlite3.connect('Datos\\Teru.db')
+		self.conexion.execute("PRAGMA journal_mode=WAL")
+		self.clientesDB = ClienteDB(self.conexion)
+		self.platillosDB = PlatilloDB(self.conexion)
 
 	def nuevaPropina(self, propina):
 		"""
@@ -228,7 +232,7 @@ class MainSystem():
 		 str(ventasEfectivo) + "\nVentas Terminal: " + str(ventasTarjeta + totalPropinaTarjeta) + "\nPropinas Efectivo : " + str(totalPropinaEfectivo) + "\nPropinas Tarjeta: " + str(totalPropinaTarjeta)
 		 
 	def __del__(self):
-		self.clientesDB.cerrar()
+		self.conexion.close()
 		with open("Datos\\conf.json", "w") as archConf:
 			self.conf["tutorialInicio"] = False
 			json.dump(self.conf, archConf, indent=3)

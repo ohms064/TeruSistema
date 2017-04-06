@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import font
 from tkinter import messagebox as mb
 from Sistema.SistemaTeru import *
+from Sistema.tkUtils import *
 import sys
 		
 class MesaGUI(tk.Frame):
@@ -18,8 +19,31 @@ class MesaGUI(tk.Frame):
 		self.pack()
 		self.sistema = sistema
 		self.master.protocol("WM_DELETE_WINDOW", self.onCloseWindow)
+		self.pedido = Pedido()
 		self.createWidgets()
-		self.pedido = Pedido()		
+		self.createMenu()
+
+	def createMenu(self):
+		self.mainMenu = tk.Menu(self.master)
+		self.categorias = self.sistema.platillosDB.getCategories()
+		self.subMenus = dict()
+		for categoria in self.categorias:
+			self.subMenus[categoria] = tk.Menu(self.master, tearoff=0)
+			platCategoria = self.sistema.platillosDB.buscarCategoria(categoria)
+			for platillo in platCategoria:
+				self.subMenus[categoria].add_command(label=platillo.nombre, command=self.agregarAPedido(platillo, self.pedido))
+			self.mainMenu.add_cascade(label=categoria, menu=self.subMenus[categoria])
+
+		self.master.config(menu=self.mainMenu)
+
+	def agregarAPedido(self, platillo, pedido):
+		def agregar():
+			index = pedido.agregar(platillo)
+			if index != -1:
+				self.actualizarListbox(index, pedido.orden[index][1], command="cantidad")
+			else:
+				self.agregarAlListbox(pedido.obtenerString(-1))
+		return agregar
 
 	def createWidgets(self):
 		"""
@@ -59,7 +83,33 @@ class MesaGUI(tk.Frame):
 		self.labelMesa = tk.Label(self.master, text=self.nombreMesa.get()[:2], font=("Times", 50))
 		self.labelMesa.place(x=380,y=130)
 
+		#Platillos
+		frame = tk.Frame(self.master)
+		scrollbar = tk.Scrollbar(frame, orient=tk.VERTICAL)
+		self.listbox = tk.Listbox(frame, width=65, height = 10, yscrollcommand=scrollbar.set)
+		scrollbar.config(command=self.listbox.yview)
+		scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+		self.listbox.pack(side=tk.LEFT, fill=tk.BOTH, expand=1)
+		self.listbox.bind("<Double-Button-1>", self.listBoxSelect)
+		frame.place(x=10, y=145)
 
+	def listBoxSelect(self, event):
+		widget = event.widget
+		selection = widget.curselection()[0]
+		updateListbox(self.listbox, selection, "" )
+
+	def agregarAlListbox(self, platillo):
+		self.listbox.insert(tk.END, str(platillo))
+
+	def actualizarListbox(self, index, value, command="cantidad"):
+		current = self.pedido.get(index, platillo=False)
+		if command == "cantidad":
+			current[1] = value
+		elif command == "precio":
+			current[0].precio = value
+		elif command == "incrementar":
+			current[1] += value
+		updateListbox(self.listbox, index, self.pedido.obtenerString(current))
 
 	def cambiarMesa(self):
 		"""
@@ -502,6 +552,7 @@ class PlatillosGUI(tk.Frame):
 		scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 		self.listbox.pack(side=tk.LEFT, fill=tk.BOTH, expand=1)
 		frame.place(x=30, y=30)
+		self.listbox.bind("<Double-Button-1>", self.listBoxSelect)
 		
 		tk.Label(self.master, text="Nuevo Platillo").place(x=30, y=210)
 
@@ -520,6 +571,19 @@ class PlatillosGUI(tk.Frame):
 		tk.Button(self.master, text="Insertar", command=self.insertar).place(x=220, y=320)
 		#tk.Button(self.master, text="Buscar", command=self.busqueda).place(x=110, y=320) #No tiene caso
 		tk.Button(self.master, text="Borrar", command=self.borrar).place(x=110, y=320) 
+		tk.Button(self.master, text="Test", command=self.test).place(x=110, y=350)
+
+	def listBoxSelect(self, event):
+		widget = event.widget
+		selection = widget.curselection()[0]
+		value = self.platillos[selection]
+		self.nuevoId.set(value.idPlatillo)
+		self.nuevoPrecio.set(value.precio)
+		self.nuevaCategoria.set(value.categoria)
+		self.nuevoNombre.set(value.nombre)
+
+	def test(self):
+		print(self.sistema.platillosDB.getCategories())
 
 	def populateListbox(self):
 		self.platillos = self.sistema.platillosDB.buscarTodos()
@@ -548,7 +612,7 @@ class PlatillosGUI(tk.Frame):
 				self.sistema.platillosDB.insertar(nuevoPlatillo)
 				self.sistema.platillosDB.confirmar()
 			except:
-				mb.showinfo(sys.exc_info()[0])
+				mb.showinfo("error",sys.exc_info()[0])
 				return
 		self.clearListbox()
 		self.populateListbox()

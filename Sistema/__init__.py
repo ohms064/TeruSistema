@@ -1,1 +1,1 @@
-__all__= ["Clientes", "Comanda", "Pedido", "SistemaTeru"]
+__all__= ["Clientes", "Comanda", "Pedido", "SistemaTeru", "tkUtils"]
