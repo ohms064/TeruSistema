@@ -32,14 +32,18 @@ class MainSystem():
 					
 		except (FileNotFoundError, ValueError) as err:
 			with open("Datos\\conf.json", "w") as archConf:
-				self.conf = {"fecha" : self.dia, "promoVisitas" : 5, "visitas" : 0, "firstRun": True}
+				self.conf = {"fecha" : self.dia, "promoVisitas" : 5, "visitas" : 0, "firstRun": True, "Categorias Platillo": []}
 				json.dump(self.conf, archConf, indent=3)
-		except:
-			with open("error", "w") as archError:
-				archError.write(sys.exc_info()[0])
-				self.conf = {"fecha" : self.dia, "promoVisitas" : 5, "visitas" : 0, "firstRun": True}
+		except Exception as err:
+			self.escribirError(err)
+			self.conf = {"fecha" : self.dia, "promoVisitas" : 5, "visitas" : 0, "firstRun": True, "Categorias Platillo": []}
 		finally:
 			print(self.conf)
+
+	def escribirError(self, err):
+		with open("error", "a") as archError:
+			arcError.write("\nError {}\n\t".format(self.dia))
+			archError.write(str(err))
 
 	def nuevaComanda(self, numClientes, total, dineroRecibido, propina=0, tarjeta=False, idCliente=""):
 		"""

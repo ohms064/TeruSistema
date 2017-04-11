@@ -1,8 +1,11 @@
 import tkinter as tk
+from tkinter import ttk
 from tkinter import font
 from tkinter import messagebox as mb
 from Sistema.SistemaTeru import *
 from Sistema.tkUtils import *
+from Sistema.CustomTK import UserForm
+import json
 import sys
 		
 class MesaGUI(tk.Frame):
@@ -15,7 +18,7 @@ class MesaGUI(tk.Frame):
 		self.nombreMesa = nombreMesa
 		self.padre = padre
 		self.master.title("Comanda: " + str(self.nombreMesa.get()))
-		self.master.geometry("480x270")
+		self.master.geometry("530x350")
 		self.pack()
 		self.sistema = sistema
 		self.master.protocol("WM_DELETE_WINDOW", self.onCloseWindow)
@@ -43,6 +46,24 @@ class MesaGUI(tk.Frame):
 				self.actualizarListbox(index, pedido.orden[index][1], command="cantidad")
 			else:
 				self.agregarAlListbox(pedido.obtenerString(-1))
+		""" def completarPlatillo():
+			done = tk.BooleanVar()
+			returnValue = dict()
+			with open(platillo.pluginName, "r") as plugin:
+				pluginJson = json.load(plugin)
+				size = pluginJson["size"]
+				del pluginJson["size"]
+			dialog = tk.Toplevel(self)
+			frame = tk.Frame(dialog)
+			UserForm(frame, padre=dialog, done=done, **pluginJson)
+			frame.grid(row=0, column=0)
+			self.master.withdraw()
+			self.master.wait_variable(done)
+			self.show()
+			platillo.nombre += " {}".format(keyLabels["Ingrediente Extra"])
+			agregar()
+		if platillo.pluginName:
+			return completarPlatillo"""
 		return agregar
 
 	def createWidgets(self):
@@ -58,10 +79,6 @@ class MesaGUI(tk.Frame):
 
 		tk.Label(self.master, text="Clientes:").place(x=50, y=10)
 		tk.Entry(self.master, textvariable=self.numClientes).place(x=110, y=10)
-
-		tk.Label(self.master, text="Cambiar Nombre:").place(x=300, y=10)
-		tk.Entry(self.master, textvariable=self.nombreMesa, width=10).place(x=410, y=10)
-		tk.Button(self.master, text="Cambiar", command=self.cambiarMesa).place(x=415, y=35)
 
 		tk.Label(self.master, text="Propina:").place(x=50, y=30)
 		tk.Entry(self.master, textvariable=self.propina).place(x=110, y=30)
@@ -79,27 +96,38 @@ class MesaGUI(tk.Frame):
 		tk.Button(self.master, text="Aceptar", command=self.confirmarComanda).place(x=185,y=115)
 		tk.Button(self.master, text="Borrar", command=self.clearComanda).place(x=125,y=115)
 
-		tk.Label(self.master, text="Mesa:").place(x=350,y=110)
+		tk.Label(self.master, text="Cambiar Nombre:").place(x=320, y=100)
+		tk.Entry(self.master, textvariable=self.nombreMesa, width=10).place(x=430, y=100)
+		tk.Button(self.master, text="Cambiar", command=self.cambiarMesa).place(x=435, y=125)
+
+		tk.Label(self.master, text="Mesa:").place(x=350,y=20)
 		self.labelMesa = tk.Label(self.master, text=self.nombreMesa.get()[:2], font=("Times", 50))
-		self.labelMesa.place(x=380,y=130)
+		self.labelMesa.place(x=420,y=0)
+
+		tk.Label(self.master, text="Id").place(x=10, y=155)
+		tk.Label(self.master, text="Nombre").place(x=25, y=155)
+		tk.Label(self.master, text="Precio").place(x=200, y=155)
+		tk.Label(self.master, text="Categoría").place(x=240, y=155)
+		tk.Label(self.master, text="Cantidad").place(x=295, y=155)
 
 		#Platillos
 		frame = tk.Frame(self.master)
 		scrollbar = tk.Scrollbar(frame, orient=tk.VERTICAL)
-		self.listbox = tk.Listbox(frame, width=65, height = 10, yscrollcommand=scrollbar.set)
+		self.listbox = tk.Listbox(frame, width=60, height = 10, yscrollcommand=scrollbar.set)
 		scrollbar.config(command=self.listbox.yview)
 		scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 		self.listbox.pack(side=tk.LEFT, fill=tk.BOTH, expand=1)
 		self.listbox.bind("<Double-Button-1>", self.listBoxSelect)
-		frame.place(x=10, y=145)
+		frame.place(x=10, y=175)
 
 	def listBoxSelect(self, event):
 		widget = event.widget
 		selection = widget.curselection()[0]
-		updateListbox(self.listbox, selection, "" )
+		
 
 	def agregarAlListbox(self, platillo):
 		self.listbox.insert(tk.END, str(platillo))
+		self.total.set(self.pedido.obtenerTotal())
 
 	def actualizarListbox(self, index, value, command="cantidad"):
 		current = self.pedido.get(index, platillo=False)
@@ -110,6 +138,7 @@ class MesaGUI(tk.Frame):
 		elif command == "incrementar":
 			current[1] += value
 		updateListbox(self.listbox, index, self.pedido.obtenerString(current))
+		self.total.set(self.pedido.obtenerTotal())
 
 	def cambiarMesa(self):
 		"""
@@ -535,19 +564,33 @@ class PlatillosGUI(tk.Frame):
 		self.populateListbox()
 		self.master.protocol("WM_DELETE_WINDOW", self.showMain)
 
+	def createMenu(self):
+		self.mainMenu = tk.Menu(self.master)
+		self.categorias = self.sistema.platillosDB.getCategories()
+		self.subMenus = dict()
+		for categoria in self.categorias:
+			self.subMenus[categoria] = tk.Menu(self.master, tearoff=0)
+			platCategoria = self.sistema.platillosDB.buscarCategoria(categoria)
+			for platillo in platCategoria:
+				self.subMenus[categoria].add_command(label=platillo.nombre, command=self.agregarAPedido(platillo, self.pedido))
+			self.mainMenu.add_cascade(label=categoria, menu=self.subMenus[categoria])
+
+		self.master.config(menu=self.mainMenu)
+
 	def createWidgets(self):
 		self.nuevoId = tk.StringVar()
-		self.nuevoNombre = tk.StringVar()
-		self.nuevoPrecio = tk.StringVar()
+		self.nombre = tk.StringVar()
+		self.precio = tk.StringVar()
+		self.categoria = tk.StringVar()
 		self.nuevaCategoria = tk.StringVar()
+		self.plugin = tk.StringVar()
 
 		tk.Label(self.master, text="Platillos").place(x=30, y=10)
-		my_font = font.Font(family="Monaco", size=9)
 
 		frame = tk.Frame(self.master)
 
 		scrollbar = tk.Scrollbar(frame, orient=tk.VERTICAL)
-		self.listbox = tk.Listbox(frame, width=65, height = 10, font=my_font, yscrollcommand=scrollbar.set)
+		self.listbox = tk.Listbox(frame, width=65, height = 10, yscrollcommand=scrollbar.set)
 		scrollbar.config(command=self.listbox.yview)
 		scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 		self.listbox.pack(side=tk.LEFT, fill=tk.BOTH, expand=1)
@@ -560,27 +603,40 @@ class PlatillosGUI(tk.Frame):
 		tk.Entry(self.master, width=30, textvariable=self.nuevoId).place(x=90, y=230)
 
 		tk.Label(self.master, text="Nombre").place(x=30, y=250)
-		tk.Entry(self.master, width=30, textvariable=self.nuevoNombre).place(x=90, y=250)
+		tk.Entry(self.master, width=30, textvariable=self.nombre).place(x=90, y=250)
 
 		tk.Label(self.master, text="Precio").place(x=30, y=270)
-		tk.Entry(self.master, width=30, textvariable=self.nuevoPrecio).place(x=90, y=270)
+		tk.Entry(self.master, width=30, textvariable=self.precio).place(x=90, y=270)
 
 		tk.Label(self.master, text="Categoría").place(x=30, y=290)
-		tk.Entry(self.master, width=30, textvariable=self.nuevaCategoria).place(x=90, y=290)
+		self.cb = ttk.Combobox(self.master, width=27, textvariable=self.categoria, value=self.sistema.conf["Categorias Platillo"], state="readonly")
+		self.cb.place(x=90, y=290)
+
+		tk.Label(self.master, text="Nueva Categoría").place(x=290, y=290)
+		tk.Entry(self.master, width=20, textvariable=self.nuevaCategoria).place(x=400, y=290)
+		tk.Button(self.master, text="Agregar", command=self.actualizarCategorias).place(x=470, y=315)
+
+		tk.Label(self.master, text="Config").place(x=315, y=230)
+		tk.Entry(self.master, width=25, textvariable=self.plugin).place(x=370, y=230)
 
 		tk.Button(self.master, text="Insertar", command=self.insertar).place(x=220, y=320)
-		#tk.Button(self.master, text="Buscar", command=self.busqueda).place(x=110, y=320) #No tiene caso
-		tk.Button(self.master, text="Borrar", command=self.borrar).place(x=110, y=320) 
-		tk.Button(self.master, text="Test", command=self.test).place(x=110, y=350)
+		tk.Button(self.master, text="Actualizar", command=self.actualizar).place(x=152, y=320)
+		tk.Button(self.master, text="Borrar", command=self.borrar).place(x=105, y=320) 
+
+	def actualizarCategorias(self):
+		self.sistema.conf["Categorias Platillo"].append(self.nuevaCategoria.get())
+		self.cb.configure(value=self.sistema.conf["Categorias Platillo"])
+		#self.cb["values"] = self.sistema.conf["Categorias Platillo"]
 
 	def listBoxSelect(self, event):
 		widget = event.widget
 		selection = widget.curselection()[0]
 		value = self.platillos[selection]
 		self.nuevoId.set(value.idPlatillo)
-		self.nuevoPrecio.set(value.precio)
-		self.nuevaCategoria.set(value.categoria)
-		self.nuevoNombre.set(value.nombre)
+		self.precio.set(value.precio)
+		self.categoria.set(value.categoria)
+		self.nombre.set(value.nombre)
+		self.plugin.set(value.pluginName)
 
 	def test(self):
 		print(self.sistema.platillosDB.getCategories())
@@ -593,26 +649,27 @@ class PlatillosGUI(tk.Frame):
 
 	def cls(self):
 		self.nuevoId.set("")
-		self.nuevoNombre.set("")
-		self.nuevoPrecio.set("")
-		self.nuevaCategoria.set("")
+		self.nombre.set("")
+		self.precio.set("")
+		self.categoria.set("")
 
 	def clearListbox(self):
 		self.listbox.delete(0, tk.END)
 
 	def insertar(self):
-		if self.nuevoNombre.get() == "" or self.nuevoPrecio.get() == "" or self.nuevaCategoria.get() == "":
+		if self.nombre.get() == "" or self.precio.get() == "" or self.categoria.get() == "":
 			mb.showinfo("Warning", "¡Faltan datos!", parent=self.master)
 			return
 
 		answer = mb.askquestion("Insertar", "¿Son correctos los datos?", icon="warning", parent=self.master)
-		nuevoPlatillo = Platillo(self.nuevoNombre.get(), self.nuevoPrecio.get(), self.nuevaCategoria.get())
+		nuevoPlatillo = Platillo(self.nombre.get(), self.precio.get(), self.categoria.get(), pluginName=self.plugin.get())
 		if answer == "yes":
 			try:
 				self.sistema.platillosDB.insertar(nuevoPlatillo)
 				self.sistema.platillosDB.confirmar()
-			except:
-				mb.showinfo("error",sys.exc_info()[0])
+			except Exception as err:
+				mb.showinfo("error", str(err))
+				self.sistema.escribirError(err)
 				return
 		self.clearListbox()
 		self.populateListbox()
@@ -635,8 +692,9 @@ class PlatillosGUI(tk.Frame):
 			try:
 				self.sistema.platillosDB.borrar(self.nuevoId.get())
 				self.sistema.platillosDB.confirmar()
-			except:
+			except Exception as err:
 				mb.showinfo("Error", sys.exc_info()[0])
+				self.sistema.escribirError(err)
 				return
 			self.cls()
 			self.clearListbox()
@@ -664,15 +722,36 @@ class PlatillosGUI(tk.Frame):
 			else:
 				mb.showinfo("Error", "No se ingresaron datos", parent=self.master)
 				return
-		except ValueError:
+		except ValueError as err:
 			mb.showerror("Dato incorrecto", "Favor de escribir un número")
 			return
 
-
 		self.nuevoId.set(query.idPlatillo)
-		self.nuevoNombre.set(query.nombre)
-		self.nuevaCategoria.set(query.categoria)
-		self.nuevoPrecio.set(query.precio)
+		self.nombre.set(query.nombre)
+		self.categoria.set(query.categoria)
+		self.precio.set(query.precio)
+
+	def actualizar(self):
+		updateValue = dict()
+		if not self.nuevoId.get():
+			return
+		query = self.sistema.platillosDB.buscarID(int(self.nuevoId.get()))
+		if self.nombre.get() and self.nombre.get() != query.nombre:
+			updateValue["nombre"] = self.nombre.get()
+
+		if self.precio.get() and self.precio.get() != str(query.precio):
+			updateValue["precio"] = self.precio.get()
+
+		if self.categoria.get() and self.categoria.get() != query.categoria:
+			updateValue["categoria"] = self.categoria.get()
+
+		if self.plugin.get() and self.plugin.get() != query.pluginName:
+			updateValue["plugin"] = self.plugin.get()
+
+		if self.sistema.platillosDB.actualizar(self.nuevoId.get(), **updateValue):
+			self.clearListbox()
+			self.populateListbox()
+			self.cls()
 
 
 if __name__ == '__main__':

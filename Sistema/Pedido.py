@@ -1,5 +1,6 @@
 import sqlite3
 import datetime
+import json
 
 class Pedido(object):
 	"""
@@ -19,7 +20,7 @@ class Pedido(object):
 
 	def obtenerTotal(self):
 		total = 0
-		for i in orden:
+		for i in self.orden:
 			total += i[0].precio * i[1]
 		return total
 
@@ -56,14 +57,25 @@ class Platillo(object):
 	"""
 	Clase ocupada para almacenar información de los platillos
 	"""
-	def __init__(self, nombre, precio, categoria, idPlatillo=-1):
+	def __init__(self, nombre, precio, categoria, idPlatillo=-1, pluginName="general.json"):
 		self.nombre = nombre
 		self.precio = precio
-		self.categoria = categoria
+		self.categoria = categoria.lower()
 		self.idPlatillo = idPlatillo
+		if pluginName:
+			self.pluginName = "Datos/Platillos/{}".format(pluginName)
+			try:
+				with open(self.pluginName, "r") as plugin:
+					json.load(plugin)
+			except Exception as err:
+				print(str(err))
+				print("No se encontró el archivo {}".format(self.pluginName))
+				self.pluginName = ""
+		else:
+			self.pluginName = "general.json"
 
 	def __str__(self):
-		return "{:3d} {:30s} ${:5.2f} {:10s}".format(self.idPlatillo, self.nombre, self.precio, self.categoria)
+		return "{:3d} {:50s} ${:5.2f}    {:10s}".format(self.idPlatillo, self.nombre, self.precio, self.categoria)
 
 class PlatilloDB:
 
@@ -75,17 +87,18 @@ class PlatilloDB:
 			( nombre VARCHAR, 
 			precio REAL, 
 			categoria VARCHAR,
-			id INTEGER PRIMARY KEY)""")
+			id INTEGER PRIMARY KEY,
+			plugin VARCHAR)""")
 
 	def insertar(self, platillo):
 		sql = \
-		"""INSERT INTO platillosTeru(nombre, precio, categoria)
-		VALUES('{}', {}, '{}')""".format(platillo.nombre, platillo.precio, platillo.categoria)
+		"""INSERT INTO platillosTeru(nombre, precio, categoria, plugin)
+		VALUES('{}', {}, '{}', '{}')""".format(platillo.nombre, platillo.precio, platillo.categoria, platillo.pluginName)
 		self.c.execute(sql)
 
-	def actualizar(self, identificador, nombre="", precio="", categoria=""):
-		if nombre == "" and precio == "" and categoria == "":
-			return
+	def actualizar(self, identificador, nombre="", precio="", categoria="", plugin=""):
+		if nombre == "" and precio == "" and categoria == "" and plugin == "":
+			return False
 		sql = "UPDATE platillosTeru SET "
 		if nombre:
 			sql += "nombre = '{}', ".format(nombre)
@@ -93,9 +106,13 @@ class PlatilloDB:
 			sql += "precio = '{}', ".format(precio)
 		if categoria:
 			sql += "categoria = '{}', ".format(categoria)
+		if plugin:
+			sql += "plugin = '{}', ".format(plugin)
 
 		sql = sql[0:-2] + " WHERE id={}".format(identificador)
+		print(sql)
 		self.c.execute(sql)
+		return True
 
 	def borrar(self, identificador):
 		self.c.execute("DELETE FROM platillosTeru WHERE id={}".format(identificador))
