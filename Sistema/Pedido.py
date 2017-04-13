@@ -25,6 +25,9 @@ class Pedido(object):
 		return total
 
 	def agregar(self, platillo, cantidad=1):
+		"""
+		Agrega un platillo a la orden, si este platillo ya se encuentra en la orden se aumenta la cantidad
+		"""
 		index = self.contiene(platillo)
 		if index != -1:
 			self.orden[index][1] += 1
