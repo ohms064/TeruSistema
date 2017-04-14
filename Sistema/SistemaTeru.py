@@ -2,6 +2,7 @@
 import datetime
 import json
 import os
+import importlib
 from Sistema.Pedido import *
 from Sistema.Comanda import *
 from Sistema.Clientes import *
@@ -41,8 +42,10 @@ class MainSystem():
 			print(self.conf)
 
 	def escribirError(self, err):
-		with open("error", "a") as archError:
-			arcError.write("\nError {}\n\t".format(self.dia))
+		print("Error! Escribiendo reporte")
+		print(str(err))
+		with open("error.txt", "a") as archError:
+			archError.write("\nError {}\n\t".format(self.dia))
 			archError.write(str(err))
 
 	def nuevaComanda(self, numClientes, total, dineroRecibido, propina=0, tarjeta=False, idCliente=""):
@@ -61,10 +64,11 @@ class MainSystem():
 			if tarjeta:
 				dineroRecibido="0"
 			cliente = self.clientesDB.buscarID(idCliente)
-			comanda = Comanda(int(numClientes), int(total), int(dineroRecibido), int(propina), tarjeta, cliente)
+			comanda = Comanda(int(numClientes), float(total), float(dineroRecibido), float(propina), tarjeta, cliente)
 			return comanda
 
-		except ValueError:
+		except ValueError as err:
+			self.escribirError("SistemaTeru 71, nuevaComanda. Error al crear comanda.\n\tMensaje:{}".format(str(err)))
 			self.error = True
 			return None
 
@@ -72,7 +76,7 @@ class MainSystem():
 		pass
 
 	def beginDB(self):
-		self.conexion = sqlite3.connect('Datos\\Teru.db')
+		self.conexion = sqlite3.connect('Datos\\Teru3.db')
 		self.conexion.execute("PRAGMA journal_mode=WAL")
 		self.clientesDB = ClienteDB(self.conexion)
 		self.platillosDB = PlatilloDB(self.conexion)
@@ -240,6 +244,17 @@ class MainSystem():
 		with open("Datos\\conf.json", "w") as archConf:
 			self.conf["tutorialInicio"] = False
 			json.dump(self.conf, archConf, indent=3)
+
+	def loadPlugin(self, pluginName):
+		try:
+			modName = "Datos.Platillos.{}".format(pluginName)
+			classmod = importlib.import_module(modName, "Datos.Platillos")
+		except (AttributeError, ImportError) as err:
+			self.escribirError("SistemaTeru 253. No se encontró {} o contiene algún error.\n\tMensaje: {}".format(modName, str(err)))
+			return None
+		plugin = getattr(classmod, pluginName)
+		return plugin()
+
 
 if __name__ == '__main__':
 	print("Porfavor abir TeruGUI")

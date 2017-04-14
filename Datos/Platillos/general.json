@@ -3,6 +3,6 @@
 	{
 		"Cantidad":	[1,2,3,4,5,6,7,8,9,10]		
 	},
-	"keyLabels":["Cantidad, Extras"],
-	"size":"500x500"	
+	"keyLabels":["Cantidad", "Extras"],
+	"size":"250x150"	
 }

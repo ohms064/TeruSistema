@@ -1,0 +1,31 @@
+
+Error 13-4-2017
+	No se encontró el plugin General.
+Mensaje: 
+Error 13-4-2017
+	No se encontró el plugin General.
+Mensaje: 
+Error 14-4-2017
+	invalid literal for int() with base 10: '105.0'
+Error 14-4-2017
+	No se encontró el plugin Sushi.
+Mensaje: 
+Error 14-4-2017
+	No se encontró el plugin Sushi.
+Mensaje: 
+Error 14-4-2017
+	No se encontró Sushi, buscando en Sistema.
+Mensaje: 
+Error 14-4-2017
+	no such column: Nose
+Error 14-4-2017
+	No se encontró Datos.Platillos.Sushi.
+	Mensaje: 
+Error 14-4-2017
+	SistemaTeru 253. No se encontró Datos.Platillos.Sushi.
+	Mensaje: No module named 'copy.copy'; 'copy' is not a package
+Error 14-4-2017
+	SistemaTeru 253. No se encontró Datos.Platillos.Sushi.
+	Mensaje: No module named 'copy.copy'; 'copy' is not a package
+Error 14-4-2017
+	invalid literal for int() with base 10: '150.0'

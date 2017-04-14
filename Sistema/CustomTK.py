@@ -19,15 +19,15 @@ class UserForm(tk.Frame):
 	a list with the desired values in listBox for dropdown lists, dateBox for dates, checkBox for check boxes and fileBox for files.
 	Leave an empty string in the same place in keyLabels  and variables to create another column
 	"""
-	def __init__(self, master, done, padre=None ,rows=10, col_size=5, keyLabels=None, dateBox=None, fileBox=None, checkBox=None, fixedValues=None, choices=None, defaultValues=None, formValues=None):
+	def __init__(self, master, done, rows=10, padre=None, col_size=5, keyLabels=None, dateBox=None, fileBox=None, checkBox=None, fixedValues=None, choices=None, defaultValues=None, formValues=None):
 		if keyLabels is None:
-			keyLabels = [""]
+			keyLabels = []
 		if dateBox is None:
-			dateBox = [""]
+			dateBox = []
 		if fileBox is None:
-			fileBox = [""]
+			fileBox = []
 		if checkBox is None:
-			checkBox = [""]
+			checkBox = []
 		if defaultValues is None:
 			defaultValues = defaultdict()
 		if choices is None:
@@ -36,16 +36,18 @@ class UserForm(tk.Frame):
 			formValues = dict()
 
 		tk.Frame.__init__(self, master)
-		padre.protocol("WM_DELETE_WINDOW", self.onCloseWindow)
-		self.padre = padre
+
+		self.master.protocol("WM_DELETE_WINDOW", self.onCloseWindow)
+
 		self.done = done
 		self.fileBox = fileBox
 		self.formValues = formValues
 		self._Form(rows, col_size, keyLabels, dateBox, checkBox, defaultValues, choices)
 
 	def onCloseWindow(self):
-		self.formValues = dict()
-		self.padre.destroy()
+		self.done.set(True)
+		self.formValues = {"$Cancel$":True}
+		self.master.destroy()
 		
 	def _Form(self, rows, col_size, keyLabels, dateBox, checkBox, defaultValues, choices):
 		"""
@@ -87,6 +89,8 @@ class UserForm(tk.Frame):
 				tk.Entry(self.master, width=27, textvariable=self.formValues[self.label]).grid(row=iter_row, column=iter_col + 1, columnspan=4)
 
 			iter_row += 1
+		max_row = max([iter_row, max_row])
+
 		tk.Frame(self.master, borderwidth=1, width=200, height=50).grid(column=0, row=max_row+1, columnspan=3, rowspan=2)
 		tk.Button(self.master, text="Aceptar", command=self.FillForm).grid(row=max_row+2, column=iter_col, columnspan=5, sticky="wens")
 
@@ -99,14 +103,13 @@ class UserForm(tk.Frame):
 		return close
 
 	def FillForm(self):
-		if mb.askyesno(title="Verificar", message="¿Son correctos los datos?", parent=self.master):
-			for data in self.formValues:
-				self.formValues[data] = self.formValues[data].get()
-			for data in self.fileBox:
-				if "Falta elegir: {}".format(data) == self.formValues[data]:
-					self.formValues[data] = ""
-			self.done.set(True)
-			self.master.destroy()
+		for data in self.formValues:
+			self.formValues[data] = self.formValues[data].get()
+		for data in self.fileBox:
+			if "Falta elegir: {}".format(data) == self.formValues[data]:
+				self.formValues[data] = ""
+		self.done.set(True)
+		self.master.destroy()
 
 class DateBox(tk.Frame):
 	def __init__(self, master, textvariable=None):

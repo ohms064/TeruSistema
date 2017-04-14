@@ -10,6 +10,9 @@ class Pedido(object):
 		self.orden = list()
 
 	def obtenerString(self, index):
+		"""
+		Obtiene la cadena de un elemento de orden ya sea pasando un elemento o un índice que buscar en la variable
+		"""
 		if type(index) is int:
 			s = self.orden[index]
 		elif type(index) is list:
@@ -20,17 +23,24 @@ class Pedido(object):
 
 	def obtenerTotal(self):
 		total = 0
+
 		for i in self.orden:
 			total += i[0].precio * i[1]
 		return total
 
-	def agregar(self, platillo, cantidad=1):
+	def agregar(self, platillo, cantidad=1, byString=False, byId=False):
 		"""
 		Agrega un platillo a la orden, si este platillo ya se encuentra en la orden se aumenta la cantidad
 		"""
-		index = self.contiene(platillo)
+		if byString:
+			index = self.findByString(platillo.nombre)
+		elif byId:
+			index = self.findById(platillo.platilloId)
+		else:
+			index = self.contiene(platillo)
+
 		if index != -1:
-			self.orden[index][1] += 1
+			self.orden[index][1] += cantidad
 		else:
 			s = [platillo, cantidad]
 			self.orden.append(s)
@@ -41,6 +51,18 @@ class Pedido(object):
 			if p[1][0] == platillo:
 				return p[0]
 		return -1
+
+	def findByString(self, nombrePlatillo):
+		for p in enumerate(self.orden):
+			if p[1][0].nombre == nombrePlatillo:
+				return p[0]
+		return -1		
+
+	def findById(self, idPlatillo):
+		for p in enumerate(self.orden):
+			if p[1][0].idPlatillo == idPlatillo:
+				return p[0]
+		return -1	
 
 	def get(self, index, platillo=True):
 		if platillo:
@@ -58,24 +80,14 @@ class Pedido(object):
 
 class Platillo(object):
 	"""
-	Clase ocupada para almacenar información de los platillos
+	Clase ocupada para almacenar información de los platillos, el orden de los argumentos es importante.
 	"""
 	def __init__(self, nombre, precio, categoria, idPlatillo=-1, pluginName="general.json"):
 		self.nombre = nombre
 		self.precio = precio
 		self.categoria = categoria.lower()
 		self.idPlatillo = idPlatillo
-		if pluginName:
-			self.pluginName = "Datos/Platillos/{}".format(pluginName)
-			try:
-				with open(self.pluginName, "r") as plugin:
-					json.load(plugin)
-			except Exception as err:
-				print(str(err))
-				print("No se encontró el archivo {}".format(self.pluginName))
-				self.pluginName = ""
-		else:
-			self.pluginName = "general.json"
+		self.pluginName = pluginName
 
 	def __str__(self):
 		return "{:3d} {:50s} ${:5.2f}    {:10s}".format(self.idPlatillo, self.nombre, self.precio, self.categoria)

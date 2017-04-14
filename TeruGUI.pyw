@@ -7,6 +7,8 @@ from Sistema.tkUtils import *
 from Sistema.CustomTK import UserForm
 import json
 import sys
+import copy
+import Datos.Platillos
 		
 class MesaGUI(tk.Frame):
 	"""
@@ -41,29 +43,34 @@ class MesaGUI(tk.Frame):
 
 	def agregarAPedido(self, platillo, pedido):
 		def agregar():
+			#Este será el comportamiento por default
 			index = pedido.agregar(platillo)
 			if index != -1:
 				self.actualizarListbox(index, pedido.orden[index][1], command="cantidad")
 			else:
+				self.agregarAlListbox(pedido.obtenerString(-1))#Obtener el string del platillo que acabamos de agregar
+		def completarPlatillo():
+			plugin = self.sistema.loadPlugin(platillo.pluginName)
+
+			if plugin is None:
+				#Para cualquier error se procederá normalmente
+				print("Plugin no encontrado")
+				agregar()
+				return
+
+			plugin.withPlatillo(platillo)
+			results = plugin.createWindowWait(tk.Toplevel(self), self.master)
+			if "$Cancel$" in results:
+				return
+			index = plugin.updatePedido(pedido, results, platillo)
+
+			if index != -1:
+				self.actualizarListbox(index, pedido.orden[index], command="todo")
+			else:
 				self.agregarAlListbox(pedido.obtenerString(-1))
-		""" def completarPlatillo():
-			done = tk.BooleanVar()
-			returnValue = dict()
-			with open(platillo.pluginName, "r") as plugin:
-				pluginJson = json.load(plugin)
-				size = pluginJson["size"]
-				del pluginJson["size"]
-			dialog = tk.Toplevel(self)
-			frame = tk.Frame(dialog)
-			UserForm(frame, padre=dialog, done=done, **pluginJson)
-			frame.grid(row=0, column=0)
-			self.master.withdraw()
-			self.master.wait_variable(done)
-			self.show()
-			platillo.nombre += " {}".format(keyLabels["Ingrediente Extra"])
-			agregar()
+
 		if platillo.pluginName:
-			return completarPlatillo"""
+			return completarPlatillo
 		return agregar
 
 	def createWidgets(self):
@@ -127,7 +134,9 @@ class MesaGUI(tk.Frame):
 
 	def agregarAlListbox(self, platillo):
 		self.listbox.insert(tk.END, str(platillo))
-		self.total.set(self.pedido.obtenerTotal())
+		total = self.pedido.obtenerTotal()
+		self.total.set(total)
+		#self.propina.set(int(total*0.1))
 
 	def actualizarListbox(self, index, value, command="cantidad"):
 		current = self.pedido.get(index, platillo=False)
@@ -137,6 +146,8 @@ class MesaGUI(tk.Frame):
 			current[0].precio = value
 		elif command == "incrementar":
 			current[1] += value
+		elif command == "todo":
+			curent = value
 		updateListbox(self.listbox, index, self.pedido.obtenerString(current))
 		self.total.set(self.pedido.obtenerTotal())
 
@@ -160,7 +171,7 @@ class MesaGUI(tk.Frame):
 		self.master.withdraw()
 		comanda = self.sistema.nuevaComanda(self.numClientes.get(), self.total.get(), self.dinRecibido.get(), self.propina.get(), bool(self.tarjeta.get()), self.idCliente.get())
 		if self.sistema:
-			mb.showinfo("¡Error!", "Se ha producido un error. TeruGUI 82.")
+			mb.showinfo("¡Error!", "Se ha producido un error. TeruGUI 172 confirmarComanda.")
 		else:
 			if mb.askokcancel("Comanda", comanda.cobro()):
 				self.aceptarComanda(comanda)
@@ -357,8 +368,13 @@ class Instanciador(tk.Frame):
 		self.textContador.set("Mesas: " + str(self.sistema.conf["visitas"]))
 
 	def onCloseWindow(self):
+		print("Cerrando sistema")
 		del self.sistema
+		print("Terminando ciclo")
+		self.master.eval('::ttk::CancelRepeat')
+		print("Destruyendo ventana")
 		self.master.destroy()
+		print("Se cerró el programa")
 		
 class ClientesGUI(tk.Frame):
 	"""
@@ -652,6 +668,7 @@ class PlatillosGUI(tk.Frame):
 		self.nombre.set("")
 		self.precio.set("")
 		self.categoria.set("")
+		self.plugin.set("")
 
 	def clearListbox(self):
 		self.listbox.delete(0, tk.END)
