@@ -4,6 +4,46 @@
 		"selected_items":
 		[
 			[
+				"ret",
+				"returnType\tparam"
+			],
+			[
+				"show",
+				"showinfo\tfunction"
+			],
+			[
+				"ask",
+				"askopenfile\tfunction"
+			],
+			[
+				"pla",
+				"platillosDB\tstatement"
+			],
+			[
+				"borr",
+				"borrarTodo\tfunction"
+			],
+			[
+				"plati",
+				"platilloCsvSerializer\tfunction"
+			],
+			[
+				"pro",
+				"propina"
+			],
+			[
+				"iter_",
+				"iter_row\tstatement"
+			],
+			[
+				"for",
+				"formValues"
+			],
+			[
+				"__",
+				"__init__"
+			],
+			[
 				"plgu",
 				"pluginName\tstatement"
 			],
@@ -68,24 +108,12 @@
 				"add_command\tfunction"
 			],
 			[
-				"plati",
-				"platillosDB\tstatement"
-			],
-			[
-				"show",
-				"showerror\tfunction"
-			],
-			[
 				"Plati",
 				"PlatilloDB\tclass"
 			],
 			[
 				"text",
 				"textvariable"
-			],
-			[
-				"for",
-				"format\tfunction"
 			],
 			[
 				"read",
@@ -228,20 +256,12 @@
 				"menubar"
 			],
 			[
-				"ask",
-				"askyesno\tfunction"
-			],
-			[
 				"defa",
 				"defaultValues\tstatement"
 			],
 			[
 				"rows",
 				"rowspan"
-			],
-			[
-				"__",
-				"__name__\tinstance"
 			],
 			[
 				"day",
@@ -380,53 +400,28 @@
 	"buffers":
 	[
 		{
-			"contents": "import sqlite3\nimport datetime\nimport json\n\nclass Pedido(object):\n\t\"\"\"\n\tClase usada durante la estancia del cliente para que se vayan agregando platillos a su orden\n\t\"\"\"\n\tdef __init__(self):\n\t\tself.orden = list()\n\n\tdef obtenerString(self, index):\n\t\tif type(index) is int:\n\t\t\ts = self.orden[index]\n\t\telif type(index) is list:\n\t\t\ts = index\n\t\telse:\n\t\t\treturn \"\"\n\t\treturn str(s[0]) + \" \" + str(s[1]) + \"\\n\"\n\n\tdef obtenerTotal(self):\n\t\ttotal = 0\n\t\tfor i in self.orden:\n\t\t\ttotal += i[0].precio * i[1]\n\t\treturn total\n\n\tdef agregar(self, platillo, cantidad=1):\n\t\t\"\"\"\n\t\tAgrega un platillo a la orden, si este platillo ya se encuentra en la orden se aumenta la cantidad\n\t\t\"\"\"\n\t\tindex = self.contiene(platillo)\n\t\tif index != -1:\n\t\t\tself.orden[index][1] += 1\n\t\telse:\n\t\t\ts = [platillo, cantidad]\n\t\t\tself.orden.append(s)\n\t\treturn index\n\n\tdef contiene(self, platillo):\n\t\tfor p in enumerate(self.orden):\n\t\t\tif p[1][0] == platillo:\n\t\t\t\treturn p[0]\n\t\treturn -1\n\n\tdef get(self, index, platillo=True):\n\t\tif platillo:\n\t\t\treturn self.orden[index][1]\n\t\treturn self.orden[index]\n\n\tdef __float__(self):\n\t\treturn ObtenerTotal()\n\n\tdef __str__(self):\n\t\tout = \"\"\n\t\tfor s in self.orden:\n\t\t\tout += str(s[0]) + \" \" + str(s[1]) + \"\\n\"\n\t\treturn out\n\nclass Platillo(object):\n\t\"\"\"\n\tClase ocupada para almacenar información de los platillos, el orden de los argumentos es importante.\n\t\"\"\"\n\tdef __init__(self, nombre, precio, categoria, idPlatillo=-1, pluginName=\"general.json\"):\n\t\tself.nombre = nombre\n\t\tself.precio = precio\n\t\tself.categoria = categoria.lower()\n\t\tself.idPlatillo = idPlatillo\n\t\tself.pluginName = pluginName\n\n\tdef __str__(self):\n\t\treturn \"{:3d} {:50s} ${:5.2f}    {:10s}\".format(self.idPlatillo, self.nombre, self.precio, self.categoria)\n\nclass PlatilloDB:\n\n\tdef __init__(self, conexion):\n\t\tself.conexion = conexion\n\t\tself.c = self.conexion.cursor()\n\n\t\tself.c.execute(\"\"\"CREATE TABLE IF NOT EXISTS platillosTeru \n\t\t\t( nombre VARCHAR, \n\t\t\tprecio REAL, \n\t\t\tcategoria VARCHAR,\n\t\t\tid INTEGER PRIMARY KEY,\n\t\t\tplugin VARCHAR)\"\"\")\n\n\tdef insertar(self, platillo):\n\t\tsql = \\\n\t\t\"\"\"INSERT INTO platillosTeru(nombre, precio, categoria, plugin)\n\t\tVALUES('{}', {}, '{}', '{}')\"\"\".format(platillo.nombre, platillo.precio, platillo.categoria, platillo.pluginName)\n\t\tself.c.execute(sql)\n\n\tdef actualizar(self, identificador, nombre=\"\", precio=\"\", categoria=\"\", plugin=\"\"):\n\t\tif nombre == \"\" and precio == \"\" and categoria == \"\" and plugin == \"\":\n\t\t\treturn False\n\t\tsql = \"UPDATE platillosTeru SET \"\n\t\tif nombre:\n\t\t\tsql += \"nombre = '{}', \".format(nombre)\n\t\tif precio:\n\t\t\tsql += \"precio = '{}', \".format(precio)\n\t\tif categoria:\n\t\t\tsql += \"categoria = '{}', \".format(categoria)\n\t\tif plugin:\n\t\t\tsql += \"plugin = '{}', \".format(plugin)\n\n\t\tsql = sql[0:-2] + \" WHERE id={}\".format(identificador)\n\t\tprint(sql)\n\t\tself.c.execute(sql)\n\t\treturn True\n\n\tdef borrar(self, identificador):\n\t\tself.c.execute(\"DELETE FROM platillosTeru WHERE id={}\".format(identificador))\n\n\tdef buscarID(self,identificador):\n\t\t\"\"\"\n\t\tBusca en la tabla por ID y retorna el primer valor encontrado\n\t\t\"\"\"\n\t\tsql = self.c.execute(\"SELECT * FROM platillosTeru WHERE id='{}'\".format(identificador)).fetchone()\n\t\ttry:\n\t\t\tplatillo = Platillo(*sql)\n\t\texcept TypeError:\n\t\t\tplatillo = Platillo(\"¡ERROR! No se encontró información\", \"\", \"\", \"¡ERROR! No se encontró información\")\n\t\treturn platillo\n\n\tdef confirmar(self):\n\t\tself.conexion.commit()\n\n\tdef buscarTodos(self):\n\t\t\"\"\"\n\t\tCrea una lista con todos los platillos guardados en la base de datos.\n\t\t\"\"\"\n\t\tquery = self.c.execute(\"SELECT * FROM platillosTeru\")\n\t\toutput = list()\n\t\tfor result in query:\n\t\t\ttry:\n\t\t\t\toutput.append(Platillo(*result))\n\t\t\texcept:\n\t\t\t\tpass\n\t\treturn output\n\tdef __len__(self):\n\t\treturn self.c.lastrowid\n\n\tdef getCategories(self):\n\t\tsql = self.c.execute(\"SELECT DISTINCT categoria FROM platillosTeru ORDER BY categoria\")\n\t\tcategories = list()\n\t\tfor category in sql:\n\t\t\tcategories.append(category[0])\n\t\treturn categories\n\n\tdef buscarCategoria(self, categoria):\n\t\tsql = self.c.execute(\"SELECT * FROM platillosTeru WHERE categoria LIKE '{}'\".format(categoria)) \n\t\t#TODO: Like es más lento, buscar porque no funciona =\n\t\tplatillos = list()\n\t\tfor s in sql:\n\t\t\ttry:\n\t\t\t\tplatillos.append( Platillo(*s))\n\t\t\texcept TypeError:\n\t\t\t\tpass\n\t\treturn platillos\n\n",
-			"file": "Sistema/Pedido.py",
-			"file_size": 4356,
-			"file_write_time": 131365993952481680,
+			"file": "Sistema/tkUtils.py",
 			"settings":
 			{
-				"buffer_size": 4232,
+				"buffer_size": 506,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"contents": ">>> b = Platillo(\"ejemplo\", 35, \"test\")\n>>> a = Pedido()\n>>> print(b)\n -1 ejemplo                                            $35.00    test      \n>>> a.agregar(b)\n-1\n>>> a.agregar(b)\n0\n>>> def cm(pedido):\n... \tpedido.orden.append(b)\n... \n>>> cm(a)\n>>> a \n<__main__.Pedido object at 0x00000000030CF5F8>\n>>> print(a)\nTraceback (most recent call last):\n  File \"<stdin>\", line 1, in <module>\n  File \"Pedido.py\", line 56, in __str__\n    out += str(s[0]) + \" \" + str(s[1]) + \"\\n\"\nTypeError: 'Platillo' object does not support indexing\n>>> a[0]\nTraceback (most recent call last):\n  File \"<stdin>\", line 1, in <module>\nTypeError: 'Pedido' object does not support indexing\n>>> a.orden[0]\n[<__main__.Platillo object at 0x00000000030CF630>, 2]\n>>> str(a)\nTraceback (most recent call last):\n  File \"<stdin>\", line 1, in <module>\n  File \"Pedido.py\", line 56, in __str__\n    out += str(s[0]) + \" \" + str(s[1]) + \"\\n\"\nTypeError: 'Platillo' object does not support indexing\n>>> a.orden[1]\n<__main__.Platillo object at 0x00000000030CF630>\n>>> str(a[0])\nTraceback (most recent call last):\n  File \"<stdin>\", line 1, in <module>\nTypeError: 'Pedido' object does not support indexing\n>>> str(a.orden[0])\n'[<__main__.Platillo object at 0x00000000030CF630>, 2]'\n>>> str(a.orden[1])\n' -1 ejemplo                                            $35.00    test      '\n>>> cm(a)\n>>> str(a.orden[1])\n' -1 ejemplo                                            $35.00    test      '\n>>> str(a.orden[2])\n' -1 ejemplo                                            $35.00    test      '\n>>> import copy\n>>> c = copy.copy(b)\n>>> c == b\nFalse\n>>> print(c)\n -1 ejemplo                                            $35.00    test      \n>>> print(b)\n -1 ejemplo                                            $35.00    test      \n>>> c is b\nFalse\n>>> ",
-			"settings":
-			{
-				"buffer_size": 1795,
-				"line_ending": "Windows",
-				"name": "*REPL* [py34]",
-				"scratch": true
-			}
-		},
-		{
-			"file": "Datos/Platillos/general.json",
-			"settings":
-			{
-				"buffer_size": 115,
-				"encoding": "UTF-8",
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"contents": "import tkinter as tk\nfrom tkinter import ttk\nfrom tkinter import font\nfrom tkinter import messagebox as mb\nfrom Sistema.SistemaTeru import *\nfrom Sistema.tkUtils import *\nfrom Sistema.CustomTK import UserForm\nimport json\nimport sys\nimport copy\n\t\t\nclass MesaGUI(tk.Frame):\n\t\"\"\"\n\tAquí es donde se se hace la comanda para una mesa\n\tEsta clase es llamada desde Instanciador y puede instanciar tantas MesaGUI como sea necesario.\n\t\"\"\"\n\tdef __init__(self, sistema, nombreMesa=\"\", master=None, padre=None):\n\t\ttk.Frame.__init__(self, master)\n\t\tself.nombreMesa = nombreMesa\n\t\tself.padre = padre\n\t\tself.master.title(\"Comanda: \" + str(self.nombreMesa.get()))\n\t\tself.master.geometry(\"530x350\")\n\t\tself.pack()\n\t\tself.sistema = sistema\n\t\tself.master.protocol(\"WM_DELETE_WINDOW\", self.onCloseWindow)\n\t\tself.pedido = Pedido()\n\t\tself.createWidgets()\n\t\tself.createMenu()\n\n\tdef createMenu(self):\n\t\tself.mainMenu = tk.Menu(self.master)\n\t\tself.categorias = self.sistema.platillosDB.getCategories()\n\t\tself.subMenus = dict()\n\t\tfor categoria in self.categorias:\n\t\t\tself.subMenus[categoria] = tk.Menu(self.master, tearoff=0)\n\t\t\tplatCategoria = self.sistema.platillosDB.buscarCategoria(categoria)\n\t\t\tfor platillo in platCategoria:\n\t\t\t\tself.subMenus[categoria].add_command(label=platillo.nombre, command=self.agregarAPedido(platillo, self.pedido))\n\t\t\tself.mainMenu.add_cascade(label=categoria, menu=self.subMenus[categoria])\n\n\t\tself.master.config(menu=self.mainMenu)\n\n\tdef agregarAPedido(self, platillo, pedido):\n\t\tdef agregar():\n\t\t\t#Este será el comportamiento por default\n\t\t\tindex = pedido.agregar(platillo)\n\t\t\tif index != -1:\n\t\t\t\tself.actualizarListbox(index, pedido.orden[index][1], command=\"cantidad\")\n\t\t\telse:\n\t\t\t\tself.agregarAlListbox(pedido.obtenerString(-1))#Obtener el string del platillo que acabamos de agregar\n\t\tdef completarPlatillo():\n\t\t\ttry:\n\t\t\t\tplugin = self.sistema.loadPlugin(platillo.pluginName)\n\t\t\texcept:\n\t\t\t\t#Para cualquier error se procederá normalmente\n\t\t\t\tagregar()\n\t\t\tresults = plugin.createWindowWait(tk.Toplevel(self), self.master)\n\t\t\tindex = pedido.contiene(platillo)\n\t\t\tcommand = plugin.updatePedido(platillo, results, index, platillo)\n\t\t\tif index != -1:\n\n\t\tif platillo.pluginName:\n\t\t\treturn completarPlatillo\n\t\treturn agregar\n\n\tdef createWidgets(self):\n\t\t\"\"\"\n\t\tEste método es llamado siempre desde init, se crean todos los widgets dentro de la ventana\n\t\t\"\"\"\n\t\tself.numClientes = tk.StringVar()\n\t\tself.dinRecibido = tk.StringVar()\n\t\tself.propina = tk.StringVar()\n\t\tself.total = tk.StringVar()\n\t\tself.tarjeta = tk.IntVar()\n\t\tself.idCliente = tk.StringVar()\n\n\t\ttk.Label(self.master, text=\"Clientes:\").place(x=50, y=10)\n\t\ttk.Entry(self.master, textvariable=self.numClientes).place(x=110, y=10)\n\n\t\ttk.Label(self.master, text=\"Propina:\").place(x=50, y=30)\n\t\ttk.Entry(self.master, textvariable=self.propina).place(x=110, y=30)\n\n\t\ttk.Label(self.master, text=\"Consumo:\").place(x=40, y=50)\n\t\ttk.Entry(self.master, textvariable=self.total).place(x=110, y=50)\n\n\t\ttk.Label(self.master, text=\"Dinero recibido:\").place(x=10, y=70)\n\t\ttk.Entry(self.master, textvariable=self.dinRecibido).place(x=110, y=70)\n\t\ttk.Checkbutton(self.master, text=\"Tarjeta:\", variable=self.tarjeta).place(x=250, y=70)\n\n\t\ttk.Label(self.master, text=\"ID Cliente:\").place(x=40, y=90)\n\t\ttk.Entry(self.master, textvariable=self.idCliente).place(x=110, y=90)\n\n\t\ttk.Button(self.master, text=\"Aceptar\", command=self.confirmarComanda).place(x=185,y=115)\n\t\ttk.Button(self.master, text=\"Borrar\", command=self.clearComanda).place(x=125,y=115)\n\n\t\ttk.Label(self.master, text=\"Cambiar Nombre:\").place(x=320, y=100)\n\t\ttk.Entry(self.master, textvariable=self.nombreMesa, width=10).place(x=430, y=100)\n\t\ttk.Button(self.master, text=\"Cambiar\", command=self.cambiarMesa).place(x=435, y=125)\n\n\t\ttk.Label(self.master, text=\"Mesa:\").place(x=350,y=20)\n\t\tself.labelMesa = tk.Label(self.master, text=self.nombreMesa.get()[:2], font=(\"Times\", 50))\n\t\tself.labelMesa.place(x=420,y=0)\n\n\t\ttk.Label(self.master, text=\"Id\").place(x=10, y=155)\n\t\ttk.Label(self.master, text=\"Nombre\").place(x=25, y=155)\n\t\ttk.Label(self.master, text=\"Precio\").place(x=200, y=155)\n\t\ttk.Label(self.master, text=\"Categoría\").place(x=240, y=155)\n\t\ttk.Label(self.master, text=\"Cantidad\").place(x=295, y=155)\n\n\t\t#Platillos\n\t\tframe = tk.Frame(self.master)\n\t\tscrollbar = tk.Scrollbar(frame, orient=tk.VERTICAL)\n\t\tself.listbox = tk.Listbox(frame, width=60, height = 10, yscrollcommand=scrollbar.set)\n\t\tscrollbar.config(command=self.listbox.yview)\n\t\tscrollbar.pack(side=tk.RIGHT, fill=tk.Y)\n\t\tself.listbox.pack(side=tk.LEFT, fill=tk.BOTH, expand=1)\n\t\tself.listbox.bind(\"<Double-Button-1>\", self.listBoxSelect)\n\t\tframe.place(x=10, y=175)\n\n\tdef listBoxSelect(self, event):\n\t\twidget = event.widget\n\t\tselection = widget.curselection()[0]\n\t\t\n\n\tdef agregarAlListbox(self, platillo):\n\t\tself.listbox.insert(tk.END, str(platillo))\n\t\tself.total.set(self.pedido.obtenerTotal())\n\n\tdef actualizarListbox(self, index, value, command=\"cantidad\"):\n\t\tcurrent = self.pedido.get(index, platillo=False)\n\t\tif command == \"cantidad\":\n\t\t\tcurrent[1] = value\n\t\telif command == \"precio\":\n\t\t\tcurrent[0].precio = value\n\t\telif command == \"incrementar\":\n\t\t\tcurrent[1] += value\n\t\tupdateListbox(self.listbox, index, self.pedido.obtenerString(current))\n\t\tself.total.set(self.pedido.obtenerTotal())\n\n\tdef cambiarMesa(self):\n\t\t\"\"\"\n\t\tSe el asigna el nombre a la mesa en caso de que no exista o se quiera cambiar.\n\t\tEl nombre aparece en el título de la ventana.\n\t\t\"\"\"\n\t\tif self.nombreMesa.get() != \"\":\n\t\t\tself.master.title(\"Comanda: \" + str(self.nombreMesa.get()))\n\t\t\tself.labelMesa.config(text=self.nombreMesa.get()[:2])\n\t\t\tself.nombreMesa.set(\"\")\n\n\tdef confirmarComanda(self):\n\t\t\"\"\"\n\t\tSe confirma que la comanda sea correcta.\n\t\tSe existe algún error se abrirá una ventana indicando que hay un error.(Cualquier error)\n\t\t\"\"\"\n\t\tif self.propina.get() == \"\":\n\t\t\tself.propina.set(\"0\")\n\t\tself.master.withdraw()\n\t\tcomanda = self.sistema.nuevaComanda(self.numClientes.get(), self.total.get(), self.dinRecibido.get(), self.propina.get(), bool(self.tarjeta.get()), self.idCliente.get())\n\t\tif self.sistema:\n\t\t\tmb.showinfo(\"¡Error!\", \"Se ha producido un error. TeruGUI 82.\")\n\t\telse:\n\t\t\tif mb.askokcancel(\"Comanda\", comanda.cobro()):\n\t\t\t\tself.aceptarComanda(comanda)\n\t\t\telse:\n\t\t\t\tself.show()\n\n\tdef clearComanda(self):\n\t\t\"\"\"\n\t\tSe limpian los datos de la comanda.\n\t\t\"\"\"\n\t\tself.numClientes.set(\"\")\n\t\tself.dinRecibido.set(\"\")\n\t\tself.propina.set(\"\")\n\t\tself.total.set(\"\")\n\t\n\n\tdef aceptarConsumo(self):\n\t\t\"\"\"\n\t\tSe confirma el consumo.\n\t\t\"\"\"\n\t\tself.consWindow.destroy()\n\t\tself.master.destroy()\n\t\tself.clearConsumo()\n\n\tdef aceptarComanda(self, comanda):\n\t\t\"\"\"\n\t\tSe confirma la comanda.\n\t\t\"\"\"\n\t\tself.sistema.commitComanda(comanda)\n\t\tself.clearComanda()\n\n\tdef show(self):\n\t\t\"\"\"\n\t\tSe regresa a MesaGUI\n\t\t\"\"\"\n\t\tself.master.update()\n\t\tself.master.deiconify()\n\n\tdef onCloseWindow(self):\n\t\tself.padre.reducirMesa()\n\t\tself.master.destroy()\n\nclass CierreGUI(tk.Frame):\n\t\"\"\"\n\tEn esta ventana se maneja todo lo conciernente al cierre de caja.\n\t\"\"\"\n\tdef __init__(self, sistema, master=None, padre=None):\n\t\ttk.Frame.__init__(self, master)\t\t\n\t\tself.padre = padre\n\t\tself.sistema = sistema\n\t\tself.padre.withdraw()\n\t\tself.master.wm_title(\"Cierre\")\n\t\tself.master.geometry(\"280x250\")\n\t\tself.pack()\n\t\tself.createWidgets()\n\t\tself.master.protocol(\"WM_DELETE_WINDOW\", self.showMain)\n\n\tdef createWidgets(self):\n\t\t\"\"\"\n\t\tSe crean todos los widgets de la ventana.\n\t\t\"\"\"\n\t\tself.dinero = tk.StringVar()\n\t\tself.gastos = tk.StringVar()\n\t\tself.nomina = tk.StringVar()\n\t\tself.dineroInicial = tk.StringVar()\n\t\tself.dia = tk.StringVar()\n\t\tself.dineroLlevo = tk.StringVar()\n\n\t\ttk.Label(self.master, text=\"Fecha (dd-mm-año):\").place(x=10,y=10)\n\t\ttk.Entry(self.master, textvariable=self.dia).place(x=130, y=10)\n\t\ttk.Label(self.master, text=\"Nota: Dejar vacío si se quiere el día de hoy\").place(x=30,y=30)\n\t\ttk.Label(self.master, text=\"Dinero en caja:\").place(x=45,y=60)\n\t\ttk.Entry(self.master, textvariable=self.dinero).place(x=130, y=60)\n\t\ttk.Label(self.master, text=\"Dinero Inicial:\").place(x=50,y=90)\n\t\ttk.Entry(self.master, textvariable=self.dineroInicial).place(x=130, y=90)\n\t\ttk.Label(self.master, text=\"Gastos:\").place(x=85,y=120)\n\t\ttk.Entry(self.master, textvariable=self.gastos).place(x=130, y=120)\n\t\ttk.Label(self.master, text=\"Nómina(Total):\").place(x=45,y=150)\n\t\ttk.Entry(self.master, textvariable=self.nomina).place(x=130, y=150)\n\n\t\ttk.Button(self.master, text=\"Cancelar\", command=self.showMain).place(x=50,y=180)\n\t\ttk.Button(self.master, text=\"Aceptar\", command=self.cerrarCaja).place(x=150,y=180)\n\n\tdef cerrarCaja(self):\n\t\t\"\"\"\n\t\tLlama al sistema para cerrar caja con los datos introducidos en la ventana CerrarCaja\n\t\t\"\"\"\n\t\tif self.dinero.get().isdigit():\n\n\t\t\tself.master.withdraw()\n\t\t\tself.reporteWindow = tk.Toplevel(self)\n\t\t\tself.reporteWindow.wm_title(\"Reporte del día\")\n\t\t\tself.reporteWindow.geometry(\"280x280\")\n\n\t\t\treporte = self.sistema.cierreDeCaja(self.dinero.get(), self.dineroInicial.get(), self.gastos.get(), self.nomina.get(), self.dia.get())\n\t\t\tcadReporte = reporte[0].split(\",\")\n\t\t\tcadReporte = \"Total Mesas: \" + cadReporte[1] + \"\\nTotal Clientes: \" + cadReporte[2] + \\\n\t\t\t\"\\nDinero Inicial: \" + cadReporte[3] + \"\\Ventas Efectivo: \" + cadReporte[4] + \"\\nTerminal: \" + cadReporte[5] + \\\n\t\t\t\"\\nGastos: \" + cadReporte[6] + \"\\nNomina: \" + cadReporte[7] + \"\\nNeto: \" + cadReporte[8] + \"\\nDinero: \" + cadReporte[9] + \\\n\t\t\t\"\\nSobra/Falta: \" + cadReporte[10] + \"\\nPropinas: \" + str(reporte[1])\n\t\t\t\n\t\t\ttk.Label(self.reporteWindow, text=cadReporte).place(x=80, y=10)\n\t\t\ttk.Label(self.reporteWindow, text=\"Llevo: \").place(x=60, y=180)\n\t\t\ttk.Entry(self.reporteWindow, textvariable=self.dineroLlevo).place(x=100, y=180)\n\t\t\ttk.Button(self.reporteWindow, text=\"Cancelar\", command=self.cancelarReporte).place(x=50,y=210)\n\t\t\ttk.Button(self.reporteWindow, text=\"Aceptar\", command=self.aceptarCierre).place(x=150,y=210)\n\n\tdef aceptarCierre(self):\n\t\t\"\"\"\n\t\tSe confirma el cierre.\n\t\t\"\"\"\n\t\tself.sistema.commitCierre(self.dineroLlevo.get(), self.dia.get())\n\t\tself.reporteWindow.destroy()\n\t\tself.showMain()\n\n\tdef showMain(self):\n\t\t\"\"\"\n\t\tSe retorna a la ventana padre.\n\t\t\"\"\"\n\t\tself.padre.abrirVentana()\n\t\tself.master.destroy()\n\n\tdef cancelarReporte(self):\n\n\t\tself.reporteWindow.destroy()\n\t\tself.master.update()\n\t\tself.master.deiconify()\n\nclass Instanciador(tk.Frame):\n\t\"\"\"\n\t\tVentana principal donde se sacaran nuevas comandas y se hará el cierre de caja\n\t\"\"\"\n\tdef __init__(self, master=None):\n\t\ttk.Frame.__init__(self, master)\n\t\tself.master.title(\"Teru Sistema\")\n\t\tself.master.geometry(\"170x260\")\n\t\tself.pack()\n\t\tmaster.protocol(\"WM_DELETE_WINDOW\", self.onCloseWindow)\n\t\tself.sistema = MainSystem()\n\t\tself.createWidgets()\n\n\tdef createWidgets(self):\n\t\tself.textContador = tk.StringVar()\n\t\tself.nombreMesa = tk.StringVar()\n\t\tself.textContador.set(\"Mesas: \" + str(self.sistema.conf[\"visitas\"]))\n\t\tself.folioLabel = tk.Label(self.master, textvariable=self.textContador).place(x=60, y=10)\n\t\ttk.Label(self.master, text=\"Nombre Mesa:\").place(x=10,y=40)\n\t\ttk.Entry(self.master, width=10, textvariable=self.nombreMesa).place(x=100,y=40)\n\t\ttk.Button(self.master, text=\"Nueva Mesa\", command=self.nuevaMesa).place(x=50,y=70)\n\t\ttk.Button(self.master, text=\"Cierre de caja\", command=self.datosCierre).place(x=45,y=110)\n\t\ttk.Button(self.master, text=\"Estado Actual\", command=self.estadoActual).place(x=45, y=150)\n\t\ttk.Button(self.master, text=\"Clientes\", command=self.abrirClientesGUI).place(x=55, y=190)\n\t\ttk.Button(self.master, text=\"Platillos\", command=self.abrirPlatillosGUI).place(x=55, y=230)\n\n\tdef estadoActual(self):\n\t\testado = self.sistema.getState()\n\t\tself.estadoWindow = tk.Toplevel(self)\n\t\tself.estadoWindow.wm_title(\"Estado Actual\")\n\t\tself.estadoWindow.geometry(\"250x180\")\n\t\ttk.Label(self.estadoWindow, text=estado).place(x=80, y=10)\n\n\tdef abrirPlatillosGUI(self):\n\t\tPlatillosGUI(self.sistema, tk.Toplevel(self), self)\n\n\tdef abrirClientesGUI(self):\n\t\t\"\"\"\n\t\tAcción para el botón \"Clientes\" cuya ventana es para hacer acciones sobre la tabla de clientes\n\t\t\"\"\"\n\t\tClientesGUI(self.sistema, tk.Toplevel(self), self)\n\n\tdef nuevaMesa(self):\n\t\t\"\"\"\n\t\t\tSe abre una nueva ventana para cobrar una mesa\n\t\t\"\"\"\n\t\tself.sistema.conf[\"visitas\"] += 1\n\t\tself.textContador.set(\"Mesas: \" + str(self.sistema.conf[\"visitas\"]))\n\t\tMesaGUI(self.sistema, self.nombreMesa, tk.Toplevel(self), self)\n\n\tdef datosCierre(self):\n\t\t\"\"\"\n\t\tAccion para el boton \"Cierre de Caja\", nos pide los datos de cierre de caja y hacer la acción\n\t\t\"\"\"\n\t\tCierreGUI(self.sistema, tk.Toplevel(self), self)\t\t\n\n\tdef withdraw(self):\n\t\tself.master.withdraw()\n\n\tdef abrirVentana(self):\n\t\tself.master.update()\n\t\tself.master.deiconify()\n\n\tdef reducirMesa(self):\n\t\tself.sistema.conf[\"visitas\"] -= 1\n\t\tself.textContador.set(\"Mesas: \" + str(self.sistema.conf[\"visitas\"]))\n\n\tdef onCloseWindow(self):\n\t\tdel self.sistema\n\t\tself.master.destroy()\n\t\t\nclass ClientesGUI(tk.Frame):\n\t\"\"\"\n\tEn esta ventana se verán todas las acciones relacionados con la base de datos de los clientes.\n\t\"\"\"\n\tdef __init__(self, sistema, master=None, padre=None):\n\t\ttk.Frame.__init__(self, master)\t\t\n\t\tself.padre = padre\n\t\tself.sistema = sistema\n\t\tself.master.wm_title(\"Clientes\")\n\t\tself.master.geometry(\"400x130\")\n\t\tself.pack()\n\t\tself.createWidgets()\n\t\tself.master.protocol(\"WM_DELETE_WINDOW\", self.showMain)\n\n\tdef createWidgets(self):\n\t\tself.id = tk.StringVar()\n\t\tself.nick = tk.StringVar()\n\t\tself.correo = tk.StringVar()\n\t\tself.nombre = tk.StringVar()\n\t\tself.visitas = tk.StringVar()\n\t\tself.ultimaVisita = tk.StringVar()\n\t\tself.consumo = tk.StringVar()\n\t\tself.fechaIngreso = tk.StringVar()\n\n\t\t#Sección de la izquierda\n\t\ttk.Label(self.master, text=\"ID: \").place(x=30, y=10)\n\t\ttk.Entry(self.master, width=30, textvariable=self.id).place(x=60, y=10)\n\t\ttk.Label(self.master, text=\"Nick: \").place(x=20, y=30)\n\t\ttk.Entry(self.master, width=30, textvariable=self.nick).place(x=60, y=30)\n\t\ttk.Label(self.master, text=\"Correo: \").place(x=10, y=50)\n\t\ttk.Entry(self.master, width=30, textvariable=self.correo).place(x=60, y=50)\n\t\ttk.Label(self.master, text=\"Nombre: \").place(x=3, y=70)\n\t\ttk.Entry(self.master, width=30, textvariable=self.nombre).place(x=60, y=70)\n\n\t\t#Sección de la derecha\n\t\ttk.Label(self.master, text=\"Visitas: \").place(x=280, y=10)\n\t\ttk.Label(self.master, textvariable=self.visitas, bd=1).place(x=330, y=10)\n\t\ttk.Label(self.master, text=\"Ultima Visita: \").place(x=250, y=30)\n\t\ttk.Label(self.master, textvariable=self.ultimaVisita).place(x=330, y=30)\n\t\ttk.Label(self.master, text=\"Consumo:\").place(x=265, y=50)\n\t\ttk.Label(self.master, textvariable=self.consumo).place(x=330, y=50)\n\t\ttk.Label(self.master, text=\"Ingreso:\").place(x=275, y=70)\n\t\ttk.Label(self.master, textvariable=self.fechaIngreso).place(x=330, y=70)\n\n\t\t#Sección de abajo\n\t\ttk.Button(self.master, text=\"Buscar\", command=self.busqueda).place(x=10, y=100)\n\t\ttk.Button(self.master, text=\"Insertar\", command=self.insertar).place(x=65, y=100)\n\t\ttk.Button(self.master, text=\"Borrar\", command=self.borrar).place(x=125, y=100)\n\t\ttk.Button(self.master, text=\"Actualizar\", command=self.actualizar).place(x=180, y=100)\n\t\ttk.Button(self.master, text=\"Limpiar Campos\", command=self.cls).place(x=270, y=100)\n\t\t\n\n\tdef busqueda(self, identificador=\"\"):\n\t\t\"\"\"\n\t\tFunción para el botón de Buscar que funciona de la siguiente manera:\n\t\tEn esta función si se envía como argumento el identificador se utilizará este ID\n\t\tpara hacer la busqueda. De no ser así se hará el busqueda con la siguiente jerarquía:\n\t\t\tid -> nick -> correo -> nombre\n\t\tEs decir que si no se tiene escrito el id en su campo se buscará por nick y así sucesivamente.\n\t\t\"\"\"\n\t\ttry:\n\t\t\tif identificador:\n\t\t\t\tquery = self.sistema.clientesDB.buscarID(identificador)\n\t\t\telif self.id.get():\n\t\t\t\tquery = self.sistema.clientesDB.buscarID(self.id.get())\n\t\t\telif self.nick.get():\n\t\t\t\tquery = self.sistema.clientesDB.buscarNick(self.nick.get())\n\t\t\telif self.correo.get():\n\t\t\t\tquery = self.sistema.clientesDB.buscarCorreo(self.correo.get())\n\t\t\telif self.nombre.get():\n\t\t\t\tquery = self.sistema.clientesDB.buscarNombre(self.nombre.get())\n\t\t\telse:\n\t\t\t\tmb.showinfo(\"Error\", \"No se ingresaron datos\", parent=self.master)\n\t\t\t\treturn\n\t\texcept:\n\t\t\tmb.showinfo(sys.exc_info()[0])\n\t\t\treturn\n\t\tself.id.set(query.id)\n\t\tself.nick.set(query.nick)\n\t\tself.correo.set(query.correo)\n\t\tself.nombre.set(query.nombre)\n\t\tself.visitas.set(query.visitas)\n\t\tself.ultimaVisita.set(query.ultimaVisita)\n\t\tself.consumo.set(query.consumo)\n\t\tself.fechaIngreso.set(query.fechaIngreso)\n\n\tdef insertar(self):\n\t\t\"\"\"\n\t\tFunción para el botón de insertar que funciona de la siguiente manera:\n\t\tSe ingresará nick, correo y/o nombre, con esto se creará un nuevo cliente con un nuevo ID.\n\t\t\"\"\"\n\t\tif self.nombre.get() == \"\" and self.nick.get() == \"\" and self.correo.get() == \"\":\n\t\t\tmb.showinfo(\"Warning\", \"¡No se agregó ningún dato!\", parent=self.master)\n\t\t\treturn\n\n\t\tanswer = mb.askquestion(\"Insertar\", \"¿Son correctos los datos?\", icon=\"warning\", parent=self.master)\n\t\tif answer == \"yes\":\n\t\t\ttry:\n\t\t\t\tself.sistema.clientesDB.insertar(nombre=self.nombre.get(), correo=self.correo.get(), nick=self.nick.get())\n\t\t\t\tself.sistema.clientesDB.confirmar()\n\t\t\texcept:\n\t\t\t\tmb.showinfo(sys.exc_info()[0])\n\t\t\t\treturn\n\t\t\tself.busqueda(len(self.sistema.clientesDB))\n\n\tdef borrar(self):\n\t\t\"\"\"\n\t\tFunción para el botón de borrar que funciona de la siguiente manera:\n\t\tSe ingresará únicamente el ID, lo demás será ignorado. Se borrará el cliente con este ID.\n\t\t\"\"\"\n\t\tif self.id.get() == \"\":\n\t\t\tmb.showinfo(\"Advertencia\", \"¡Se debe ingresar un ID!\", parent=self.master)\n\t\t\treturn\n\t\tself.busqueda(self.id.get())\n\t\tif self.id.get() == \"¡ERROR! No se encontró información\":\n\t\t\tmb.showinfo(\"¡Error!\", \"No se encontraron coincidencias. No se continuará con el proceso.\", parent=self.master)\n\t\t\tself.cls()\n\t\t\treturn\n\t\tanswer = mb.askquestion(\"Borrar\", \"Los datos se perderán permanentemente. Favor de revisar.\", parent=self.master)\n\t\tif answer == \"yes\":\n\t\t\ttry:\n\t\t\t\tself.sistema.clientesDB.borrar(self.id.get())\n\t\t\t\tself.sistema.clientesDB.confirmar()\n\t\t\texcept:\n\t\t\t\tmb.showinfo(sys.exc_info()[0])\n\t\t\t\treturn\n\t\t\tself.cls()\n\n\tdef actualizar(self):\n\t\t\"\"\"\n\t\tFunción para el botón que actualiza los datos de la siguiente manera:\n\t\tSe ingresa el ID (el cliente con este ID será modificado) y se ingresa solamente los datos que se quieran\n\t\tcambiar. Una vez hecho esto al dar click en Actualizar se nos mostrará los cambios que se harán y nos\n\t\tpreguntará si es correcto.\n\t\t\"\"\"\n\t\t#Primero vemos que exista el ID\n\t\tif self.id.get() == \"\":\n\t\t\tmb.showinfo(\"Advertencia\", \"¡Se debe ingresar un ID!\", parent=self.master)\n\t\t\treturn\n\t\t#No tiene caso hacer nada si ningún valor se ha introducido\n\t\tif self.nick.get() == \"\" and self.nombre.get() == \"\" and self.correo.get() == \"\":\n\t\t\tmb.showinfo(\"Advertencia\", \"¡No se ingresó ningún cambio!\", parent=self.master)\n\t\t\treturn\n\t\t#Variables auxiliares que son los nuevos valores potenciales\n\t\tnick = self.nick.get().strip()\n\t\tnombre = self.nombre.get().strip()\n\t\tcorreo = self.correo.get().strip()\n\t\t#Se hace una busqueda para poder mostrar los valores originales\n\t\tself.busqueda(self.id.get())\n\t\t#Si no se encontró el ID se nos indicará\n\t\tif self.id.get() == \"¡ERROR! No se encontró información\":\n\t\t\tmb.showinfo(\"¡Error!\", \"No se encontraron coincidencias. No se continuará con el proceso.\", parent=self.master)\n\t\t\tself.cls()\n\t\t\treturn\n\t\t#Para cada valor potencial, si tiene escrito algo se escribirá en el campo de la siguiente manera: {ORIGNAL} -> {NUEVO}\n\t\tif nick:\n\t\t\tself.nick.set(self.nick.get() + \" -> \" + nick)\n\t\tif nombre:\n\t\t\tself.nombre.set(self.nombre.get() + \" -> \" + nombre)\n\t\tif correo:\n\t\t\tself.correo.set(self.correo.get() + \" -> \" + correo)\n\t\t#Se nos preguntará si continuamos con el proceso\n\t\tanswer = mb.askquestion(\"Actualizar\", \"¿Son correctos los datos a actualizar?\")\n\t\tif answer == \"yes\":\n\t\t\ttry:#Puede que la base de datos estuviera bloqueada\n\t\t\t\tself.sistema.clientesDB.actualizar(self.id.get(), nombre=nombre, nick=nick, correo=correo)\n\t\t\t\tself.sistema.clientesDB.confirmar()\n\t\t\texcept:\n\t\t\t\tmb.showinfo(sys.exc_info()[0])\n\t\t\t\treturn\n\t\t\tself.busqueda(self.id.get())\n\t\telse:\n\t\t\tself.nick.set(nick)\n\t\t\tself.nombre.set(nombre)\n\t\t\tself.correo.set(correo)\n\n\tdef cls(self):\n\t\tself.id.set(\"\")\n\t\tself.nick.set(\"\")\n\t\tself.correo.set(\"\")\n\t\tself.nombre.set(\"\")\n\t\tself.visitas.set(\"\")\n\t\tself.ultimaVisita.set(\"\")\n\t\tself.consumo.set(\"\")\n\t\tself.fechaIngreso.set(\"\")\n\n\tdef showMain(self):\n\t\t\"\"\"\n\t\tSe retorna a la ventana padre.\n\t\t\"\"\"\n\t\tself.master.destroy()\n\nclass PlatillosGUI(tk.Frame):\n\tdef __init__(self, sistema, master=None, padre=None):\n\t\ttk.Frame.__init__(self, master)\t\t\n\t\tself.padre = padre\n\t\tself.sistema = sistema\n\t\tself.master.wm_title(\"Platillos\")\n\t\tself.master.geometry(\"530x360\")\n\t\tself.pack()\n\t\tself.createWidgets()\n\t\tself.populateListbox()\n\t\tself.master.protocol(\"WM_DELETE_WINDOW\", self.showMain)\n\n\tdef createMenu(self):\n\t\tself.mainMenu = tk.Menu(self.master)\n\t\tself.categorias = self.sistema.platillosDB.getCategories()\n\t\tself.subMenus = dict()\n\t\tfor categoria in self.categorias:\n\t\t\tself.subMenus[categoria] = tk.Menu(self.master, tearoff=0)\n\t\t\tplatCategoria = self.sistema.platillosDB.buscarCategoria(categoria)\n\t\t\tfor platillo in platCategoria:\n\t\t\t\tself.subMenus[categoria].add_command(label=platillo.nombre, command=self.agregarAPedido(platillo, self.pedido))\n\t\t\tself.mainMenu.add_cascade(label=categoria, menu=self.subMenus[categoria])\n\n\t\tself.master.config(menu=self.mainMenu)\n\n\tdef createWidgets(self):\n\t\tself.nuevoId = tk.StringVar()\n\t\tself.nombre = tk.StringVar()\n\t\tself.precio = tk.StringVar()\n\t\tself.categoria = tk.StringVar()\n\t\tself.nuevaCategoria = tk.StringVar()\n\t\tself.plugin = tk.StringVar()\n\n\t\ttk.Label(self.master, text=\"Platillos\").place(x=30, y=10)\n\n\t\tframe = tk.Frame(self.master)\n\n\t\tscrollbar = tk.Scrollbar(frame, orient=tk.VERTICAL)\n\t\tself.listbox = tk.Listbox(frame, width=65, height = 10, yscrollcommand=scrollbar.set)\n\t\tscrollbar.config(command=self.listbox.yview)\n\t\tscrollbar.pack(side=tk.RIGHT, fill=tk.Y)\n\t\tself.listbox.pack(side=tk.LEFT, fill=tk.BOTH, expand=1)\n\t\tframe.place(x=30, y=30)\n\t\tself.listbox.bind(\"<Double-Button-1>\", self.listBoxSelect)\n\t\t\n\t\ttk.Label(self.master, text=\"Nuevo Platillo\").place(x=30, y=210)\n\n\t\ttk.Label(self.master, text=\"Id\").place(x=30, y=230)\n\t\ttk.Entry(self.master, width=30, textvariable=self.nuevoId).place(x=90, y=230)\n\n\t\ttk.Label(self.master, text=\"Nombre\").place(x=30, y=250)\n\t\ttk.Entry(self.master, width=30, textvariable=self.nombre).place(x=90, y=250)\n\n\t\ttk.Label(self.master, text=\"Precio\").place(x=30, y=270)\n\t\ttk.Entry(self.master, width=30, textvariable=self.precio).place(x=90, y=270)\n\n\t\ttk.Label(self.master, text=\"Categoría\").place(x=30, y=290)\n\t\tself.cb = ttk.Combobox(self.master, width=27, textvariable=self.categoria, value=self.sistema.conf[\"Categorias Platillo\"], state=\"readonly\")\n\t\tself.cb.place(x=90, y=290)\n\n\t\ttk.Label(self.master, text=\"Nueva Categoría\").place(x=290, y=290)\n\t\ttk.Entry(self.master, width=20, textvariable=self.nuevaCategoria).place(x=400, y=290)\n\t\ttk.Button(self.master, text=\"Agregar\", command=self.actualizarCategorias).place(x=470, y=315)\n\n\t\ttk.Label(self.master, text=\"Config\").place(x=315, y=230)\n\t\ttk.Entry(self.master, width=25, textvariable=self.plugin).place(x=370, y=230)\n\n\t\ttk.Button(self.master, text=\"Insertar\", command=self.insertar).place(x=220, y=320)\n\t\ttk.Button(self.master, text=\"Actualizar\", command=self.actualizar).place(x=152, y=320)\n\t\ttk.Button(self.master, text=\"Borrar\", command=self.borrar).place(x=105, y=320) \n\n\tdef actualizarCategorias(self):\n\t\tself.sistema.conf[\"Categorias Platillo\"].append(self.nuevaCategoria.get())\n\t\tself.cb.configure(value=self.sistema.conf[\"Categorias Platillo\"])\n\t\t#self.cb[\"values\"] = self.sistema.conf[\"Categorias Platillo\"]\n\n\tdef listBoxSelect(self, event):\n\t\twidget = event.widget\n\t\tselection = widget.curselection()[0]\n\t\tvalue = self.platillos[selection]\n\t\tself.nuevoId.set(value.idPlatillo)\n\t\tself.precio.set(value.precio)\n\t\tself.categoria.set(value.categoria)\n\t\tself.nombre.set(value.nombre)\n\t\tself.plugin.set(value.pluginName)\n\n\tdef test(self):\n\t\tprint(self.sistema.platillosDB.getCategories())\n\n\tdef populateListbox(self):\n\t\tself.platillos = self.sistema.platillosDB.buscarTodos()\n\t\tfor p in self.platillos:\n\t\t\tprint(str(p))\n\t\t\tself.listbox.insert(tk.END, str(p))\n\n\tdef cls(self):\n\t\tself.nuevoId.set(\"\")\n\t\tself.nombre.set(\"\")\n\t\tself.precio.set(\"\")\n\t\tself.categoria.set(\"\")\n\n\tdef clearListbox(self):\n\t\tself.listbox.delete(0, tk.END)\n\n\tdef insertar(self):\n\t\tif self.nombre.get() == \"\" or self.precio.get() == \"\" or self.categoria.get() == \"\":\n\t\t\tmb.showinfo(\"Warning\", \"¡Faltan datos!\", parent=self.master)\n\t\t\treturn\n\n\t\tanswer = mb.askquestion(\"Insertar\", \"¿Son correctos los datos?\", icon=\"warning\", parent=self.master)\n\t\tnuevoPlatillo = Platillo(self.nombre.get(), self.precio.get(), self.categoria.get(), pluginName=self.plugin.get())\n\t\tif answer == \"yes\":\n\t\t\ttry:\n\t\t\t\tself.sistema.platillosDB.insertar(nuevoPlatillo)\n\t\t\t\tself.sistema.platillosDB.confirmar()\n\t\t\texcept Exception as err:\n\t\t\t\tmb.showinfo(\"error\", str(err))\n\t\t\t\tself.sistema.escribirError(err)\n\t\t\t\treturn\n\t\tself.clearListbox()\n\t\tself.populateListbox()\n\n\tdef borrar(self):\n\t\t\"\"\"\n\t\tFunción para el botón de borrar que funciona de la siguiente manera:\n\t\tSe ingresará únicamente el ID, lo demás será ignorado. Se borrará el cliente con este ID.\n\t\t\"\"\"\n\t\tif self.nuevoId.get() == \"\":\n\t\t\tmb.showinfo(\"Advertencia\", \"¡Se debe ingresar un ID!\", parent=self.master)\n\t\t\treturn\n\t\tself.busqueda(self.nuevoId.get())\n\t\tif self.nuevoId.get() == \"¡ERROR! No se encontró información\":\n\t\t\tmb.showinfo(\"¡Error!\", \"No se encontraron coincidencias. No se continuará con el proceso.\", parent=self.master)\n\t\t\tself.cls()\n\t\t\treturn\n\t\tanswer = mb.askquestion(\"Borrar\", \"Los datos se perderán permanentemente. Favor de revisar.\", parent=self.master)\n\t\tif answer == \"yes\":\n\t\t\ttry:\n\t\t\t\tself.sistema.platillosDB.borrar(self.nuevoId.get())\n\t\t\t\tself.sistema.platillosDB.confirmar()\n\t\t\texcept Exception as err:\n\t\t\t\tmb.showinfo(\"Error\", sys.exc_info()[0])\n\t\t\t\tself.sistema.escribirError(err)\n\t\t\t\treturn\n\t\t\tself.cls()\n\t\t\tself.clearListbox()\n\t\t\tself.populateListbox()\n\n\tdef showMain(self):\n\t\t\"\"\"\n\t\tSe retorna a la ventana padre.\n\t\t\"\"\"\n\t\tself.master.destroy()\n\n\tdef busqueda(self, identificador=\"\"):\n\t\t\"\"\"\n\t\tFunción para el botón de Buscar que funciona de la siguiente manera:\n\t\tEn esta función si se envía como argumento el identificador se utilizará este ID\n\t\tpara hacer la busqueda. De no ser así se hará el busqueda con la siguiente jerarquía:\n\t\t\tid -> nick -> correo -> nombre\n\t\tEs decir que si no se tiene escrito el id en su campo se buscará por nick y así sucesivamente.\n\t\t\"\"\"\n\t\ttry:\n\t\t\tif identificador:\n\t\t\t\tquery = self.sistema.platillosDB.buscarID(identificador)\n\t\t\telif self.nuevoId.get():\n\t\t\t\tquery = self.sistema.platillosDB.buscarID(int(self.nuevoId.get()))\n\t\t\telse:\n\t\t\t\tmb.showinfo(\"Error\", \"No se ingresaron datos\", parent=self.master)\n\t\t\t\treturn\n\t\texcept ValueError as err:\n\t\t\tmb.showerror(\"Dato incorrecto\", \"Favor de escribir un número\")\n\t\t\treturn\n\n\t\tself.nuevoId.set(query.idPlatillo)\n\t\tself.nombre.set(query.nombre)\n\t\tself.categoria.set(query.categoria)\n\t\tself.precio.set(query.precio)\n\n\tdef actualizar(self):\n\t\tupdateValue = dict()\n\t\tif not self.nuevoId.get():\n\t\t\treturn\n\t\tquery = self.sistema.platillosDB.buscarID(int(self.nuevoId.get()))\n\t\tif self.nombre.get() and self.nombre.get() != query.nombre:\n\t\t\tupdateValue[\"nombre\"] = self.nombre.get()\n\n\t\tif self.precio.get() and self.precio.get() != str(query.precio):\n\t\t\tupdateValue[\"precio\"] = self.precio.get()\n\n\t\tif self.categoria.get() and self.categoria.get() != query.categoria:\n\t\t\tupdateValue[\"categoria\"] = self.categoria.get()\n\n\t\tif self.plugin.get() and self.plugin.get() != query.pluginName:\n\t\t\tupdateValue[\"plugin\"] = self.plugin.get()\n\n\t\tif self.sistema.platillosDB.actualizar(self.nuevoId.get(), **updateValue):\n\t\t\tself.clearListbox()\n\t\t\tself.populateListbox()\n\t\t\tself.cls()\n\n\nif __name__ == '__main__':\n\troot = tk.Tk()\n\tapp = Instanciador(master=root)\n\troot.protocol(\"WM_DELETE_WINDOW\", app.onCloseWindow)\n\tapp.mainloop()\n\n",
 			"file": "TeruGUI.pyw",
-			"file_size": 28645,
-			"file_write_time": 131365993171869474,
 			"settings":
 			{
-				"buffer_size": 27925,
+				"buffer_size": 29694,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "Sistema/TeruPlugin.py",
+			"file": "Sistema/CSVReader.py",
 			"settings":
 			{
-				"buffer_size": 1716,
+				"buffer_size": 1106,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
@@ -435,8 +430,26 @@
 			"file": "Sistema/SistemaTeru.py",
 			"settings":
 			{
-				"buffer_size": 9918,
+				"buffer_size": 10361,
 				"encoding": "UTF-8 with BOM",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "Sistema/Pedido.py",
+			"settings":
+			{
+				"buffer_size": 5061,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "error.txt",
+			"settings":
+			{
+				"buffer_size": 2173,
+				"encoding": "Western (Windows 1252)",
 				"line_ending": "Windows"
 			}
 		},
@@ -450,10 +463,10 @@
 			}
 		},
 		{
-			"file": "Sistema/CustomTK.py",
+			"file": "Datos/Platillos/TeruPlugin.py",
 			"settings":
 			{
-				"buffer_size": 6110,
+				"buffer_size": 1998,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
@@ -563,12 +576,20 @@
 				"SublimeREPL: Python"
 			],
 			[
-				"resource ",
-				"PackageResourceViewer: Open Resource"
+				"remove",
+				"Package Control: Remove Package"
 			],
 			[
 				"install",
 				"Package Control: Install Package"
+			],
+			[
+				"diffy",
+				"Diffy Compare"
+			],
+			[
+				"resource ",
+				"PackageResourceViewer: Open Resource"
 			],
 			[
 				"repl py",
@@ -621,10 +642,6 @@
 			[
 				"xml",
 				"Indent XML"
-			],
-			[
-				"remove",
-				"Package Control: Remove Package"
 			],
 			[
 				"insta",
@@ -717,23 +734,32 @@
 	"expanded_folders":
 	[
 		"/H/Documentos/Trabajo/TeruSistema",
-		"/H/Documentos/Trabajo/TeruSistema/Datos",
-		"/H/Documentos/Trabajo/TeruSistema/Datos/Platillos",
-		"/H/Documentos/Trabajo/TeruSistema/Sistema",
-		"/H/Documentos/Trabajo/TeruSistema/Sistema/__pycache__"
+		"/H/Documentos/Trabajo/TeruSistema/Sistema"
 	],
 	"file_history":
 	[
+		"/H/Documentos/Trabajo/TeruSistema/Lista Platillos.csv",
+		"/H/Documentos/Trabajo/TeruSistema/Sistema/CustomTK.py",
+		"/H/Documentos/Trabajo/TeruSistema/error.txt",
 		"/H/Documentos/Trabajo/UNIC/UNIC_Formatos/CreadorFormatos.pyw",
+		"/H/Documentos/Trabajo/TeruSistema/Sistema/__init__.py",
+		"/H/Documentos/Trabajo/TeruSistema/Sistema/CSVReader.py",
+		"/H/Documentos/Trabajo/TeruSistema/TeruGUI.pyw",
+		"/H/Documentos/Trabajo/TeruSistema/.gitignore",
+		"/H/Documentos/Trabajo/TeruSistema/Datos/Platillos/TeruPlugin.py",
+		"/H/Documentos/Trabajo/TeruSistema/Sistema/SistemaTeru.py",
+		"/H/Documentos/Trabajo/TeruSistema/Sistema/Pedido.py",
+		"/H/Documentos/Trabajo/TeruSistema/Datos/Platillos/Sushi.py",
+		"/H/Documentos/Trabajo/TeruSistema/Datos/Platillos/sushi.json",
+		"/H/Documentos/Trabajo/TeruSistema/Datos/Platillos/general.json",
+		"/H/Documentos/Trabajo/TeruSistema/Datos/Platillos/General.py",
+		"/H/Documentos/Trabajo/UNIC/UNIC_Formatos/libs/CustomTK.py",
+		"/H/Documentos/Trabajo/UNIC/UNIC_Formatos/libs/__init__.py",
+		"/H/Documentos/Trabajo/TeruSistema/Sistema/TeruPlugin.py",
 		"/H/Documentos/Trabajo/UNIC/UNIC_Formatos/Config/inscripcion.conf",
 		"/H/Documentos/Trabajo/TeruSistema/Sistema/__pycache__/plugins.py",
-		"/H/Documentos/Trabajo/TeruSistema/Sistema/__init__.py",
 		"/H/Documentos/Trabajo/TeruSistema/Datos/conf.json",
 		"/H/Documentos/Trabajo/TeruSistema/Sistema/tkUtils.py",
-		"/H/Documentos/Trabajo/TeruSistema/Datos/Platillos/general.json",
-		"/H/Documentos/Trabajo/TeruSistema/Sistema/CustomTK.py",
-		"/H/Documentos/Trabajo/TeruSistema/Sistema/SistemaTeru.py",
-		"/H/Documentos/Trabajo/UNIC/UNIC_Formatos/libs/CustomTK.py",
 		"/H/Documentos/Trabajo/UNIC/UNIC_Formatos/libs/Templates/InscripcionTemplate.py",
 		"/H/Documentos/Proyectos Unity/YoMeLoComo/Assets/Scripts/Spawners/PoolSizeException.cs",
 		"/H/Documentos/Proyectos Unity/YoMeLoComo/Assets/Editor/SpawnPoolEditor.cs",
@@ -749,8 +775,6 @@
 		"/H/Documentos/Proyectos Unity/YoMeLoComo/Assets/Resources/Shaders/SpriteShaders/SpritesVertexLit.shader",
 		"/H/Documentos/Proyectos Unity/YoMeLoComo/Assets/Resources/Shaders/CustomDefault.shader",
 		"/H/Documentos/Development/Unity/Shaders/DefaultResourcesExtra/Mobile/Mobile-Bumped.shader",
-		"/H/Documentos/Trabajo/TeruSistema/Sistema/Pedido.py",
-		"/H/Documentos/Trabajo/TeruSistema/TeruGUI.pyw",
 		"/H/Documentos/Trabajo/TeruSistema/Datos/clientesTeru.db",
 		"/H/Documentos/Trabajo/TeruSistema/Sistema/Platillos.py",
 		"/H/Documentos/Trabajo/UNIC/UNIC_Formatos/libs/CustomPyLatex.py",
@@ -758,7 +782,6 @@
 		"/H/Documentos/Trabajo/TeruSistema/SistemaTeru.py",
 		"/H/Documentos/Trabajo/TeruSistema/Sistema/Mesas.py",
 		"/H/Documentos/Trabajo/TeruSistema/Sistema/TeruDB.py",
-		"/H/Documentos/Trabajo/UNIC/UNIC_Formatos/libs/__init__.py",
 		"/H/Documentos/Trabajo/UNIC/Resources/preguntas.xml",
 		"/H/Documentos/EjemplosCodigo/Avah/app/src/main/java/com/avalerroux/fragments/ProfileFragment.java",
 		"/H/Documentos/EjemplosCodigo/Avah/app/src/main/java/com/avalerroux/models/ProfileModel.java",
@@ -842,16 +865,7 @@
 		"/H/Documentos/Diplomado/When Hell Freezes Over/gameStatus.json",
 		"/H/Documentos/Diplomado/Prácticas/Práctica8/Assets/Shaders/CustomPhongLighting.shader",
 		"/H/Documentos/Diplomado/Prácticas/Práctica8/Assets/Shaders/VertexAnimation.shader",
-		"/H/Documentos/Diplomado/Prácticas/Práctica8/Assets/Shaders/Alpha.shader",
-		"/H/Documentos/Diplomado/Prácticas/Práctica8/Assets/Shaders/ShowNormal.shader",
-		"/C/Users/Omar/AppData/Local/Temp/Rar$DRa0.261/DefaultResourcesExtra/UI/UI-Default.shader",
-		"/H/Documentos/Trabajo/Upa/propiedades/index.html",
-		"/H/Documentos/Diplomado/Prácticas/Práctica8/Assets/Shaders/PhongLighting.shader",
-		"/H/Documentos/Diplomado/Prácticas/Práctica8/Assets/Shaders/NightVision.shader",
-		"/H/Documentos/Diplomado/Prácticas/Práctica8/Assets/Shaders/GrayScale.shader",
-		"/H/Documentos/Diplomado/Prácticas/Práctica8/Assets/Shaders/FirstShader.shader",
-		"/H/Documentos/Squad_PruebaTecnica/Assets/New Material.mat",
-		"/H/Documentos/Diplomado/Prácticas/Práctica8/Assets/Shaders/BasicCGShader.shader"
+		"/H/Documentos/Diplomado/Prácticas/Práctica8/Assets/Shaders/Alpha.shader"
 	],
 	"find":
 	{
@@ -870,6 +884,16 @@
 		"case_sensitive": true,
 		"find_history":
 		[
+			"fd",
+			"classType",
+			"Inscripcion",
+			"CSVTable",
+			"84",
+			"onFrameConfigure",
+			"pack",
+			")\n",
+			"beginDB",
+			"escrib",
 			"actualizarListbox",
 			"error",
 			"abrirVentana",
@@ -987,17 +1011,7 @@
 			"Config",
 			"dia",
 			"repl_python_run",
-			"id: repl_python_run",
-			"repl_python_run",
-			"id: repl_python_run",
-			"c",
-			"r",
-			"\\",
-			":",
-			",",
-			":",
-			"mb",
-			"_formatos"
+			"id: repl_python_run"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -1005,6 +1019,7 @@
 		"regex": true,
 		"replace_history":
 		[
+			"returnType",
 			"self.nombre",
 			"self.precio",
 			"self.categoria",
@@ -1081,30 +1096,30 @@
 		"reverse": false,
 		"show_context": true,
 		"use_buffer2": true,
-		"whole_word": false,
+		"whole_word": true,
 		"wrap": false
 	},
 	"groups":
 	[
 		{
-			"selected": 4,
+			"selected": 2,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "Sistema/Pedido.py",
+					"file": "Sistema/tkUtils.py",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 4232,
+						"buffer_size": 506,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1346,
-								1346
+								257,
+								273
 							]
 						],
 						"settings":
@@ -1120,16 +1135,41 @@
 							},
 							"bh_regions":
 							[
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
 								"bh_c_define",
 								"bh_c_define_center",
 								"bh_c_define_open",
 								"bh_c_define_close",
 								"bh_c_define_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
 								"bh_angle",
 								"bh_angle_center",
 								"bh_angle_open",
@@ -1140,268 +1180,18 @@
 								"bh_round_open",
 								"bh_round_close",
 								"bh_round_content",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_double_quote_content",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_default_content",
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_regex_content",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_unmatched_content",
 								"bh_single_quote",
 								"bh_single_quote_center",
 								"bh_single_quote_open",
 								"bh_single_quote_close",
 								"bh_single_quote_content",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_tag_content"
-							],
-							"color_scheme": "Packages/User/Color Highlighter/themes/Monokai.tmTheme",
-							"syntax": "Packages/Python/Python.sublime-syntax",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 660.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 3,
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 1795,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1795,
-								1795
-							]
-						],
-						"settings":
-						{
-							"BracketHighlighterBusy": false,
-							"WordCount":
-							{
-								"changes": -1,
-								"modified": true,
-								"selection": true,
-								"status": -1,
-								"syntax": "python"
-							},
-							"auto_complete": true,
-							"auto_indent": false,
-							"bh_regions":
-							[
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
-								"bh_c_define",
-								"bh_c_define_center",
-								"bh_c_define_open",
-								"bh_c_define_close",
-								"bh_c_define_content",
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_angle_content",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_round_content",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_double_quote_content",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_default_content",
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_regex_content",
 								"bh_unmatched",
 								"bh_unmatched_center",
 								"bh_unmatched_open",
 								"bh_unmatched_close",
-								"bh_unmatched_content",
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close",
-								"bh_single_quote_content",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_tag_content"
+								"bh_unmatched_content"
 							],
-							"default_dir": "H:\\Documentos\\Trabajo\\TeruSistema",
-							"detect_indentation": false,
-							"gutter": false,
-							"history_arrows": true,
-							"indent_subsequent_lines": false,
-							"line_numbers": false,
-							"repl": true,
-							"repl_external_id": "py34",
-							"repl_id": "63411377744d4ca88f5d8feac009a8c3",
-							"repl_restart_args":
-							{
-								"cmd":
-								[
-									"py34",
-									"-i",
-									"-u",
-									"$file_basename"
-								],
-								"cwd": "$file_path",
-								"encoding": "utf8",
-								"extend_env":
-								{
-									"PYTHONIOENCODING": "utf-8"
-								},
-								"external_id": "py34",
-								"syntax": "Packages/Python/Python.tmLanguage",
-								"type": "subprocess"
-							},
-							"repl_sublime2": false,
-							"smart_indent": false,
-							"spell_check": false,
-							"syntax": "Packages/Python/Python.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 474.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 4,
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "Datos/Platillos/general.json",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 115,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								53,
-								53
-							]
-						],
-						"settings":
-						{
-							"BracketHighlighterBusy": false,
-							"WordCount":
-							{
-								"changes": -1,
-								"modified": true,
-								"selection": true,
-								"status": -1,
-								"syntax": "json"
-							},
-							"bh_regions":
-							[
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
-								"bh_c_define",
-								"bh_c_define_center",
-								"bh_c_define_open",
-								"bh_c_define_close",
-								"bh_c_define_content",
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_angle_content",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_round_content",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_double_quote_content",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_default_content",
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_regex_content",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_unmatched_content",
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close",
-								"bh_single_quote_content",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_tag_content"
-							],
-							"syntax": "Packages/JavaScript/JSON.sublime-syntax"
+							"syntax": "Packages/Python/Python.sublime-syntax"
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
@@ -1411,20 +1201,20 @@
 					"type": "text"
 				},
 				{
-					"buffer": 3,
+					"buffer": 1,
 					"file": "TeruGUI.pyw",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 27925,
+						"buffer_size": 29694,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								5210,
-								5217
+								29273,
+								29273
 							]
 						],
 						"settings":
@@ -1440,16 +1230,41 @@
 							},
 							"bh_regions":
 							[
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
 								"bh_c_define",
 								"bh_c_define_center",
 								"bh_c_define_open",
 								"bh_c_define_close",
 								"bh_c_define_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
 								"bh_angle",
 								"bh_angle_center",
 								"bh_angle_open",
@@ -1460,48 +1275,214 @@
 								"bh_round_open",
 								"bh_round_close",
 								"bh_round_content",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_double_quote_content",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_default_content",
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_regex_content",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_unmatched_content",
 								"bh_single_quote",
 								"bh_single_quote_center",
 								"bh_single_quote_open",
 								"bh_single_quote_close",
 								"bh_single_quote_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content"
+							],
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 15045.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "Sistema/CSVReader.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1106,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1106,
+								1106
+							]
+						],
+						"settings":
+						{
+							"BracketHighlighterBusy": false,
+							"WordCount":
+							{
+								"changes": -1,
+								"modified": true,
+								"selection": true,
+								"status": -1,
+								"syntax": "python"
+							},
+							"bh_regions":
+							[
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
 								"bh_square",
 								"bh_square_center",
 								"bh_square_open",
 								"bh_square_close",
 								"bh_square_content",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_tag_content"
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content"
 							],
-							"color_scheme": "Packages/User/Color Highlighter/themes/Monokai.tmTheme",
 							"syntax": "Packages/Python/Python.sublime-syntax",
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 2120.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "Sistema/SistemaTeru.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 10361,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								10104,
+								10104
+							]
+						],
+						"settings":
+						{
+							"BracketHighlighterBusy": false,
+							"WordCount":
+							{
+								"changes": -1,
+								"modified": true,
+								"selection": true,
+								"status": -1,
+								"syntax": "python"
+							},
+							"bh_regions":
+							[
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content"
+							],
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 4625.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 1,
@@ -1509,19 +1490,19 @@
 				},
 				{
 					"buffer": 4,
-					"file": "Sistema/TeruPlugin.py",
+					"file": "Sistema/Pedido.py",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 1716,
+						"buffer_size": 5061,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1679,
-								1679
+								4956,
+								4956
 							]
 						],
 						"settings":
@@ -1537,16 +1518,41 @@
 							},
 							"bh_regions":
 							[
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
 								"bh_c_define",
 								"bh_c_define_center",
 								"bh_c_define_open",
 								"bh_c_define_close",
 								"bh_c_define_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
 								"bh_angle",
 								"bh_angle_center",
 								"bh_angle_open",
@@ -1557,67 +1563,42 @@
 								"bh_round_open",
 								"bh_round_close",
 								"bh_round_content",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_double_quote_content",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_default_content",
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_regex_content",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_unmatched_content",
 								"bh_single_quote",
 								"bh_single_quote_center",
 								"bh_single_quote_open",
 								"bh_single_quote_close",
 								"bh_single_quote_content",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_tag_content"
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content"
 							],
 							"syntax": "Packages/Python/Python.sublime-syntax",
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 240.0,
+						"translation.y": 3249.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 0,
+					"stack_index": 3,
 					"type": "text"
 				},
 				{
 					"buffer": 5,
-					"file": "Sistema/SistemaTeru.py",
+					"file": "error.txt",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 9918,
+						"buffer_size": 2173,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								9855,
-								9855
+								0,
+								0
 							]
 						],
 						"settings":
@@ -1625,24 +1606,50 @@
 							"BracketHighlighterBusy": false,
 							"WordCount":
 							{
-								"changes": -1,
+								"changes": 2,
+								"count": 205,
 								"modified": true,
 								"selection": true,
 								"status": -1,
-								"syntax": "python"
+								"syntax": "plain text"
 							},
 							"bh_regions":
 							[
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
 								"bh_c_define",
 								"bh_c_define_center",
 								"bh_c_define_open",
 								"bh_c_define_close",
 								"bh_c_define_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
 								"bh_angle",
 								"bh_angle_center",
 								"bh_angle_open",
@@ -1653,50 +1660,25 @@
 								"bh_round_open",
 								"bh_round_close",
 								"bh_round_content",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_double_quote_content",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_default_content",
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_regex_content",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_unmatched_content",
 								"bh_single_quote",
 								"bh_single_quote_center",
 								"bh_single_quote_open",
 								"bh_single_quote_close",
 								"bh_single_quote_content",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_tag_content"
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content"
 							],
-							"syntax": "Packages/Python/Python.sublime-syntax",
+							"syntax": "Packages/Text/Plain text.tmLanguage",
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 4490.0,
+						"translation.y": 660.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 2,
+					"stack_index": 6,
 					"type": "text"
 				},
 				{
@@ -1712,8 +1694,8 @@
 						"selection":
 						[
 							[
-								3691,
-								3691
+								266,
+								268
 							]
 						],
 						"settings":
@@ -1729,16 +1711,41 @@
 							},
 							"bh_regions":
 							[
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
 								"bh_c_define",
 								"bh_c_define_center",
 								"bh_c_define_open",
 								"bh_c_define_close",
 								"bh_c_define_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
 								"bh_angle",
 								"bh_angle_center",
 								"bh_angle_open",
@@ -1749,143 +1756,110 @@
 								"bh_round_open",
 								"bh_round_close",
 								"bh_round_content",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_double_quote_content",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_default_content",
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_regex_content",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_unmatched_content",
 								"bh_single_quote",
 								"bh_single_quote_center",
 								"bh_single_quote_open",
 								"bh_single_quote_close",
 								"bh_single_quote_content",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_tag_content"
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content"
 							],
 							"syntax": "Packages/Python/Python.sublime-syntax",
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 1700.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 6,
+					"stack_index": 4,
 					"type": "text"
 				},
 				{
 					"buffer": 7,
-					"file": "Sistema/CustomTK.py",
+					"file": "Datos/Platillos/TeruPlugin.py",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 6110,
+						"buffer_size": 1998,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								2327,
-								2337
+								1688,
+								1688
 							]
 						],
 						"settings":
 						{
 							"BracketHighlighterBusy": false,
-							"WordCount":
-							{
-								"changes": -1,
-								"modified": true,
-								"selection": true,
-								"status": -1,
-								"syntax": "python"
-							},
 							"bh_regions":
 							[
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
-								"bh_c_define",
-								"bh_c_define_center",
-								"bh_c_define_open",
-								"bh_c_define_close",
-								"bh_c_define_content",
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_angle_content",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_round_content",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_double_quote_content",
 								"bh_default",
 								"bh_default_center",
 								"bh_default_open",
 								"bh_default_close",
 								"bh_default_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
 								"bh_regex",
 								"bh_regex_center",
 								"bh_regex_open",
 								"bh_regex_close",
 								"bh_regex_content",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_unmatched_content",
 								"bh_single_quote",
 								"bh_single_quote_center",
 								"bh_single_quote_open",
 								"bh_single_quote_close",
 								"bh_single_quote_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
 								"bh_square",
 								"bh_square_center",
 								"bh_square_open",
 								"bh_square_close",
 								"bh_square_content",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_tag_content"
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content"
 							],
 							"syntax": "Packages/Python/Python.sublime-syntax",
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 480.0,
+						"translation.y": 269.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 7,

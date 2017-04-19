@@ -1,0 +1,55 @@
+Platillo,Precio,Categoría,Plugin
+Takoyaki,40,japonesa,General
+Salchiyaki,40,japonesa,General
+Ramen,50,japonesa,General
+Miso,30,japonesa,General
+Okono,65,japonesa,General
+Onigiris 1 ingrediente,25,japonesa,General
+Onigiris 2 ingredientes,30,japonesa,General
+California roll,55,sushi,General
+Midori roll,40,sushi,General
+Mango roll,60,sushi,General
+Masago roll,65,sushi,General
+Queso roll,55,sushi,General
+Aguacate roll,55,sushi,General
+Panko roll,70,sushi,General
+Oshi teru,55,sushi,General
+Oshi Frutas,40,sushi,General
+Gohan,30,japonesa,General
+Gohan especial,45,japonesa,General
+Gohan supremo,50,japonesa,General
+Yakimeshi,40,japonesa,General
+Yakimeshi especial,45,japonesa,General
+Yakimeshi supremo,50,japonesa,General
+Pachiri,50,waffle,General
+Kyu,50,waffle,General
+Sara Sara,50,waffle,General
+Zee haa,50,waffle,General
+Nikkori,55,waffle,General
+Zuzu,55,waffle,General
+Uchu,55,waffle,General
+Teru,55,waffle,General
+Sawa,55,waffle,General
+Cutz,60,waffle,General
+Paki,60,waffle,General
+Espresso,20,Bebida,General
+Americano,20,Bebida,General
+Capuccino,30,Bebida,General
+Mokaccino,35,Bebida,General
+Matcha Latte,40,Bebida,General
+Chai Latte,40,Bebida,General
+Calpis Natural,30,Bebida,General
+Calpis Sabor,40,Bebida,General
+Té,30,Bebida,General
+Promo de té,40,Bebida,General
+Malteada,45,Bebida,General
+Flotante,35,Bebida,General
+Sundae,40,Bebida,General
+Sundae Oreo,45,Bebida,General
+Smoothie,50,Bebida,General
+Frappe,45,Bebida,General
+ingrediente extra,10,Bebida,General
+Pops lychee,10,Bebida,General
+Refresco light,10,Bebida,General
+Refresco ,20,Bebida,General
+Agua,10,Bebida,General

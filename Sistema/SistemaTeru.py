@@ -6,6 +6,7 @@ import importlib
 from Sistema.Pedido import *
 from Sistema.Comanda import *
 from Sistema.Clientes import *
+from Sistema.CSVReader import *
 
 class MainSystem():
 	def __init__(self):
@@ -254,6 +255,19 @@ class MainSystem():
 			return None
 		plugin = getattr(classmod, pluginName)
 		return plugin()
+
+	def cargarDesdeCSV(self, filePath):
+		self.platillosDB.borrarTodo()
+		try:
+			table = CSVTable(filePath, ["Platillo", "Precio", "Categoría", "Plugin"], platilloCsvSerializer)
+			for platillo in table:
+				self.platillosDB.insertar(platillo)
+			return True
+		except Exception as err: 
+			self.escribirError(err)
+			print(err)
+			self.platillosDB.deshacer()
+			return False
 
 
 if __name__ == '__main__':

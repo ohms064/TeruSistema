@@ -29,3 +29,48 @@ Error 14-4-2017
 	Mensaje: No module named 'copy.copy'; 'copy' is not a package
 Error 14-4-2017
 	invalid literal for int() with base 10: '150.0'
+Error 15-4-2017
+	SistemaTeru 71, nuevaComanda. Error al crear comanda.
+	Mensaje:invalid literal for int() with base 10: ''
+Error 15-4-2017
+	SistemaTeru 71, nuevaComanda. Error al crear comanda.
+	Mensaje:could not convert string to float: 
+Error 15-4-2017
+	SistemaTeru 71, nuevaComanda. Error al crear comanda.
+	Mensaje:could not convert string to float: 'fa'
+Error 16-4-2017
+	'utf-8' codec can't decode byte 0xed in position 23: invalid continuation byte
+Error 16-4-2017
+	list.remove(x): x not in list
+Error 16-4-2017
+	'utf-8' codec can't decode byte 0xe9 in position 1265: invalid continuation byte
+Error 16-4-2017
+	'utf-8' codec can't decode byte 0xe9 in position 1265: invalid continuation byte
+Error 18-4-2017
+	list.remove(x): x not in list
+Error 18-4-2017
+	list.remove(x): x not in list
+Error 18-4-2017
+	'utf-8' codec can't decode byte 0xe9 in position 1265: invalid continuation byte
+Error 18-4-2017
+	list.remove(x): x not in list
+Error 18-4-2017
+	list.remove(x): x not in list
+Error 18-4-2017
+	list.remove(x): x not in list
+Error 18-4-2017
+	'str' object has no attribute 'remove'
+Error 18-4-2017
+	name 'filename' is not defined
+Error 18-4-2017
+	name 'filename' is not defined
+Error 18-4-2017
+	name 'filename' is not defined
+Error 18-4-2017
+	name 'returnType' is not defined
+Error 18-4-2017
+	'Plugin'
+Error 18-4-2017
+	'Plugin'
+Error 18-4-2017
+	'Plugin'

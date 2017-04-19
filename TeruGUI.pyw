@@ -2,6 +2,8 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import font
 from tkinter import messagebox as mb
+from tkinter import filedialog as fd
+from Sistema.tkUtils import validate, checkVar
 from Sistema.SistemaTeru import *
 from Sistema.tkUtils import *
 from Sistema.CustomTK import UserForm
@@ -84,17 +86,19 @@ class MesaGUI(tk.Frame):
 		self.tarjeta = tk.IntVar()
 		self.idCliente = tk.StringVar()
 
+		vcmd = (self.master.register(validate ),'%d', '%i', '%P', '%s', '%S', '%v', '%V', '%W')
+
 		tk.Label(self.master, text="Clientes:").place(x=50, y=10)
-		tk.Entry(self.master, textvariable=self.numClientes).place(x=110, y=10)
+		tk.Entry(self.master, textvariable=self.numClientes, validatecommand=vcmd, validate = 'key').place(x=110, y=10)
 
 		tk.Label(self.master, text="Propina:").place(x=50, y=30)
-		tk.Entry(self.master, textvariable=self.propina).place(x=110, y=30)
+		tk.Entry(self.master, textvariable=self.propina, validatecommand=vcmd, validate = 'key').place(x=110, y=30)
 
 		tk.Label(self.master, text="Consumo:").place(x=40, y=50)
-		tk.Entry(self.master, textvariable=self.total).place(x=110, y=50)
+		tk.Entry(self.master, textvariable=self.total, validatecommand=vcmd, validate = 'key').place(x=110, y=50)
 
 		tk.Label(self.master, text="Dinero recibido:").place(x=10, y=70)
-		tk.Entry(self.master, textvariable=self.dinRecibido).place(x=110, y=70)
+		tk.Entry(self.master, textvariable=self.dinRecibido, validatecommand=vcmd, validate = 'key').place(x=110, y=70)
 		tk.Checkbutton(self.master, text="Tarjeta:", variable=self.tarjeta).place(x=250, y=70)
 
 		tk.Label(self.master, text="ID Cliente:").place(x=40, y=90)
@@ -166,12 +170,19 @@ class MesaGUI(tk.Frame):
 		Se confirma que la comanda sea correcta.
 		Se existe algún error se abrirá una ventana indicando que hay un error.(Cualquier error)
 		"""
-		if self.propina.get() == "":
-			self.propina.set("0")
 		self.master.withdraw()
+		checkVar(self.numClientes, "0")
+		checkVar(self.dinRecibido, "0")
+		checkVar(self.propina, "0")
+		if checkVar(self.total, "0"):
+			mb.showinfo("Total", "No se ha escrito el consumo")
+			self.show()
+			return
+
 		comanda = self.sistema.nuevaComanda(self.numClientes.get(), self.total.get(), self.dinRecibido.get(), self.propina.get(), bool(self.tarjeta.get()), self.idCliente.get())
 		if self.sistema:
-			mb.showinfo("¡Error!", "Se ha producido un error. TeruGUI 172 confirmarComanda.")
+			mb.showinfo("¡Error!", "Se ha producido un error. TeruGUI 172 confirmarComanda.\nRevisar que los datos sean correctos.")
+			self.show()
 		else:
 			if mb.askokcancel("Comanda", comanda.cobro()):
 				self.aceptarComanda(comanda)
@@ -637,7 +648,8 @@ class PlatillosGUI(tk.Frame):
 
 		tk.Button(self.master, text="Insertar", command=self.insertar).place(x=220, y=320)
 		tk.Button(self.master, text="Actualizar", command=self.actualizar).place(x=152, y=320)
-		tk.Button(self.master, text="Borrar", command=self.borrar).place(x=105, y=320) 
+		tk.Button(self.master, text="Borrar", command=self.borrar).place(x=105, y=320)
+		tk.Button(self.master, text="CSV", command=self.fromCSV).place(x=270, y=320)
 
 	def actualizarCategorias(self):
 		self.sistema.conf["Categorias Platillo"].append(self.nuevaCategoria.get())
@@ -766,9 +778,24 @@ class PlatillosGUI(tk.Frame):
 			updateValue["plugin"] = self.plugin.get()
 
 		if self.sistema.platillosDB.actualizar(self.nuevoId.get(), **updateValue):
+			self.sistema.platillosDB.confirmar()
 			self.clearListbox()
 			self.populateListbox()
 			self.cls()
+
+	def fromCSV(self):
+		filePath = fd.askopenfilename(parent=self.master)
+		if filePath:
+			if mb.askokcancel(title="Alerta", message="Se borrarán todos los datos de los platillos existentes. ¿Está seguro de continuar?"):
+				if self.sistema.cargarDesdeCSV(filePath):
+					self.sistema.platillosDB.confirmar()
+					self.clearListbox()
+					self.populateListbox()
+					self.cls()
+					mb.showinfo(title="Éxito", message="La operación se realizó exitosamente")
+				else:
+					mb.showwarning(title="Error", message="No se pudo leer el archivo, se restauraron los datos anteriores.")
+
 
 
 if __name__ == '__main__':

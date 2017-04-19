@@ -90,7 +90,7 @@ class Platillo(object):
 		self.pluginName = pluginName
 
 	def __str__(self):
-		return "{:3d} {:50s} ${:5.2f}    {:10s}".format(self.idPlatillo, self.nombre, self.precio, self.categoria)
+		return "{:3d} {:<50} ${:5.2f}    {:10s}".format(self.idPlatillo, self.nombre, self.precio, self.categoria)
 
 class PlatilloDB:
 
@@ -132,6 +132,9 @@ class PlatilloDB:
 	def borrar(self, identificador):
 		self.c.execute("DELETE FROM platillosTeru WHERE id={}".format(identificador))
 
+	def borrarTodo(self):
+		self.c.execute("DELETE FROM platillosTeru")
+
 	def buscarID(self,identificador):
 		"""
 		Busca en la tabla por ID y retorna el primer valor encontrado
@@ -145,6 +148,9 @@ class PlatilloDB:
 
 	def confirmar(self):
 		self.conexion.commit()
+
+	def deshacer(self):
+		self.conexion.rollback()
 
 	def buscarTodos(self):
 		"""
@@ -179,3 +185,5 @@ class PlatilloDB:
 				pass
 		return platillos
 
+def platilloCsvSerializer(values):
+	return Platillo(values["Platillo"], values["Precio"], values["Categoría"], pluginName=values["Plugin"])

@@ -38,6 +38,11 @@ class TeruPlugin:
 		"""
 		platilloCopy = copy.copy(platillo)
 		platilloCopy.nombre += " " + results["Extras"]
+		print(results["Costo Extra"])
+		try:
+			platilloCopy.precio += int(results["Costo Extra"])
+		except:
+			pass
 		return pedido.agregar(platilloCopy, int(results["Cantidad"]), byString=True)
 
 	def createWindowWait(self, master, padre, wait=True):
@@ -46,6 +51,7 @@ class TeruPlugin:
 		"""
 		done = BooleanVar()
 		window = UserForm(master, done=done, padre=padre, keyLabels=self.configuration["keyLabels"], choices=self.configuration["choices"])
+		self.size+="+{}+{}".format(padre.winfo_rootx(), padre.winfo_rooty())
 
 		master.geometry(self.size)
 		if wait:
