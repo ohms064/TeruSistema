@@ -1,13 +1,19 @@
 import sqlite3
 import datetime
 import json
+from Sistema.ObjectDB import *
 
 class Pedido(object):
 	"""
 	Clase usada durante la estancia del cliente para que se vayan agregando platillos a su orden
 	"""
-	def __init__(self):
-		self.orden = list()
+	def __init__(self, fecha, orden=None, idCliente=-1):
+		if orden is None:
+			self.orden = list()
+		else:
+			self.orden = orden
+		self.idCliente = idCliente
+		self.fecha = fecha
 
 	def obtenerString(self, index):
 		"""
@@ -78,85 +84,47 @@ class Pedido(object):
 			out += str(s[0]) + " " + str(s[1]) + "\n"
 		return out
 
-class Platillo(object):
-	"""
-	Clase ocupada para almacenar información de los platillos, el orden de los argumentos es importante.
-	"""
-	def __init__(self, nombre, precio, categoria, idPlatillo=-1, pluginName="general.json"):
-		self.nombre = nombre
-		self.precio = precio
-		self.categoria = categoria.lower()
-		self.idPlatillo = idPlatillo
-		self.pluginName = pluginName
+	def withCliente(self, idCliente):
+		self.idCliente = idCliente
 
-	def __str__(self):
-		return "{:3d} {:<50} ${:5.2f}    {:10s}".format(self.idPlatillo, self.nombre, self.precio, self.categoria)
-
-class PlatilloDB:
-
+class PedidoDB(ObjectDB):
 	def __init__(self, conexion):
-		self.conexion = conexion
-		self.c = self.conexion.cursor()
+		super().__init__(conexion)
 
-		self.c.execute("""CREATE TABLE IF NOT EXISTS platillosTeru 
-			( nombre VARCHAR, 
-			precio REAL, 
-			categoria VARCHAR,
+		self.c.execute("""CREATE TABLE IF NOT EXISTS orden_platillo_Teru
+			(
 			id INTEGER PRIMARY KEY,
-			plugin VARCHAR)""")
+			idOrden INTEGER,
+			idPlatillo INTEGER,
+			cantidad INTEGER,
+			extras REAL,
+			FOREIGN KEY(idOrden) REFERENCES ordenTeru(id),
+			FOREIGN KEY(idPlatillo) REFERENCES platilloTeru(id)
+			)""")
 
-	def insertar(self, platillo):
-		sql = \
-		"""INSERT INTO platillosTeru(nombre, precio, categoria, plugin)
-		VALUES('{}', {}, '{}', '{}')""".format(platillo.nombre, platillo.precio, platillo.categoria, platillo.pluginName)
-		self.c.execute(sql)
+		self.c.execute("""CREATE TABLE IF NOT EXISTS ordenTeru 
+			(
+			id INTEGER PRIMARY KEY,
+			idCliente INTEGER,
+			fecha DATE,
+			FOREIGN KEY(idCliente) REFERENCES clienteTeru(id)
+			)""")
 
-	def actualizar(self, identificador, nombre="", precio="", categoria="", plugin=""):
-		if nombre == "" and precio == "" and categoria == "" and plugin == "":
-			return False
-		sql = "UPDATE platillosTeru SET "
-		if nombre:
-			sql += "nombre = '{}', ".format(nombre)
-		if precio:
-			sql += "precio = '{}', ".format(precio)
-		if categoria:
-			sql += "categoria = '{}', ".format(categoria)
-		if plugin:
-			sql += "plugin = '{}', ".format(plugin)
-
-		sql = sql[0:-2] + " WHERE id={}".format(identificador)
+	def insertarPedido(self, pedido):
+		if pedido.idCliente == -1:
+			sql = " INSERT INTO ordenTeru(fecha) VALUES (?)"
+			self.c.execute(sql, (pedido.fecha, ))
+		else:
+			sql = " INSERT INTO ordenTeru(idCliente, fecha) VALUES (?, ?)"
+			self.c.execute(sql, (pedido.idCliente, pedido.fecha, ))
 		print(sql)
-		self.c.execute(sql)
-		return True
-
-	def borrar(self, identificador):
-		self.c.execute("DELETE FROM platillosTeru WHERE id={}".format(identificador))
-
-	def borrarTodo(self):
-		self.c.execute("DELETE FROM platillosTeru")
-
-	def buscarID(self,identificador):
-		"""
-		Busca en la tabla por ID y retorna el primer valor encontrado
-		"""
-		sql = self.c.execute("SELECT * FROM platillosTeru WHERE id='{}'".format(identificador)).fetchone()
-		try:
-			platillo = Platillo(*sql)
-		except TypeError:
-			platillo = Platillo("¡ERROR! No se encontró información", "", "", "¡ERROR! No se encontró información")
-		return platillo
-
-	def confirmar(self):
-		self.conexion.commit()
-
-	def deshacer(self):
-		self.conexion.rollback()
+		lastId = self.c.lastrowid
+		for platillo in pedido.orden:
+			sql = " INSERT INTO orden_platillo_Teru(idOrden, idPlatillo, cantidad, extras) VALUES ({}, {}, {}, {})".format(lastId, platillo[0].idPlatillo, platillo[1], platillo[0].extra)
+			self.c.execute(sql)
 
 	def buscarTodos(self):
-		"""
-		Crea una lista con todos los platillos guardados en la base de datos.
-		"""
-		query = self.c.execute("SELECT * FROM platillosTeru")
+		query = self.c.execute("SELECT * FROM platilloTeru")
 		output = list()
 		for result in query:
 			try:
@@ -164,26 +132,3 @@ class PlatilloDB:
 			except:
 				pass
 		return output
-	def __len__(self):
-		return self.c.lastrowid
-
-	def getCategories(self):
-		sql = self.c.execute("SELECT DISTINCT categoria FROM platillosTeru ORDER BY categoria")
-		categories = list()
-		for category in sql:
-			categories.append(category[0])
-		return categories
-
-	def buscarCategoria(self, categoria):
-		sql = self.c.execute("SELECT * FROM platillosTeru WHERE categoria LIKE '{}'".format(categoria)) 
-		#TODO: Like es más lento, buscar porque no funciona =
-		platillos = list()
-		for s in sql:
-			try:
-				platillos.append( Platillo(*s))
-			except TypeError:
-				pass
-		return platillos
-
-def platilloCsvSerializer(values):
-	return Platillo(values["Platillo"], values["Precio"], values["Categoría"], pluginName=values["Plugin"])

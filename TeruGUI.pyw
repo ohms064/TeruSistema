@@ -26,7 +26,7 @@ class MesaGUI(tk.Frame):
 		self.pack()
 		self.sistema = sistema
 		self.master.protocol("WM_DELETE_WINDOW", self.onCloseWindow)
-		self.pedido = Pedido()
+		self.pedido = self.sistema.nuevoPedido()
 		self.createWidgets()
 		self.createMenu()
 
@@ -52,15 +52,15 @@ class MesaGUI(tk.Frame):
 			else:
 				self.agregarAlListbox(pedido.obtenerString(-1))#Obtener el string del platillo que acabamos de agregar
 		def completarPlatillo():
-			plugin = self.sistema.loadPlugin(platillo.pluginName)
+			plugin = self.sistema.loadPlugin(platillo)
 
 			if plugin is None:
 				#Para cualquier error se procederá normalmente
 				print("Plugin no encontrado")
+				self.sistema.escribirError("No se encontró el plugin: {} del platillo {}", platillo.pluginName, str(platillo))
 				agregar()
 				return
 
-			plugin.withPlatillo(platillo)
 			results = plugin.createWindowWait(tk.Toplevel(self), self.master)
 			if "$Cancel$" in results:
 				return
@@ -89,16 +89,16 @@ class MesaGUI(tk.Frame):
 		vcmd = (self.master.register(validate ),'%d', '%i', '%P', '%s', '%S', '%v', '%V', '%W')
 
 		tk.Label(self.master, text="Clientes:").place(x=50, y=10)
-		tk.Entry(self.master, textvariable=self.numClientes, validatecommand=vcmd, validate = 'key').place(x=110, y=10)
+		tk.Entry(self.master, textvariable=self.numClientes).place(x=110, y=10)
 
 		tk.Label(self.master, text="Propina:").place(x=50, y=30)
-		tk.Entry(self.master, textvariable=self.propina, validatecommand=vcmd, validate = 'key').place(x=110, y=30)
+		tk.Entry(self.master, textvariable=self.propina).place(x=110, y=30)
 
 		tk.Label(self.master, text="Consumo:").place(x=40, y=50)
-		tk.Entry(self.master, textvariable=self.total, validatecommand=vcmd, validate = 'key').place(x=110, y=50)
+		tk.Entry(self.master, textvariable=self.total).place(x=110, y=50)
 
 		tk.Label(self.master, text="Dinero recibido:").place(x=10, y=70)
-		tk.Entry(self.master, textvariable=self.dinRecibido, validatecommand=vcmd, validate = 'key').place(x=110, y=70)
+		tk.Entry(self.master, textvariable=self.dinRecibido).place(x=110, y=70)
 		tk.Checkbutton(self.master, text="Tarjeta:", variable=self.tarjeta).place(x=250, y=70)
 
 		tk.Label(self.master, text="ID Cliente:").place(x=40, y=90)
@@ -179,7 +179,7 @@ class MesaGUI(tk.Frame):
 			self.show()
 			return
 
-		comanda = self.sistema.nuevaComanda(self.numClientes.get(), self.total.get(), self.dinRecibido.get(), self.propina.get(), bool(self.tarjeta.get()), self.idCliente.get())
+		comanda = self.sistema.nuevaComanda(self.numClientes.get(), self.total.get(), self.dinRecibido.get(), self.propina.get(), bool(self.tarjeta.get()), self.idCliente.get(), self.pedido)
 		if self.sistema:
 			mb.showinfo("¡Error!", "Se ha producido un error. TeruGUI 172 confirmarComanda.\nRevisar que los datos sean correctos.")
 			self.show()
@@ -197,15 +197,6 @@ class MesaGUI(tk.Frame):
 		self.dinRecibido.set("")
 		self.propina.set("")
 		self.total.set("")
-	
-
-	def aceptarConsumo(self):
-		"""
-		Se confirma el consumo.
-		"""
-		self.consWindow.destroy()
-		self.master.destroy()
-		self.clearConsumo()
 
 	def aceptarComanda(self, comanda):
 		"""

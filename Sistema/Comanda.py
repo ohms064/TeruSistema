@@ -1,11 +1,12 @@
 class Comanda(object):
-	def __init__(self, numClientes, total, dineroRecibido, propina, tarjeta=False, cliente=""):
+	def __init__(self, numClientes, total, dineroRecibido, propina, tarjeta=False, cliente="", detalles=None):
 		self.numClientes = numClientes
 		self.total = total
 		self.propina = propina
 		self.dineroRecibido = dineroRecibido
 		self.tarjeta = tarjeta
 		self.cliente = cliente
+		self.detalles = detalles
 
 	def agregarPropina(self, propina=0):
 		self.propina += propina

@@ -1,5 +1,6 @@
 import sqlite3
 import datetime
+from Sistema.ObjectDB import *
 class ClienteTeru:
 	def __init__(self, sql):
 		"""
@@ -36,12 +37,11 @@ class ClienteTeru:
 	def __bool__(self):
 		return self.id != "¡ERROR! No se encontró información"
 
-class ClienteDB:
+class ClienteDB(ObjectDB):
 	def __init__(self, conexion):
-		self.conexion = conexion
-		self.c = self.conexion.cursor()
+		super().__init__(conexion)
 		
-		self.c.execute("""CREATE TABLE IF NOT EXISTS clientesTeru 
+		self.c.execute("""CREATE TABLE IF NOT EXISTS clienteTeru 
 			( id INTEGER PRIMARY KEY, 
 			nombre VARCHAR, 
 			consumo REAL, 
@@ -60,7 +60,7 @@ class ClienteDB:
 			fechaIngreso = str(fecha.day) + "-" + str(fecha.month) + "-" + str(fecha.year)
 
 		sql = \
-		"""INSERT INTO clientesTeru(nombre, consumo, visitas, ultimaVisita, correo, nick, fechaIngreso) 
+		"""INSERT INTO clienteTeru(nombre, consumo, visitas, ultimaVisita, correo, nick, fechaIngreso) 
 		VALUES ('{}', {}, {}, '{}', '{}', '{}', '{}')""".format(nombre, consumo, visitas, ultimaVisita, correo, nick, fechaIngreso)
 		self.c.execute(sql)
 
@@ -70,7 +70,7 @@ class ClienteDB:
 		"""	
 		if nombre == "" and nick == "" and correo == "":#Seguramente esto se puede mejorar usando **args
 			return
-		sql = "UPDATE clientesTeru SET "
+		sql = "UPDATE clienteTeru SET "
 		if nombre != "":
 			sql += "nombre = '{}', ".format(nombre)
 		if nick != "":
@@ -81,83 +81,65 @@ class ClienteDB:
 		self.c.execute(sql)
 
 	def borrar(self, identificador):
-		self.c.execute("DELETE FROM clientesTeru WHERE id={}".format(identificador))
-
-	def confirmar(self):
-		self.conexion.commit()
-
-	def rewind(self):
-		self.c.rollback()
+		self.c.execute("DELETE FROM clienteTeru WHERE id={}".format(identificador))
 
 	def buscarID(self,ide):
 		"""
 		Busca en la tabla por ID y retorna el primer valor encontrado
 		"""
-		return ClienteTeru(self.c.execute("SELECT * FROM clientesTeru WHERE id='{}'".format(ide)).fetchone())
+		return ClienteTeru(self.c.execute("SELECT * FROM clienteTeru WHERE id='{}'".format(ide)).fetchone())
 
 	def buscarNombre(self, nombre):
 		"""
 		Busca en la tabla por nombre y retorna el primer valor encontrado
 		"""
-		return ClienteTeru(self.c.execute("SELECT * FROM clientesTeru WHERE nombre='{}'".format(nombre)).fetchone())
+		return ClienteTeru(self.c.execute("SELECT * FROM clienteTeru WHERE nombre='{}'".format(nombre)).fetchone())
 
 	def buscarNick(self, nick):
 		"""
 		Busca en la tabla por nick y retorna el primer valor encontrado
 		"""
-		return ClienteTeru(self.c.execute("SELECT * FROM clientesTeru WHERE nick='{}'".format(nick)).fetchone())
+		return ClienteTeru(self.c.execute("SELECT * FROM clienteTeru WHERE nick='{}'".format(nick)).fetchone())
 
 	def resetVisitas(self):
 		"""
 		Resetea a todos los clientes su valor de visitas a 0. Esto para que se haga cada mes.
 		"""
-		self.c.execute(" UPDATE clientesTeru SET visitas = 0")
+		self.c.execute(" UPDATE clienteTeru SET visitas = 0")
 
 	def resetConsumo(self):
 		"""
 		Resetea a todos los clientes su valor de visitas a 0. Esto para que se haga cada mes.
 		"""
-		self.c.execute(" UPDATE clientesTeru SET consumo = 0")
+		self.c.execute(" UPDATE clienteTeru SET consumo = 0")
 
 	def incVisitas(self, identificador):
 		"""
 		Se incrementa el valor de las visitas por 1.
 		"""
-		self.c.execute(" UPDATE clientesTeru SET visitas = visitas + 1 WHERE id={}".format(identificador))
+		self.c.execute(" UPDATE clienteTeru SET visitas = visitas + 1 WHERE id={}".format(identificador))
 
 	def incConsumo(self, identificador, consumo):
-		self.c.execute(" UPDATE clientesTeru SET consumo = consumo + {} WHERE id={}".format(consumo, identificador))	
+		self.c.execute(" UPDATE clienteTeru SET consumo = consumo + {} WHERE id={}".format(consumo, identificador))	
 
 	def actualizarUltimaVisita(self, identificador, fecha):
-		self.c.execute(" UPDATE clientesTeru SET ultimaVisita = {} WHERE id={}".format(fecha, identificador))			
+		self.c.execute(" UPDATE clienteTeru SET ultimaVisita = {} WHERE id={}".format(fecha, identificador))			
 
 	def buscarCorreo(self, correo):
 		"""
 		Busca en la tabla por correo y retorna el primer valor encontrado
 		"""
-		return ClienteTeru(self.c.execute("SELECT * FROM clientesTeru WHERE correo='{}'".format(correo)).fetchone())
-
-	def cerrar(self):
-		self.conexion.close()
+		return ClienteTeru(self.c.execute("SELECT * FROM clienteTeru WHERE correo='{}'".format(correo)).fetchone())
 
 	def drop(self):
-		self.c.execute('drop table clientesTeru')
-
-	def __len__(self):
-		return self.c.lastrowid
-
-	def __enter__(self):
-		return self
-
-	def __exit__(self, exc_type, exc_value, traceback):
-		self.cerrar()
+		self.c.execute('drop table clienteTeru')
 
 	def __str__(self):
 		s = ""
-		for query in self.c.execute("SELECT * FROM clientesTeru"):
+		for query in self.c.execute("SELECT * FROM clienteTeru"):
 			s += str(ClienteTeru(query)) + "\n"
 		return s
 
 	def __iter__(self):
-		for query in self.c.execute("SELECT * FROM clientesTeru "):
+		for query in self.c.execute("SELECT * FROM clienteTeru "):
 			yield ClienteTeru(query)

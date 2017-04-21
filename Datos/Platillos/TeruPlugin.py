@@ -40,7 +40,8 @@ class TeruPlugin:
 		platilloCopy.nombre += " " + results["Extras"]
 		print(results["Costo Extra"])
 		try:
-			platilloCopy.precio += int(results["Costo Extra"])
+			platilloCopy.extra = int(results["Costo Extra"])
+			platilloCopy.precio += platilloCopy.extra
 		except:
 			pass
 		return pedido.agregar(platilloCopy, int(results["Cantidad"]), byString=True)
@@ -64,3 +65,10 @@ class TeruPlugin:
 		Aquí se puede usar la información para llenar datos de la ventana
 		"""
 		self.platillo = platillo
+
+	def fromSistema(self, sistema):
+		"""
+		Método donde se recibe el sistema de teru teru, 
+		aquí se deberían obtener los datos necesarios para usarse en updatePedido o al crear la ventana
+		"""
+		pass

@@ -4,6 +4,7 @@ import json
 import os
 import importlib
 from Sistema.Pedido import *
+from Sistema.Platillo import *
 from Sistema.Comanda import *
 from Sistema.Clientes import *
 from Sistema.CSVReader import *
@@ -16,8 +17,6 @@ class MainSystem():
 		self.reporteCadena = ""
 		self.dineroCaja = ""
 		os.makedirs("Datos", exist_ok=True)
-
-		self.beginDB()
 
 		with open("Comandas\\" + self.dia + ".csv", "a+") as arch:
 			if (arch.tell() == 0):
@@ -34,13 +33,14 @@ class MainSystem():
 					
 		except (FileNotFoundError, ValueError) as err:
 			with open("Datos\\conf.json", "w") as archConf:
-				self.conf = {"fecha" : self.dia, "promoVisitas" : 5, "visitas" : 0, "firstRun": True, "Categorias Platillo": []}
+				self.conf = {"fecha" : self.dia, "promoVisitas" : 5, "visitas" : 0, "firstRun": True, "Categorias Platillo": [], "Database":"Datos\\Teru.db"}
 				json.dump(self.conf, archConf, indent=3)
 		except Exception as err:
 			self.escribirError(err)
-			self.conf = {"fecha" : self.dia, "promoVisitas" : 5, "visitas" : 0, "firstRun": True, "Categorias Platillo": []}
+			self.conf = {"fecha" : self.dia, "promoVisitas" : 5, "visitas" : 0, "firstRun": True, "Categorias Platillo": [], "Database":"Datos\\Teru.db"}
 		finally:
 			print(self.conf)
+		self.beginDB()
 
 	def escribirError(self, err):
 		print("Error! Escribiendo reporte")
@@ -49,7 +49,7 @@ class MainSystem():
 			archError.write("\nError {}\n\t".format(self.dia))
 			archError.write(str(err))
 
-	def nuevaComanda(self, numClientes, total, dineroRecibido, propina=0, tarjeta=False, idCliente=""):
+	def nuevaComanda(self, numClientes, total, dineroRecibido, propina=0, tarjeta=False, idCliente="", pedido=None):
 		"""
 		Se crea una nueva transacción.
 		In:
@@ -65,7 +65,7 @@ class MainSystem():
 			if tarjeta:
 				dineroRecibido="0"
 			cliente = self.clientesDB.buscarID(idCliente)
-			comanda = Comanda(int(numClientes), float(total), float(dineroRecibido), float(propina), tarjeta, cliente)
+			comanda = Comanda(int(numClientes), float(total), float(dineroRecibido), float(propina), tarjeta, cliente, pedido)
 			return comanda
 
 		except ValueError as err:
@@ -73,14 +73,18 @@ class MainSystem():
 			self.error = True
 			return None
 
+	def nuevoPedido(self):
+		return Pedido(datetime.datetime.now())
+
 	def llamarCliente(self, id):
 		pass
 
 	def beginDB(self):
-		self.conexion = sqlite3.connect('Datos\\Teru3.db')
+		self.conexion = sqlite3.connect(self.conf["Database"], detect_types=sqlite3.PARSE_DECLTYPES|sqlite3.PARSE_COLNAMES)
 		self.conexion.execute("PRAGMA journal_mode=WAL")
 		self.clientesDB = ClienteDB(self.conexion)
 		self.platillosDB = PlatilloDB(self.conexion)
+		self.pedidosDB = PedidoDB(self.conexion)
 
 	def nuevaPropina(self, propina):
 		"""
@@ -104,7 +108,10 @@ class MainSystem():
 			self.clientesDB.incVisitas(comanda.cliente.id)
 			self.clientesDB.incConsumo(comanda.cliente.id, comanda.total)
 			self.clientesDB.actualizarUltimaVisita(comanda.cliente.id, self.dia)
-			self.clientesDB.confirmar()
+		if comanda.detalles is not None:
+			self.pedidosDB.insertarPedido(comanda.detalles)
+		if comanda.cliente or comanda.detalles is not None:
+			self.conexion.commit()
 
 	def calculoComanda(self, con, string=False):
 		"""
@@ -246,7 +253,8 @@ class MainSystem():
 			self.conf["tutorialInicio"] = False
 			json.dump(self.conf, archConf, indent=3)
 
-	def loadPlugin(self, pluginName):
+	def loadPlugin(self, platillo):
+		pluginName = platillo.pluginName
 		try:
 			modName = "Datos.Platillos.{}".format(pluginName)
 			classmod = importlib.import_module(modName, "Datos.Platillos")
@@ -254,7 +262,10 @@ class MainSystem():
 			self.escribirError("SistemaTeru 253. No se encontró {} o contiene algún error.\n\tMensaje: {}".format(modName, str(err)))
 			return None
 		plugin = getattr(classmod, pluginName)
-		return plugin()
+		instPlugin = plugin()
+		instPlugin.fromSistema(self)
+		instPlugin.withPlatillo(platillo)
+		return instPlugin
 
 	def cargarDesdeCSV(self, filePath):
 		self.platillosDB.borrarTodo()
@@ -266,7 +277,7 @@ class MainSystem():
 		except Exception as err: 
 			self.escribirError(err)
 			print(err)
-			self.platillosDB.deshacer()
+			self.platillosDB.rewind()
 			return False
 
 
