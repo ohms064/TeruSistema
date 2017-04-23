@@ -16,6 +16,9 @@ class Platillo(object):
 	def __str__(self):
 		return "{:3d} {:<30} ${:5.2f}    {:10s}".format(self.idPlatillo, self.nombre, self.precio, self.categoria)
 
+	def asTuple(self):
+		return (self.nombre, self.precio, self.categoria, self.idPlatillo, self.extra)
+
 class PlatilloDB(ObjectDB):
 
 	def __init__(self, conexion):
@@ -29,10 +32,13 @@ class PlatilloDB(ObjectDB):
 			plugin VARCHAR)""")
 
 	def insertar(self, platillo):
-		sql = \
-		"""INSERT INTO platilloTeru(nombre, precio, categoria, plugin)
+		sql = """INSERT INTO platilloTeru(nombre, precio, categoria, plugin)
 		VALUES('{}', {}, '{}', '{}')""".format(platillo.nombre, platillo.precio, platillo.categoria, platillo.pluginName)
 		self.c.execute(sql)
+
+	def insertarVarios(self, platillos):
+		sql = """INSERT INTO platilloTeru(nombre, precio, categoria, plugin) VALUES(?, ?, ?, ?)"""
+		self.c.executemany(sql, platillos)
 
 	def actualizar(self, identificador, nombre="", precio="", categoria="", plugin=""):
 		if nombre == "" and precio == "" and categoria == "" and plugin == "":
@@ -104,7 +110,7 @@ class PlatilloDB(ObjectDB):
 		sql = self.c.execute("SELECT COUNT(*) FROM platilloTeru")
 		return self.c.execute(sql)[0]
 
-def platilloCsvSerializer(values):
+def platilloCsvSerializer(values, pos):
 	return Platillo(values["Platillo"], values["Precio"], values["Categoría"], pluginName=values["Plugin"])
 
 class CustomPlatilloDB(ObjectDB):

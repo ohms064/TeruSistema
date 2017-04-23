@@ -269,12 +269,14 @@ class MainSystem():
 		instPlugin.withPlatillo(platillo)
 		return instPlugin
 
-	def cargarDesdeCSV(self, filePath):
+	def cargarPlatillosDesdeCsv(self, filePath):
 		self.platillosDB.borrarTodo()
 		try:
-			table = CSVTable(filePath, ["Platillo", "Precio", "Categoría", "Plugin"], platilloCsvSerializer)
+			table = CSVTable(filePath, ["Platillo", "Precio", "Categoría", "Plugin"], tuple())
+			values = list()
 			for platillo in table:
-				self.platillosDB.insertar(platillo)
+				values.append(platillo)
+			self.platillosDB.insertarVarios(values)
 			return True
 		except Exception as err: 
 			self.escribirError(err)
@@ -282,6 +284,20 @@ class MainSystem():
 			self.platillosDB.rewind()
 			return False
 
+	def cargarIngredientesDesdeCsv(self, filePath):
+		self.ingredientesDB.borrarTodoIngrediente()
+		try:
+			table = CSVTable(filePath, ["Nombre", "Precio", "Cantidad", "Unidad"], tuple())
+			values = list()
+			for ingrediente in table:
+				values.append(ingrediente)
+			self.ingredientesDB.insertarVariosIngredientes(values)
+			return True
+		except Exception as err: 
+			self.escribirError(err)
+			print(err)
+			self.ingredientesDB.rewind()
+			return False
 
 if __name__ == '__main__':
 	print("Porfavor abir TeruGUI")

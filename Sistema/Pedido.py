@@ -87,6 +87,9 @@ class Pedido(object):
 	def withCliente(self, idCliente):
 		self.idCliente = idCliente
 
+	def clear(self):
+		self.orden = list()
+
 class PedidoDB(ObjectDB):
 	def __init__(self, conexion):
 		super().__init__(conexion)

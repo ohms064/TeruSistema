@@ -42,7 +42,8 @@ class IngredienteDB(ObjectDB):
 			nombre VARCHAR,
 			precio REAL,
 			cantidad REAL,
-			unidad VARCHAR
+			unidad VARCHAR,
+			UNIQUE(nombre)
 			)""")
 		self.c.execute("""CREATE TABLE IF NOT EXISTS ingrediente_platillo_Teru(
 			id INTEGER PRIMARY KEY,
@@ -57,8 +58,12 @@ class IngredienteDB(ObjectDB):
 			)""")
 
 	def insertarIngrediente(self, ingrediente):
-		sql = "INSERT INTO ingredienteTeru(nombre, precio, cantidad, unidad) VALUES(?, ?, ?, ?)"
+		sql = "INSERT OR REPLACE INTO ingredienteTeru(nombre, precio, cantidad, unidad) VALUES(?, ?, ?, ?)"
 		self.c.execute(sql, (ingrediente.nombre, ingrediente.precio, ingrediente.cantidad, ingrediente.unidadCantidad))
+
+	def insertarVariosIngredientes(self, ingredientes):
+		sql = "INSERT OR REPLACE INTO ingredienteTeru(nombre, precio, cantidad, unidad) VALUES(?, ?, ?, ?)"
+		self.c.executemany(sql, ingredientes)
 
 	def insertarIngredientePlatillo(self, ingredientePlatillo):
 		sql = "INSERT OR IGNORE INTO ingrediente_platillo_Teru(idPlatillo, idIngrediente, porcion, unidad, extra) VALUES(?, ?, ?, ?, ?)"
@@ -81,6 +86,9 @@ class IngredienteDB(ObjectDB):
 		print(sql)
 		self.c.execute(sql)
 		return True
+
+	def borrarTodoIngrediente(self):
+		self.c.execute("DELETE FROM ingredienteTeru")
 
 	def actualizarIngredientePlatillo(self, porcion="", unidad="", extra=None):
 		if porcion == "" and unidad == "" and extra == "":
@@ -130,7 +138,6 @@ class IngredienteDB(ObjectDB):
 	def borrarIngrediente(self, identificador):
 		self.c.execute("DELETE FROM ingredienteTeru WHERE id = ?",(identificador,))
 
-
 	def borrarIngredientePlatillo(self, idPlatillo, idIngrediente=None):
 		if idIngrediente is None:
 			self.c.execute("DELETE FROM ingrediente_platillo_Teru WHERE id=?",(idPlatillo,))
@@ -157,3 +164,7 @@ class IngredienteDB(ObjectDB):
 		ing.setIngrediente(Ingrediente(*sql[11:]))
 		ing.setPlatillo(Platillo(*sql[:5]))
 		return ing
+
+def ingredienteCSVSerializer(csv, pos):
+	import pdb; pdb.set_trace()  # breakpoint 8d2996a7 //
+	return Ingrediente(pos, csv["Nombre"], csv["Precio"], csv["Cantidad"], csv["Unidad"])

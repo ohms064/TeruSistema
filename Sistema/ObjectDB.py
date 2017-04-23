@@ -7,7 +7,7 @@ class ObjectDB:
 		self.conexion.commit()
 
 	def rewind(self):
-		self.c.rollback()
+		self.conexion.rollback()
 
 	def cerrar(self):
 		self.conexion.close()

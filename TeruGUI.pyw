@@ -22,11 +22,12 @@ class MesaGUI(tk.Frame):
 		self.nombreMesa = nombreMesa
 		self.padre = padre
 		self.master.title("Comanda: " + str(self.nombreMesa.get()))
-		self.master.geometry("530x350")
+		self.master.geometry("540x350")
 		self.pack()
 		self.sistema = sistema
 		self.master.protocol("WM_DELETE_WINDOW", self.onCloseWindow)
 		self.pedido = self.sistema.nuevoPedido()
+		self.selectedItem = -1
 		self.createWidgets()
 		self.createMenu()
 
@@ -95,7 +96,7 @@ class MesaGUI(tk.Frame):
 		tk.Entry(self.master, textvariable=self.propina).place(x=110, y=30)
 
 		tk.Label(self.master, text="Consumo:").place(x=40, y=50)
-		tk.Entry(self.master, textvariable=self.total).place(x=110, y=50)
+		tk.Label(self.master, textvariable=self.total).place(x=110, y=50)
 
 		tk.Label(self.master, text="Dinero recibido:").place(x=10, y=70)
 		tk.Entry(self.master, textvariable=self.dinRecibido).place(x=110, y=70)
@@ -105,7 +106,7 @@ class MesaGUI(tk.Frame):
 		tk.Entry(self.master, textvariable=self.idCliente).place(x=110, y=90)
 
 		tk.Button(self.master, text="Aceptar", command=self.confirmarComanda).place(x=185,y=115)
-		tk.Button(self.master, text="Borrar", command=self.clearComanda).place(x=125,y=115)
+		#tk.Button(self.master, text="Borrar", command=self.clearComanda).place(x=125,y=115)
 
 		tk.Label(self.master, text="Cambiar Nombre:").place(x=320, y=100)
 		tk.Entry(self.master, textvariable=self.nombreMesa, width=10).place(x=430, y=100)
@@ -121,21 +122,41 @@ class MesaGUI(tk.Frame):
 		tk.Label(self.master, text="Categoría").place(x=320, y=155)
 		tk.Label(self.master, text="Cantidad").place(x=385, y=155)
 
+		self.total.set(0)
+
 		#Platillos
 		frame, self.pedidoListbox = createListbox(self.master, width=60)
 		self.pedidoListbox.bind("<Double-Button-1>", self.listBoxSelect)
 		frame.place(x=10, y=175)
 
+		tk.Button(self.master, text="Borrar", command=self.borrarArticulo).place(x=460, y=275)
+		tk.Button(self.master, text="Borrar Todo", command=self.borrarTodo).place(x=460, y=305)
+
 	def listBoxSelect(self, event):
 		widget = event.widget
-		selection = widget.curselection()[0]
-		
+		self.selectedItem = widget.curselection()[0]
 
 	def agregarAlListbox(self, platillo):
 		self.pedidoListbox.insert(tk.END, str(platillo))
 		total = self.pedido.obtenerTotal()
 		self.total.set(total)
 		#self.propina.set(int(total*0.1))
+
+	def borrarArticulo(self):
+		if self.selectedItem == -1:
+			return
+		self.pedidoListbox.delete(self.selectedItem)
+		del self.pedido.orden[self.selectedItem]
+		self.selectedItem = -1
+		total = self.pedido.obtenerTotal()
+		self.total.set(total)
+
+	def borrarTodo(self):
+		clearListbox(self.pedidoListbox)
+		self.pedido.clear()
+		self.selectedItem = -1
+		total = self.pedido.obtenerTotal()
+		self.total.set(total)
 
 	def actualizarListbox(self, index, value, command="cantidad"):
 		current = self.pedido.get(index, platillo=False)
@@ -583,7 +604,8 @@ class PlatillosGUI(tk.Frame):
 		self.mainMenu = tk.Menu(self.master)
 		self.categorias = self.sistema.platillosDB.getCategories()
 		self.importMenu = tk.Menu(self.master, tearoff=0)
-		self.importMenu.add_command(label="Importar Platillos desde CSV", command=self.fromCSV)
+		self.importMenu.add_command(label="Importar Platillos desde CSV", command=self.platillosfromCSV)
+		self.importMenu.add_command(label="Importar Ingredientes desde CSV", command=self.ingredientesfromCSV)
 		self.mainMenu.add_cascade(label="Importar", menu=self.importMenu)
 		self.master.config(menu=self.mainMenu)
 
@@ -834,15 +856,27 @@ class PlatillosGUI(tk.Frame):
 			self.populatePlatillos()
 			self.cls()
 
-	def fromCSV(self):
+	def platillosfromCSV(self):
 		filePath = fd.askopenfilename(parent=self.master)
 		if filePath:
 			if mb.askokcancel(title="Alerta", message="Se borrarán todos los datos de los platillos existentes. ¿Está seguro de continuar?"):
-				if self.sistema.cargarDesdeCSV(filePath):
+				if self.sistema.cargarPlatillosDesdeCsv(filePath):
 					self.sistema.platillosDB.confirmar()
-					self.clearListbox()
+					clearListbox(self.platillosListbox)
 					self.populatePlatillos()
 					self.cls()
+					mb.showinfo(title="Éxito", message="La operación se realizó exitosamente")
+				else:
+					mb.showwarning(title="Error", message="No se pudo leer el archivo, se restauraron los datos anteriores.")
+
+	def ingredientesfromCSV(self):
+		filePath = fd.askopenfilename(parent=self.master)
+		if filePath:
+			if mb.askokcancel(title="Alerta", message="Se borrarán todos los datos de los ingredientes existentes. ¿Está seguro de continuar?"):
+				if self.sistema.cargarIngredientesDesdeCsv(filePath):
+					self.sistema.ingredientesDB.confirmar()
+					clearListbox(self.ingredienteListbox)
+					self.populateIngredientes()
 					mb.showinfo(title="Éxito", message="La operación se realizó exitosamente")
 				else:
 					mb.showwarning(title="Error", message="No se pudo leer el archivo, se restauraron los datos anteriores.")
