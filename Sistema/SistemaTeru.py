@@ -8,6 +8,7 @@ from Sistema.Platillo import *
 from Sistema.Comanda import *
 from Sistema.Clientes import *
 from Sistema.CSVReader import *
+from Sistema.Ingredientes import *
 
 class MainSystem():
 	def __init__(self):
@@ -85,6 +86,7 @@ class MainSystem():
 		self.clientesDB = ClienteDB(self.conexion)
 		self.platillosDB = PlatilloDB(self.conexion)
 		self.pedidosDB = PedidoDB(self.conexion)
+		self.ingredientesDB = IngredienteDB(self.conexion)
 
 	def nuevaPropina(self, propina):
 		"""

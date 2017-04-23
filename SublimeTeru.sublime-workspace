@@ -4,6 +4,14 @@
 		"selected_items":
 		[
 			[
+				"unidad",
+				"unidadPorcion"
+			],
+			[
+				"unid",
+				"unidadPorcion\tparam"
+			],
+			[
 				"date",
 				"datetime\tclass"
 			],
@@ -408,23 +416,12 @@
 	"buffers":
 	[
 		{
-			"file": "TeruGUI.pyw",
+			"file": "Sistema/Ingredientes.py",
 			"settings":
 			{
-				"buffer_size": 29494,
+				"buffer_size": 3606,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
-			}
-		},
-		{
-			"contents": "{'visitas': 3, 'tutorialInicio': False, 'firstRun': True, 'Categorias Platillo': [], 'fecha': '19-4-2017', 'promoVisitas': 5}\n  1 Takoyaki                                           $40.00    japonesa  \n  2 Salchiyaki                                         $40.00    japonesa  \n  3 Ramen                                              $50.00    japonesa  \n  4 Miso                                               $30.00    japonesa  \n  5 Okono                                              $65.00    japonesa  \n  6 Onigiris 1 ingrediente                             $25.00    japonesa  \n  7 Onigiris 2 ingredientes                            $30.00    japonesa  \n  8 California roll                                    $55.00    sushi     \n  9 Midori roll                                        $40.00    sushi     \n 10 Mango roll                                         $60.00    sushi     \n 11 Masago roll                                        $65.00    sushi     \n 12 Queso roll                                         $55.00    sushi     \n 13 Aguacate roll                                      $55.00    sushi     \n 14 Panko roll                                         $70.00    sushi     \n 15 Oshi teru                                          $55.00    sushi     \n 16 Oshi Frutas                                        $40.00    sushi     \n 17 Gohan                                              $30.00    japonesa  \n 18 Gohan especial                                     $45.00    japonesa  \n 19 Gohan supremo                                      $50.00    japonesa  \n 20 Yakimeshi                                          $40.00    japonesa  \n 21 Yakimeshi especial                                 $45.00    japonesa  \n 22 Yakimeshi supremo                                  $50.00    japonesa  \n 23 Pachiri                                            $50.00    waffle    \n 24 Kyu                                                $50.00    waffle    \n 25 Sara Sara                                          $50.00    waffle    \n 26 Zee haa                                            $50.00    waffle    \n 27 Nikkori                                            $55.00    waffle    \n 28 Zuzu                                               $55.00    waffle    \n 29 Uchu                                               $55.00    waffle    \n 30 Teru                                               $55.00    waffle    \n 31 Sawa                                               $55.00    waffle    \n 32 Cutz                                               $60.00    waffle    \n 33 Paki                                               $60.00    waffle    \n 34 Espresso                                           $20.00    bebida    \n 35 Americano                                          $20.00    bebida    \n 36 Capuccino                                          $30.00    bebida    \n 37 Mokaccino                                          $35.00    bebida    \n 38 Matcha Latte                                       $40.00    bebida    \n 39 Chai Latte                                         $40.00    bebida    \n 40 Calpis Natural                                     $30.00    bebida    \n 41 Calpis Sabor                                       $40.00    bebida    \n 42 Té                                                 $30.00    bebida    \n 43 Promo de té                                        $40.00    bebida    \n 44 Malteada                                           $45.00    bebida    \n 45 Flotante                                           $35.00    bebida    \n 46 Sundae                                             $40.00    bebida    \n 47 Sundae Oreo                                        $45.00    bebida    \n 48 Smoothie                                           $50.00    bebida    \n 49 Frappe                                             $45.00    bebida    \n 50 ingrediente extra                                  $10.00    bebida    \n 51 Pops lychee                                        $10.00    bebida    \n 52 Refresco light                                     $10.00    bebida    \n 53 Refresco                                           $20.00    bebida    \n 54 Agua                                               $10.00    bebida    \nCerrando sistema\nTerminando ciclo\nDestruyendo ventana\nSe cerró el programa\n>>> ",
-			"settings":
-			{
-				"buffer_size": 4309,
-				"line_ending": "Windows",
-				"name": "*REPL* [py34]",
-				"read_only": true,
-				"scratch": true
 			}
 		},
 		{
@@ -433,24 +430,6 @@
 			{
 				"buffer_size": 3433,
 				"encoding": "UTF-8",
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "Sistema/Pedido.py",
-			"settings":
-			{
-				"buffer_size": 3355,
-				"encoding": "UTF-8",
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "Sistema/SistemaTeru.py",
-			"settings":
-			{
-				"buffer_size": 10875,
-				"encoding": "UTF-8 with BOM",
 				"line_ending": "Windows"
 			}
 		}
@@ -551,9 +530,13 @@
 	"command_palette":
 	{
 		"height": 392.0,
-		"last_filter": "repl",
+		"last_filter": "repl ",
 		"selected_items":
 		[
+			[
+				"repl ",
+				"SublimeREPL: Python"
+			],
 			[
 				"repl",
 				"SublimeREPL: Python"
@@ -717,37 +700,39 @@
 	"expanded_folders":
 	[
 		"/H/Documentos/Trabajo/TeruSistema",
+		"/H/Documentos/Trabajo/TeruSistema/Datos/Platillos",
 		"/H/Documentos/Trabajo/TeruSistema/Sistema"
 	],
 	"file_history":
 	[
-		"/H/Documentos/Trabajo/TeruSistema/Sistema/Platillo.py",
-		"/H/Documentos/Trabajo/TeruSistema/Sistema/SistemaTeru.py",
 		"/H/Documentos/Trabajo/TeruSistema/Sistema/Pedido.py",
+		"/H/Documentos/Trabajo/TeruSistema/Sistema/Platillo.py",
+		"/H/Documentos/Trabajo/TeruSistema/Sistema/Clientes.py",
+		"/H/Documentos/Trabajo/TeruSistema/Datos/Platillos/Sushi.py",
+		"/H/Documentos/Trabajo/TeruSistema/Datos/Platillos/TeruPlugin.py",
+		"/H/Documentos/Trabajo/TeruSistema/Datos/Platillos/General.py",
+		"/H/Documentos/Trabajo/TeruSistema/Datos/conf.json",
+		"/H/Documentos/Trabajo/TeruSistema/SistemaTeru.py",
+		"/H/Documentos/Trabajo/TeruSistema/Sistema/SistemaTeru.py",
+		"/H/Documentos/Trabajo/TeruSistema/TeruGUI.pyw",
 		"/H/Documentos/Trabajo/TeruSistema/Sistema/ObjectDB.py",
 		"/H/Documentos/Trabajo/TeruSistema/Sistema/Comanda.py",
 		"/H/Documentos/Trabajo/TeruSistema/Sistema/tkUtils.py",
 		"/H/Documentos/Trabajo/TeruSistema/Sistema/__init__.py",
-		"/H/Documentos/Trabajo/TeruSistema/Datos/Platillos/TeruPlugin.py",
-		"/H/Documentos/Trabajo/TeruSistema/Sistema/Clientes.py",
 		"/H/Documentos/Trabajo/UNIC/UNIC_Formatos/CreadorFormatos.pyw",
 		"/H/Documentos/Trabajo/TeruSistema/error.txt",
 		"/H/Documentos/Trabajo/TeruSistema/Sistema/ObjectDB",
 		"/H/Documentos/Trabajo/TeruSistema/Sistema/CSVReader.py",
 		"/H/Documentos/Trabajo/TeruSistema/Datos/Platillos/general.json",
-		"/H/Documentos/Trabajo/TeruSistema/Datos/Platillos/General.py",
 		"/H/Documentos/Trabajo/TeruSistema/Lista Platillos.csv",
 		"/H/Documentos/Trabajo/TeruSistema/Sistema/CustomTK.py",
-		"/H/Documentos/Trabajo/TeruSistema/TeruGUI.pyw",
 		"/H/Documentos/Trabajo/TeruSistema/.gitignore",
-		"/H/Documentos/Trabajo/TeruSistema/Datos/Platillos/Sushi.py",
 		"/H/Documentos/Trabajo/TeruSistema/Datos/Platillos/sushi.json",
 		"/H/Documentos/Trabajo/UNIC/UNIC_Formatos/libs/CustomTK.py",
 		"/H/Documentos/Trabajo/UNIC/UNIC_Formatos/libs/__init__.py",
 		"/H/Documentos/Trabajo/TeruSistema/Sistema/TeruPlugin.py",
 		"/H/Documentos/Trabajo/UNIC/UNIC_Formatos/Config/inscripcion.conf",
 		"/H/Documentos/Trabajo/TeruSistema/Sistema/__pycache__/plugins.py",
-		"/H/Documentos/Trabajo/TeruSistema/Datos/conf.json",
 		"/H/Documentos/Trabajo/UNIC/UNIC_Formatos/libs/Templates/InscripcionTemplate.py",
 		"/H/Documentos/Proyectos Unity/YoMeLoComo/Assets/Scripts/Spawners/PoolSizeException.cs",
 		"/H/Documentos/Proyectos Unity/YoMeLoComo/Assets/Editor/SpawnPoolEditor.cs",
@@ -765,7 +750,6 @@
 		"/H/Documentos/Trabajo/TeruSistema/Datos/clientesTeru.db",
 		"/H/Documentos/Trabajo/TeruSistema/Sistema/Platillos.py",
 		"/H/Documentos/Trabajo/UNIC/UNIC_Formatos/libs/CustomPyLatex.py",
-		"/H/Documentos/Trabajo/TeruSistema/SistemaTeru.py",
 		"/H/Documentos/Trabajo/TeruSistema/Sistema/Mesas.py",
 		"/H/Documentos/Trabajo/TeruSistema/Sistema/TeruDB.py",
 		"/H/Documentos/Trabajo/UNIC/Resources/preguntas.xml",
@@ -867,6 +851,8 @@
 		"case_sensitive": true,
 		"find_history":
 		[
+			"fetchall",
+			"buscarID",
 			"platillosTeru",
 			")\n",
 			"createPedido",
@@ -992,9 +978,7 @@
 			"Birthday",
 			"Birthplace",
 			"Name",
-			"Maternal",
-			"Paternal",
-			"Photo"
+			"Maternal"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -1088,24 +1072,24 @@
 	"groups":
 	[
 		{
-			"selected": 1,
+			"selected": 0,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "TeruGUI.pyw",
+					"file": "Sistema/Ingredientes.py",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 29494,
+						"buffer_size": 3606,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								6797,
-								6797
+								3602,
+								3602
 							]
 						],
 						"settings":
@@ -1126,6 +1110,31 @@
 								"bh_curly_open",
 								"bh_curly_close",
 								"bh_curly_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
 								"bh_c_define",
 								"bh_c_define_center",
 								"bh_c_define_open",
@@ -1141,11 +1150,6 @@
 								"bh_round_open",
 								"bh_round_close",
 								"bh_round_content",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_double_quote_content",
 								"bh_square",
 								"bh_square_center",
 								"bh_square_open",
@@ -1155,168 +1159,20 @@
 								"bh_regex_center",
 								"bh_regex_open",
 								"bh_regex_close",
-								"bh_regex_content",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_unmatched_content",
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close",
-								"bh_single_quote_content",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_default_content",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_tag_content"
+								"bh_regex_content"
 							],
-							"syntax": "Packages/Python/Python.sublime-syntax",
-							"translate_tabs_to_spaces": false
+							"open_with_edit": true,
+							"syntax": "Packages/Python/Python.sublime-syntax"
 						},
 						"translation.x": 0.0,
-						"translation.y": 3180.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 2,
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 4309,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								3393,
-								3393
-							]
-						],
-						"settings":
-						{
-							"BracketHighlighterBusy": false,
-							"WordCount":
-							{
-								"changes": -1,
-								"modified": true,
-								"selection": true,
-								"status": -1,
-								"syntax": "python"
-							},
-							"auto_complete": true,
-							"auto_indent": false,
-							"bh_regions":
-							[
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
-								"bh_c_define",
-								"bh_c_define_center",
-								"bh_c_define_open",
-								"bh_c_define_close",
-								"bh_c_define_content",
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_angle_content",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_round_content",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_double_quote_content",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content",
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_regex_content",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_unmatched_content",
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close",
-								"bh_single_quote_content",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_default_content",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_tag_content"
-							],
-							"default_dir": "H:\\Documentos\\Trabajo\\TeruSistema",
-							"detect_indentation": false,
-							"gutter": false,
-							"history_arrows": true,
-							"indent_subsequent_lines": false,
-							"line_numbers": false,
-							"repl": true,
-							"repl_external_id": "py34",
-							"repl_id": "70ae1717320e4e1eb8cb0415f20f8b27",
-							"repl_restart_args":
-							{
-								"cmd":
-								[
-									"py34",
-									"-i",
-									"-u",
-									"$file_basename"
-								],
-								"cwd": "$file_path",
-								"encoding": "utf8",
-								"extend_env":
-								{
-									"PYTHONIOENCODING": "utf-8"
-								},
-								"external_id": "py34",
-								"syntax": "Packages/Python/Python.tmLanguage",
-								"type": "subprocess"
-							},
-							"repl_sublime2": false,
-							"smart_indent": false,
-							"spell_check": false,
-							"syntax": "Packages/Python/Python.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 1300.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 0,
 					"type": "text"
 				},
 				{
-					"buffer": 2,
+					"buffer": 1,
 					"file": "Sistema/Platillo.py",
 					"semi_transient": false,
 					"settings":
@@ -1328,8 +1184,8 @@
 						"selection":
 						[
 							[
-								0,
-								0
+								1946,
+								1953
 							]
 						],
 						"settings":
@@ -1350,6 +1206,31 @@
 								"bh_curly_open",
 								"bh_curly_close",
 								"bh_curly_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
 								"bh_c_define",
 								"bh_c_define_center",
 								"bh_c_define_open",
@@ -1365,11 +1246,6 @@
 								"bh_round_open",
 								"bh_round_close",
 								"bh_round_content",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_double_quote_content",
 								"bh_square",
 								"bh_square_center",
 								"bh_square_open",
@@ -1379,254 +1255,16 @@
 								"bh_regex_center",
 								"bh_regex_open",
 								"bh_regex_close",
-								"bh_regex_content",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_unmatched_content",
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close",
-								"bh_single_quote_content",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_default_content",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_tag_content"
+								"bh_regex_content"
 							],
 							"syntax": "Packages/Python/Python.sublime-syntax",
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 240.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 3,
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "Sistema/Pedido.py",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 3355,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"BracketHighlighterBusy": false,
-							"WordCount":
-							{
-								"changes": -1,
-								"modified": true,
-								"selection": true,
-								"status": -1,
-								"syntax": "python"
-							},
-							"bh_regions":
-							[
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
-								"bh_c_define",
-								"bh_c_define_center",
-								"bh_c_define_open",
-								"bh_c_define_close",
-								"bh_c_define_content",
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_angle_content",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_round_content",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_double_quote_content",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content",
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_regex_content",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_unmatched_content",
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close",
-								"bh_single_quote_content",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_default_content",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_tag_content"
-							],
-							"syntax": "Packages/Python/Python.sublime-syntax",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": -0.0,
-						"translation.y": 1560.0,
+						"translation.y": 1140.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 1,
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "Sistema/SistemaTeru.py",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 10875,
-						"regions":
-						{
-							"bp-35d35001":
-							{
-								"flags": 16,
-								"icon": "circle",
-								"regions":
-								[
-									[
-										4123,
-										4177
-									]
-								],
-								"scope": "mark"
-							},
-							"bp-773365d3":
-							{
-								"flags": 16,
-								"icon": "circle",
-								"regions":
-								[
-									[
-										3980,
-										4034
-									]
-								],
-								"scope": "mark"
-							}
-						},
-						"selection":
-						[
-							[
-								4123,
-								4123
-							]
-						],
-						"settings":
-						{
-							"BracketHighlighterBusy": false,
-							"WordCount":
-							{
-								"changes": -1,
-								"modified": true,
-								"selection": true,
-								"status": -1,
-								"syntax": "python"
-							},
-							"bh_regions":
-							[
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
-								"bh_c_define",
-								"bh_c_define_center",
-								"bh_c_define_open",
-								"bh_c_define_close",
-								"bh_c_define_content",
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_angle_content",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_round_content",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_double_quote_content",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content",
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_regex_content",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_unmatched_content",
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close",
-								"bh_single_quote_content",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_default_content",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_tag_content"
-							],
-							"syntax": "Packages/Python/Python.sublime-syntax",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": -0.0,
-						"translation.y": 2040.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 4,
 					"type": "text"
 				}
 			]

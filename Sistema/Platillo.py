@@ -14,7 +14,7 @@ class Platillo(object):
 		self.extra = extra
 
 	def __str__(self):
-		return "{:3d} {:<50} ${:5.2f}    {:10s}".format(self.idPlatillo, self.nombre, self.precio, self.categoria)
+		return "{:3d} {:<30} ${:5.2f}    {:10s}".format(self.idPlatillo, self.nombre, self.precio, self.categoria)
 
 class PlatilloDB(ObjectDB):
 
@@ -99,6 +99,10 @@ class PlatilloDB(ObjectDB):
 			except TypeError:
 				pass
 		return platillos
+
+	def __len__(self):
+		sql = self.c.execute("SELECT COUNT(*) FROM platilloTeru")
+		return self.c.execute(sql)[0]
 
 def platilloCsvSerializer(values):
 	return Platillo(values["Platillo"], values["Precio"], values["Categoría"], pluginName=values["Plugin"])

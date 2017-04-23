@@ -1,3 +1,5 @@
+import tkinter as tk
+
 def updateListbox(listbox, index, value):
 	listbox.delete(index)
 	listbox.insert(index, value)
@@ -19,6 +21,15 @@ def checkVar(tkVar, default):
 		return True
 	return False
 
-class tkCustomWindow:
-	def __init__(self):
-		pass
+def clearListbox(listbox):
+	listbox.delete(0, tk.END)
+
+def createListbox(master, width=65, height=10):
+	frame = tk.Frame(master)
+	scrollbar = tk.Scrollbar(frame, orient=tk.VERTICAL)
+	customFont = tk.font.Font(family="Monaco", size=8)
+	listbox = tk.Listbox(frame, width=width, height=height, yscrollcommand=scrollbar.set, font=customFont)
+	scrollbar.config(command=listbox.yview)
+	scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+	listbox.pack(side=tk.LEFT, fill=tk.BOTH, expand=1)
+	return frame, listbox

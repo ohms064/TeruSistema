@@ -91,6 +91,14 @@ class PedidoDB(ObjectDB):
 	def __init__(self, conexion):
 		super().__init__(conexion)
 
+		self.c.execute("""CREATE TABLE IF NOT EXISTS ordenTeru 
+			(
+			id INTEGER PRIMARY KEY,
+			idCliente INTEGER,
+			fecha DATE,
+			FOREIGN KEY(idCliente) REFERENCES clienteTeru(id)
+			)""")
+
 		self.c.execute("""CREATE TABLE IF NOT EXISTS orden_platillo_Teru
 			(
 			id INTEGER PRIMARY KEY,
@@ -100,14 +108,6 @@ class PedidoDB(ObjectDB):
 			extras REAL,
 			FOREIGN KEY(idOrden) REFERENCES ordenTeru(id),
 			FOREIGN KEY(idPlatillo) REFERENCES platilloTeru(id)
-			)""")
-
-		self.c.execute("""CREATE TABLE IF NOT EXISTS ordenTeru 
-			(
-			id INTEGER PRIMARY KEY,
-			idCliente INTEGER,
-			fecha DATE,
-			FOREIGN KEY(idCliente) REFERENCES clienteTeru(id)
 			)""")
 
 	def insertarPedido(self, pedido):
@@ -124,11 +124,9 @@ class PedidoDB(ObjectDB):
 			self.c.execute(sql)
 
 	def buscarTodos(self):
-		query = self.c.execute("SELECT * FROM platilloTeru")
-		output = list()
-		for result in query:
-			try:
-				output.append(Platillo(*result))
-			except:
-				pass
-		return output
+		pass
+
+	def buscarOrden(self, idOrden):
+		query = "SELECT * FROM ordenTeru JOIN orden_platillo_Teru ON ordenTeru.id = orden_platillo_Teru.idOrden WHERE ordenTeru.id = ?"
+		self.c.execute(query, (idOrden,))
+		#TODO: Ordenar la información obtenida
