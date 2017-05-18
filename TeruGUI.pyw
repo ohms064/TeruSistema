@@ -197,7 +197,7 @@ class MesaGUI(tk.Frame):
 
 		comanda = self.sistema.nuevaComanda(self.numClientes.get(), self.total.get(), self.dinRecibido.get(), self.propina.get(), bool(self.tarjeta.get()), self.idCliente.get(), self.pedido)
 		if self.sistema:
-			mb.showinfo("¡Error!", "Se ha producido un error. TeruGUI 172 confirmarComanda.\nRevisar que los datos sean correctos.")
+			mb.showinfo("¡Error!", "Se ha producido un error. TeruGUI 200 confirmarComanda.\nRevisar que los datos sean correctos.")
 			self.show()
 		else:
 			if mb.askokcancel("Comanda", comanda.cobro()):
@@ -495,7 +495,7 @@ class ClientesGUI(tk.Frame):
 				self.sistema.clientesDB.insertar(nombre=self.nombre.get(), correo=self.correo.get(), nick=self.nick.get())
 				self.sistema.clientesDB.confirmar()
 			except:
-				mb.showinfo(sys.exc_info()[0])
+				mb.showinfo("Error", "Error al insertar. Ya existe el correo.")
 				return
 			self.busqueda(len(self.sistema.clientesDB))
 

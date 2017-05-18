@@ -16,8 +16,8 @@ class Platillo(object):
 	def __str__(self):
 		return "{:3d} {:<30} ${:5.2f}    {:10s}".format(self.idPlatillo, self.nombre, self.precio, self.categoria)
 
-	def asTuple(self):
-		return (self.nombre, self.precio, self.categoria, self.idPlatillo, self.extra)
+	def toCsv(self):
+		return "".format(self.nombre, self.precio, self.categoria, self.idPlatillo, self.extra)
 
 class PlatilloDB(ObjectDB):
 

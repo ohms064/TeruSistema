@@ -47,7 +47,7 @@ class ClienteDB(ObjectDB):
 			consumo REAL, 
 			visitas INTEGER, 
 			ultimaVisita VARCHAR, 
-			correo VARCHAR, 
+			correo VARCHAR NOT NULL UNIQUE, 
 			nick VARCHAR, 
 			fechaIngreso VARCHAR)""")
 	
@@ -63,6 +63,17 @@ class ClienteDB(ObjectDB):
 		"""INSERT INTO clienteTeru(nombre, consumo, visitas, ultimaVisita, correo, nick, fechaIngreso) 
 		VALUES ('{}', {}, {}, '{}', '{}', '{}', '{}')""".format(nombre, consumo, visitas, ultimaVisita, correo, nick, fechaIngreso)
 		self.c.execute(sql)
+
+	def insertarPlaceholder(self, idPlaceholder, sucursal):
+		fecha = datetime.datetime.now()
+		fecha = str(fecha.day) + "-" + str(fecha.month) + "-" + str(fecha.year)
+		if(self.buscarID(idPlaceholder)):
+			self.actualizarUltimaVisita(idPlaceholder, fecha)
+			return
+		sql = \
+		"""INSERT OR REPLACE INTO clienteTeru(id, nombre, consumo, visitas, ultimaVisita, correo, nick, fechaIngreso) 
+		VALUES ({}, '{}', {}, {}, '{}', '{}', '{}', '{}')""".format(idPlaceholder, "Teru Teru", 0, 0, fecha, "TeruTeru@mangakissa.com", sucursal, fecha)
+		self.c.execute(sql)	
 
 	def actualizar(self, identificador, nombre="", nick="", correo=""):
 		"""

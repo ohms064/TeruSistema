@@ -34,14 +34,19 @@ class MainSystem():
 					
 		except (FileNotFoundError, ValueError) as err:
 			with open("Datos\\conf.json", "w") as archConf:
-				self.conf = {"fecha" : self.dia, "promoVisitas" : 5, "visitas" : 0, "firstRun": True, "Categorias Platillo": [], "Database":"Datos\\Teru.db"}
+				self.conf = {"fecha" : self.dia, "promoVisitas" : 5, "visitas" : 0, "firstRun": True, "Categorias Platillo": [], "Database":"Datos\\Teru.db", "Datos":{"Sucursal":"Cuernacava Centro", "id":100000}}
 				json.dump(self.conf, archConf, indent=3)
 		except Exception as err:
 			self.escribirError(err)
-			self.conf = {"fecha" : self.dia, "promoVisitas" : 5, "visitas" : 0, "firstRun": True, "Categorias Platillo": [], "Database":"Datos\\Teru.db"}
+			self.conf = {"fecha" : self.dia, "promoVisitas" : 5, "visitas" : 0, "firstRun": True, "Categorias Platillo": [], "Database":"Datos\\Teru.db", "Datos":{"Sucursal":"Cuernacava Centro", "id":100000}}
 		finally:
 			print(self.conf)
 		self.beginDB()
+		try:
+			self.clientesDB.insertarPlaceholder(self.conf["Datos"]["id"], self.conf["Datos"]["Sucursal"])
+		except:
+			self.conf["Datos"] = {"Sucursal":"Cuernacava Centro", "id":100000}
+			self.clientesDB.insertarPlaceholder(self.conf["Datos"]["id"], self.conf["Datos"]["Sucursal"])
 
 	def escribirError(self, err):
 		print("Error! Escribiendo reporte")
@@ -65,7 +70,7 @@ class MainSystem():
 		try:
 			if tarjeta:
 				dineroRecibido="0"
-			cliente = self.clientesDB.buscarID(idCliente)
+			cliente = self.clientesDB.buscarCorreo(idCliente)
 			comanda = Comanda(int(numClientes), float(total), float(dineroRecibido), float(propina), tarjeta, cliente, pedido)
 			return comanda
 
