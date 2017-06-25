@@ -75,6 +75,17 @@ class PlatilloDB(ObjectDB):
 			platillo = Platillo("¡ERROR! No se encontró información", "", "", "¡ERROR! No se encontró información")
 		return platillo
 
+	def buscarNombre(self,nombre):
+		"""
+		Busca en la tabla por ID y retorna el primer valor encontrado
+		"""
+		sql = self.c.execute("SELECT * FROM platilloTeru WHERE nombre='{}'".format(nombre)).fetchone()
+		try:
+			platillo = Platillo(*sql)
+		except TypeError:
+			platillo = Platillo("¡ERROR! No se encontró información", "", "", "¡ERROR! No se encontró información")
+		return platillo
+
 	def buscarTodos(self):
 		"""
 		Crea una lista con todos los platillos guardados en la base de datos.

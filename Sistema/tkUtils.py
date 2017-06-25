@@ -28,7 +28,7 @@ def createListbox(master, width=65, height=10):
 	frame = tk.Frame(master)
 	scrollbar = tk.Scrollbar(frame, orient=tk.VERTICAL)
 	customFont = tk.font.Font(family="Monaco", size=8)
-	listbox = tk.Listbox(frame, width=width, height=height, yscrollcommand=scrollbar.set, font=customFont)
+	listbox = tk.Listbox(frame, width=width, height=height, yscrollcommand=scrollbar.set, font=customFont, exportselection=False)
 	scrollbar.config(command=listbox.yview)
 	scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 	listbox.pack(side=tk.LEFT, fill=tk.BOTH, expand=1)

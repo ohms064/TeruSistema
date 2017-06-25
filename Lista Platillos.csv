@@ -4,16 +4,16 @@ Salchiyaki,40,japonesa,General
 Ramen,50,japonesa,General
 Miso,30,japonesa,General
 Okono,65,japonesa,General
-Onigiris 1 ingrediente,25,japonesa,General
-Onigiris 2 ingredientes,30,japonesa,General
-California roll,55,sushi,General
+Onigiris 1 ingrediente,25,japonesa,Onigiri
+Onigiris 2 ingredientes,30,japonesa,Onigiri
+California roll,55,sushi,Sushi
 Midori roll,40,sushi,General
-Mango roll,60,sushi,General
-Masago roll,65,sushi,General
-Queso roll,55,sushi,General
-Aguacate roll,55,sushi,General
-Panko roll,70,sushi,General
-Oshi teru,55,sushi,General
+Mango roll,60,sushi,Sushi
+Masago roll,65,sushi,Sushi
+Queso roll,55,sushi,Sushi
+Aguacate roll,55,sushi,Sushi
+Panko roll,70,sushi,Sushi
+Oshi teru,55,sushi,Sushi
 Oshi Frutas,40,sushi,General
 Gohan,30,japonesa,General
 Gohan especial,45,japonesa,General
@@ -32,24 +32,30 @@ Teru,55,waffle,General
 Sawa,55,waffle,General
 Cutz,60,waffle,General
 Paki,60,waffle,General
-Espresso,20,Bebida,General
-Americano,20,Bebida,General
-Capuccino,30,Bebida,General
-Mokaccino,35,Bebida,General
-Matcha Latte,40,Bebida,General
-Chai Latte,40,Bebida,General
-Calpis Natural,30,Bebida,General
-Calpis Sabor,40,Bebida,General
-Té,30,Bebida,General
-Promo de té,40,Bebida,General
-Malteada,45,Bebida,General
-Flotante,35,Bebida,General
-Sundae,40,Bebida,General
-Sundae Oreo,45,Bebida,General
-Smoothie,50,Bebida,General
-Frappe,45,Bebida,General
-ingrediente extra,10,Bebida,General
-Pops lychee,10,Bebida,General
-Refresco light,10,Bebida,General
-Refresco ,20,Bebida,General
-Agua,10,Bebida,General
+Espresso,20,Bebida,Bebida
+Americano,20,Bebida,Bebida
+Capuccino,30,Bebida,Bebida
+Mokaccino,35,Bebida,Bebida
+Matcha Latte,40,Bebida,Bebida
+Chai Latte,40,Bebida,Bebida
+Calpis Natural,30,Bebida,Bebida
+Calpis Sabor,40,Bebida,Bebida
+Té,30,Bebida,Bebida
+Promo de té,40,Bebida,Bebida
+Malteada,45,Bebida,Bebida
+Flotante,35,Bebida,Bebida
+Sundae,40,Bebida,Bebida
+Sundae Oreo,45,Bebida,Bebida
+Smoothie,50,Bebida,Bebida
+Frappe,45,Bebida,Bebida
+ingrediente extra,10,Bebida,Bebida
+Pops lychee,10,Bebida,Bebida
+Refresco light,10,Bebida,Bebida
+Refresco ,20,Bebida,Bebida
+Agua,10,Bebida,Bebida
+Anguila,10,Salsas,General
+Tampico,10,Salsas,General
+Chipotle con Mayonesa,10,Salsas,General
+Soya con Chiles,10,Salsas,General
+Teriyaki,10,Salsas,General
+Soya Habanero,10,Salsas,General

@@ -79,7 +79,7 @@ class UserForm(tk.Frame):
 				iter_row += 1
 			
 			elif self.label in checkBox:
-				tk.Checkbutton(self.master, textvariable=self.formValues[self.label]).grid(row=iter_row, column=iter_col + 1)
+				tk.Checkbutton(self.master, variable=self.formValues[self.label], onvalue="y", offvalue="").grid(row=iter_row, column=iter_col + 1)
 			
 			elif self.label in defaultValues:
 				self.formValues[self.label].set(defaultValues[self.label])

@@ -1,1 +1,1 @@
-__all__= ["Clientes", "Comanda", "Pedido", "SistemaTeru", "tkUtils", "CustomTK", "plugins", "CSVReader", "ObjectDB", "Platillo", "Ingredientes"]
+__all__= ["Clientes", "Comanda", "Pedido", "SistemaTeru", "tkUtils", "CustomTK", "plugins", "CSVReader", "ObjectDB", "Platillo", "Ingredientes", "UnidadMedida", "parserUtils"]

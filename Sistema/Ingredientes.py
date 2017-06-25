@@ -12,6 +12,9 @@ class Ingrediente:
 	def __str__(self):
 		return "{:3d}, {}".format(self.idIngrediente, self.nombre)
 
+	def toTuple(self):
+		return (self.nombre, self.precio, self.cantidad, self.unidadCantidad)
+
 class IngredientePlatillo:
 	def __init__(self, idUnion=-1, idIngrediente=-1, idPlatillo=-1, porcion=0, unidadPorcion="", extra=False):
 		self.idUnion = idUnion
@@ -42,34 +45,47 @@ class IngredienteDB(ObjectDB):
 			nombre VARCHAR,
 			precio REAL,
 			cantidad REAL,
-			unidad VARCHAR,
-			UNIQUE(nombre)
+			idUnidad INTEGER,
+			UNIQUE(nombre),
+			FOREIGN KEY(idUnidad) REFERENCES unidadTeru(id)
 			)""")
 		self.c.execute("""CREATE TABLE IF NOT EXISTS ingrediente_platillo_Teru(
 			id INTEGER PRIMARY KEY,
 			idPlatillo INTEGER,
 			idIngrediente INTEGER,
 			porcion REAL,
-			unidad VARCHAR,
+			idUnidad INTEGER,
 			extra INTEGER,
 			FOREIGN KEY(idPlatillo) REFERENCES platilloTeru(id),
+			FOREIGN KEY(idUnidad) REFERENCES unidadTeru(id),
 			FOREIGN KEY(idIngrediente) REFERENCES ingredienteTeru(id),
 			UNIQUE(idPlatillo, idIngrediente)
 			)""")
 
 	def insertarIngrediente(self, ingrediente):
-		sql = "INSERT OR REPLACE INTO ingredienteTeru(nombre, precio, cantidad, unidad) VALUES(?, ?, ?, ?)"
-		self.c.execute(sql, (ingrediente.nombre, ingrediente.precio, ingrediente.cantidad, ingrediente.unidadCantidad))
+		sql = "SELECT id FROM unidadTeru WHERE nombre = ?"
+		idUnidad = self.c.execute(sql, (ingrediente.unidadCantidad, )).fetchone()[0]
+		sql = "INSERT OR REPLACE INTO ingredienteTeru(nombre, precio, cantidad, idUnidad) VALUES(?, ?, ?, ?)"
+		self.c.execute(sql, (ingrediente.nombre, ingrediente.precio, ingrediente.cantidad, idUnidad))
 
 	def insertarVariosIngredientes(self, ingredientes):
-		sql = "INSERT OR REPLACE INTO ingredienteTeru(nombre, precio, cantidad, unidad) VALUES(?, ?, ?, ?)"
-		self.c.executemany(sql, ingredientes)
+		sql = "SELECT id FROM unidadTeru WHERE nombre = ?"
+		tuplaIngredientes = list()
+		for i in range(len(ingredientes)):
+			unidad = self.c.execute(sql, (ingredientes[i].unidadCantidad, )).fetchone()[0]
+			ingredientes[i].unidadCantidad = unidad
+			tuplaIngredientes.append(ingredientes[i].toTuple())
+
+		sql = "INSERT OR REPLACE INTO ingredienteTeru(nombre, precio, cantidad, idUnidad) VALUES(?, ?, ?, ?)"
+		self.c.executemany(sql, tuple(tuplaIngredientes))
 
 	def insertarIngredientePlatillo(self, ingredientePlatillo):
-		sql = "INSERT OR IGNORE INTO ingrediente_platillo_Teru(idPlatillo, idIngrediente, porcion, unidad, extra) VALUES(?, ?, ?, ?, ?)"
-		self.c.execute(sql, (ingredientePlatillo.idPlatillo, ingredientePlatillo.idIngrediente, ingredientePlatillo.porcion, ingredientePlatillo.unidadPorcion, ingredientePlatillo.extra))
+		sql = "SELECT id FROM unidadTeru WHERE nombre = ?"
+		idUnidad = self.c.execute(sql, (ingredientePlatillo.unidadPorcion,))
+		sql = "INSERT OR IGNORE INTO ingrediente_platillo_Teru(idPlatillo, idIngrediente, porcion, idUnidad, extra) VALUES(?, ?, ?, ?, ?)"
+		self.c.execute(sql, (ingredientePlatillo.idPlatillo, ingredientePlatillo.idIngrediente, ingredientePlatillo.porcion, idUnidad, ingredientePlatillo.extra))
 
-	def actualizarIngrediente(self, identificador, nombre="", precio="", cantidad="", unidad=""):
+	def actualizarIngrediente(self, identificador, nombre="", precio="", cantidad="", idUnidad=""):
 		if nombre == "" and precio == "" and categoria == "" and plugin == "":
 			return False
 		sql = "UPDATE ingredienteTeru SET "
@@ -79,8 +95,8 @@ class IngredienteDB(ObjectDB):
 			sql += "precio = {}, ".format(precio)
 		if cantidad:
 			sql += "cantidad = {}, ".format(cantidad)
-		if unidad:
-			sql += "unidad = '{}', ".format(unidad)
+		if idUnidad:
+			sql += "idUnidad = '{}', ".format(idUnidad)
 
 		sql = sql[0:-2] + " WHERE id={}".format(identificador)
 		print(sql)
@@ -90,14 +106,14 @@ class IngredienteDB(ObjectDB):
 	def borrarTodoIngrediente(self):
 		self.c.execute("DELETE FROM ingredienteTeru")
 
-	def actualizarIngredientePlatillo(self, porcion="", unidad="", extra=None):
-		if porcion == "" and unidad == "" and extra == "":
+	def actualizarIngredientePlatillo(self, porcion="", idUnidad="", extra=None):
+		if porcion == "" and idUnidad == "" and extra == "":
 			return False
 		sql = "UPDATE ingrediente_platillo_Teru SET "
 		if porcion:
 			porcion += "nombre = {}, ".format(porcion)
-		if unidad:
-			unidad += "nombre = {}, ".format(unidad)
+		if idUnidad:
+			idUnidad += "nombre = {}, ".format(idUnidad)
 		if extra is not None: #Entonces es booleano
 			extra += "nombre = {}, ".format(int(extra))
 
@@ -109,7 +125,10 @@ class IngredienteDB(ObjectDB):
 		"""
 		Busca en la tabla por ID y retorna el primer valor encontrado
 		"""
-		sql = self.c.execute("SELECT * FROM ingredienteTeru WHERE id={}".format(identificador)).fetchone()
+		query = """SELECT * FROM ingredienteTeru 
+			JOIN unidadTeru ON unidadTeru.id = ingredienteTeru.idUnidad 
+			WHERE id={}""".format(identificador)
+		sql = self.c.execute(query).fetchone()
 		try:
 			ingrediente = Ingrediente(*sql)
 		except TypeError:
@@ -166,5 +185,4 @@ class IngredienteDB(ObjectDB):
 		return ing
 
 def ingredienteCSVSerializer(csv, pos):
-	import pdb; pdb.set_trace()  # breakpoint 8d2996a7 //
 	return Ingrediente(pos, csv["Nombre"], csv["Precio"], csv["Cantidad"], csv["Unidad"])

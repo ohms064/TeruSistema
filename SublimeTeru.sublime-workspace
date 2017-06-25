@@ -4,6 +4,90 @@
 		"selected_items":
 		[
 			[
+				"col",
+				"columnsOrder\tstatement"
+			],
+			[
+				"inp",
+				"inputType\tparam"
+			],
+			[
+				"ingredientes",
+				"ingredientesfromCSV\tfunction"
+			],
+			[
+				"popu",
+				"populateIngredientes\tfunction"
+			],
+			[
+				"insertar",
+				"insertarIngrediente\tfunction"
+			],
+			[
+				"ingredient",
+				"ingredientesDB\tstatement"
+			],
+			[
+				"Ingre",
+				"ingrediente"
+			],
+			[
+				"exce",
+				"execute"
+			],
+			[
+				"populate",
+				"populateIngredientesPlatillo\tfunction"
+			],
+			[
+				"nomb",
+				"nombreIngrediente\tstatement"
+			],
+			[
+				"ingredieplatli",
+				"ingredientesPlatilloListbox\tstatement"
+			],
+			[
+				"s",
+				"self\tparam"
+			],
+			[
+				"Ingred",
+				"IngredientePlatillo\tclass"
+			],
+			[
+				"inre",
+				"ingredientePlatillo\tparam"
+			],
+			[
+				"ingredi",
+				"ingredientesDB\tstatement"
+			],
+			[
+				"platill",
+				"platillosListbox\tstatement"
+			],
+			[
+				"ingre",
+				"ingredientesPlatilloListbox\tstatement"
+			],
+			[
+				"ingredien",
+				"ingredienteListbox\tstatement"
+			],
+			[
+				"insera",
+				"insertarIngrediente\tfunction"
+			],
+			[
+				"ingred",
+				"ingredientesDB\tstatement"
+			],
+			[
+				"font",
+				"font\tmodule"
+			],
+			[
 				"unidad",
 				"unidadPorcion"
 			],
@@ -416,21 +500,33 @@
 	"buffers":
 	[
 		{
-			"file": "Sistema/Ingredientes.py",
+			"contents": "{'fecha': '23-4-2017', 'visitas': 0, 'promoVisitas': 5, 'Categorias Platillo': ['japonesa'], 'Database': 'Datos\\\\Teru.db', 'firstRun': True, 'tutorialInicio': False}\nCerrando sistema\nTerminando ciclo\nDestruyendo ventana\nSe cerró el programa\n>>> ",
 			"settings":
 			{
-				"buffer_size": 3606,
-				"encoding": "UTF-8",
-				"line_ending": "Windows"
+				"buffer_size": 245,
+				"line_ending": "Windows",
+				"name": "*REPL* [py34]",
+				"scratch": true
 			}
 		},
 		{
-			"file": "Sistema/Platillo.py",
+			"contents": "{'fecha': '23-4-2017', 'firstRun': True, 'visitas': 0, 'tutorialInicio': False, 'Categorias Platillo': ['japonesa'], 'Database': 'Datos\\\\Teru.db', 'promoVisitas': 5}\n\n INSERT INTO ordenTeru(fecha) VALUES (?)\nCerrando sistema\nTerminando ciclo\nDestruyendo ventana\nSe cerró el programa\n>>> ",
 			"settings":
 			{
-				"buffer_size": 3433,
-				"encoding": "UTF-8",
-				"line_ending": "Windows"
+				"buffer_size": 287,
+				"line_ending": "Windows",
+				"name": "*REPL* [py34]",
+				"scratch": true
+			}
+		},
+		{
+			"contents": "{'firstRun': True, 'fecha': '27-4-2017', 'Categorias Platillo': ['japonesa'], 'visitas': 0, 'promoVisitas': 5, 'tutorialInicio': False, 'Database': 'Datos\\\\Teru.db'}\nCerrando sistema\nTerminando ciclo\nDestruyendo ventana\nSe cerró el programa\n>>> ",
+			"settings":
+			{
+				"buffer_size": 245,
+				"line_ending": "Windows",
+				"name": "*REPL* [py34]",
+				"scratch": true
 			}
 		}
 	],
@@ -529,16 +625,16 @@
 	"build_varint": "",
 	"command_palette":
 	{
-		"height": 392.0,
-		"last_filter": "repl ",
+		"height": 98.0,
+		"last_filter": "repl",
 		"selected_items":
 		[
 			[
-				"repl ",
+				"repl",
 				"SublimeREPL: Python"
 			],
 			[
-				"repl",
+				"repl ",
 				"SublimeREPL: Python"
 			],
 			[
@@ -700,31 +796,47 @@
 	"expanded_folders":
 	[
 		"/H/Documentos/Trabajo/TeruSistema",
-		"/H/Documentos/Trabajo/TeruSistema/Datos/Platillos",
 		"/H/Documentos/Trabajo/TeruSistema/Sistema"
 	],
 	"file_history":
 	[
 		"/H/Documentos/Trabajo/TeruSistema/Sistema/Pedido.py",
+		"/H/Documentos/Trabajo/UNIC/OrientacionVoacionalTest/app/src/main/java/omar/com/orientacionvoacionaltest/fragment/CareerListFragment.java",
+		"/H/Documentos/Trabajo/UNIC/OrientacionVoacionalTest/app/src/main/java/omar/com/orientacionvoacionaltest/navigation/IFragmentable.java",
+		"/H/Documentos/Trabajo/UNIC/OrientacionVoacionalTest/app/src/main/java/omar/com/orientacionvoacionaltest/model/CareerInfoModel.java",
+		"/H/Documentos/Trabajo/UNIC/OrientacionVoacionalTest/app/src/main/java/omar/com/orientacionvoacionaltest/model/CareerEnum.java",
+		"/H/Documentos/Trabajo/UNIC/OrientacionVoacionalTest/app/src/main/java/omar/com/orientacionvoacionaltest/model/PhoneModel.java",
+		"/H/Documentos/Trabajo/TeruSistema/TeruGUI.pyw",
 		"/H/Documentos/Trabajo/TeruSistema/Sistema/Platillo.py",
+		"/H/Documentos/OneDrive/Documentos/BusquedaTrabajo/Resume/Moderncv Oldstyle/main.tex",
+		"/H/Documentos/Trabajo/UNIC/UNIC_Formatos/Outputs/PAE_308633184_Omar.tex",
+		"/H/Documentos/OneDrive/Documentos/BusquedaTrabajo/Resume/cv-us.tex",
+		"/H/Documentos/OneDrive/Documentos/BusquedaTrabajo/Resume/ej2.sty",
+		"/H/Documentos/OneDrive/Documentos/BusquedaTrabajo/Resume/custom.pdf",
+		"/C/Users/Omar/AppData/Local/Android/sdk/tools/NOTICE.txt",
+		"/H/Documentos/Trabajo/TeruSistema/Sistema/UnidadMedidad.py",
+		"/H/Documentos/Proyectos Unity/Almas/Assets/Plugins/Android/assets/oculussig_0815f832492b3304",
+		"/H/Documentos/Proyectos Unity/GearVRTest/Assets/OVR/Editor/OVRMoonlightLoader.cs",
+		"/H/Documentos/Trabajo/TeruSistema/SublimeTeru.sublime-project",
+		"/H/Documentos/Trabajo/TeruSistema/Sistema/SistemaTeru.py",
+		"/H/Documentos/Trabajo/TeruSistema/Sistema/Ingredientes.py",
+		"/H/Documentos/Trabajo/TeruSistema/Sistema/CSVReader.py",
+		"/H/Documentos/Trabajo/TeruSistema/ListaIngredientes.csv",
+		"/H/Documentos/Trabajo/TeruSistema/Lista Platillos.csv",
+		"/H/Documentos/Trabajo/TeruSistema/error.txt",
+		"/H/Documentos/Trabajo/TeruSistema/Sistema/ObjectDB.py",
+		"/H/Documentos/Trabajo/TeruSistema/Sistema/tkUtils.py",
+		"/H/Documentos/Trabajo/TeruSistema/Datos/conf.json",
+		"/H/Documentos/Trabajo/TeruSistema/Datos/Platillos/General.py",
+		"/H/Documentos/Trabajo/TeruSistema/Datos/Platillos/TeruPlugin.py",
+		"/H/Documentos/Trabajo/TeruSistema/Datos/Platillos/general.json",
+		"/H/Documentos/Trabajo/TeruSistema/Sistema/__init__.py",
 		"/H/Documentos/Trabajo/TeruSistema/Sistema/Clientes.py",
 		"/H/Documentos/Trabajo/TeruSistema/Datos/Platillos/Sushi.py",
-		"/H/Documentos/Trabajo/TeruSistema/Datos/Platillos/TeruPlugin.py",
-		"/H/Documentos/Trabajo/TeruSistema/Datos/Platillos/General.py",
-		"/H/Documentos/Trabajo/TeruSistema/Datos/conf.json",
 		"/H/Documentos/Trabajo/TeruSistema/SistemaTeru.py",
-		"/H/Documentos/Trabajo/TeruSistema/Sistema/SistemaTeru.py",
-		"/H/Documentos/Trabajo/TeruSistema/TeruGUI.pyw",
-		"/H/Documentos/Trabajo/TeruSistema/Sistema/ObjectDB.py",
 		"/H/Documentos/Trabajo/TeruSistema/Sistema/Comanda.py",
-		"/H/Documentos/Trabajo/TeruSistema/Sistema/tkUtils.py",
-		"/H/Documentos/Trabajo/TeruSistema/Sistema/__init__.py",
 		"/H/Documentos/Trabajo/UNIC/UNIC_Formatos/CreadorFormatos.pyw",
-		"/H/Documentos/Trabajo/TeruSistema/error.txt",
 		"/H/Documentos/Trabajo/TeruSistema/Sistema/ObjectDB",
-		"/H/Documentos/Trabajo/TeruSistema/Sistema/CSVReader.py",
-		"/H/Documentos/Trabajo/TeruSistema/Datos/Platillos/general.json",
-		"/H/Documentos/Trabajo/TeruSistema/Lista Platillos.csv",
 		"/H/Documentos/Trabajo/TeruSistema/Sistema/CustomTK.py",
 		"/H/Documentos/Trabajo/TeruSistema/.gitignore",
 		"/H/Documentos/Trabajo/TeruSistema/Datos/Platillos/sushi.json",
@@ -761,7 +873,6 @@
 		"/H/Documentos/Trabajo/UNIC/OrientacionVoacionalTest/app/src/main/java/omar/com/orientacionvoacionaltest/activity/MainMenuActivity.java",
 		"/H/Documentos/EjemplosCodigo/Avah/app/src/main/java/com/avalerroux/activities/QuestionAnswerActivity.java",
 		"/H/Documentos/EjemplosCodigo/Avah/app/src/main/java/com/avalerroux/activities/NetworkInfoActivity.java",
-		"/H/Documentos/Trabajo/UNIC/OrientacionVoacionalTest/app/src/main/java/omar/com/orientacionvoacionaltest/navigation/IFragmentable.java",
 		"/H/Documentos/EjemplosCodigo/MPChartExample/src/com/xxmassdeveloper/mpchartexample/fragments/BarChartFrag.java",
 		"/H/Documentos/EjemplosCodigo/MPChartExample/src/com/xxmassdeveloper/mpchartexample/BarChartActivity.java",
 		"/H/Documentos/EjemplosCodigo/MPChartExample/src/com/xxmassdeveloper/mpchartexample/BarChartActivityMultiDataset.java",
@@ -816,23 +927,7 @@
 		"/H/Documentos/SODVI/papiitv2/Assets/Resources/SPM_PAPIITv1.1.1/Editor/Scripts/EditorPenalty.cs",
 		"/H/Documentos/SODVI/papiitv2/Assets/Resources/SPM_PAPIITv1.1.1/Editor/Scripts/EditorManagerPenalty.cs",
 		"/H/Documentos/SODVI/papiitv2/Assets/Resources/SPM_PAPIITv1.1.1/Editor/Scripts/EditorManagerGlobal.cs",
-		"/H/Documentos/Diplomado/When Hell Freezes Over/Assets/Scripts/JSON/GameStatusJSON.cs",
-		"/H/Documentos/Diplomado/Prácticas/Práctica8/Assets/Shaders/RampTextureLighting.shader",
-		"/H/Documentos/Diplomado/Prácticas/Práctica8/Assets/Shaders/GaryScaleImageEffect.cs",
-		"/H/Documentos/Diplomado/When Hell Freezes Over/GameData/gameStatus.json",
-		"/H/Documentos/OneDrive/Documentos/hola.cs",
-		"/G/ProyectoFinal/WhenHellFreezesOver_Data/Resources/gameStatus.json",
-		"/H/Documentos/Diplomado/When Hell Freezes Over/GameData/frozen.json",
-		"/C/Users/Omar/AppData/Local/Temp/Rar$DIa0.640/readme.txt",
-		"/H/Documentos/Diplomado/Prácticas/Práctica8/Assets/Shaders/DiffuseReflectiveShader.shader",
-		"/C/Users/Omar/AppData/Local/Temp/Rar$DRa0.965/DefaultResourcesExtra/UI/UI-Unlit-Transparent.shader",
-		"/H/Documentos/Diplomado/Prácticas/Practica1/Assets/Scripts/Practica1/SceneLoader.cs",
-		"/H/Documentos/Diplomado/Prácticas/Práctica6y7/Assets/Scripts/CarController.cs",
-		"/H/Documentos/Diplomado/Prácticas/Práctica8/Assets/Shaders/ColorMesh.shader",
-		"/H/Documentos/Diplomado/When Hell Freezes Over/.gitignore",
-		"/H/Documentos/OneDrive/pythonTemario.txt",
-		"/C/Users/Omar/Desktop/WhenHellFreezesOver/gameStatus.json",
-		"/H/Documentos/Diplomado/When Hell Freezes Over/gameStatus.json"
+		"/H/Documentos/Diplomado/When Hell Freezes Over/Assets/Scripts/JSON/GameStatusJSON.cs"
 	],
 	"find":
 	{
@@ -851,6 +946,28 @@
 		"case_sensitive": true,
 		"find_history":
 		[
+			"CREATE TABLE IF NOT EXISTS",
+			"enumerate",
+			"idIngrediente",
+			"fromCSV",
+			"platillosfromCSV",
+			"fromCSV",
+			"cargarDesdeCSV",
+			"platilloCsvSerializer",
+			"buscarIngredientesFromPlatillo",
+			"nuevoId",
+			"clearPlatilloListbox",
+			"busqueda",
+			"populateListbox",
+			"print",
+			"platillosListbox",
+			"platillosScrollbar",
+			"platillosFrame",
+			"listbox",
+			"self.listbox",
+			"listbox",
+			"Listbox",
+			"listbox",
 			"fetchall",
 			"buscarID",
 			"platillosTeru",
@@ -956,36 +1073,23 @@
 			"data",
 			"libs",
 			"\"libs",
-			"CustomTK",
-			"CommandBase",
-			"italic",
-			"Package",
-			"Subsection",
-			"Section",
-			"Document",
-			"OrderedDict",
-			"defaultdict",
-			"docJSON",
-			"doc",
-			"inscripcion",
-			"../",
-			"gutter",
-			"Teléfono Particular Padre",
-			"Business",
-			"Number",
-			"Street",
-			"Nationality",
-			"Birthday",
-			"Birthplace",
-			"Name",
-			"Maternal"
+			"CustomTK"
 		],
 		"highlight": true,
 		"in_selection": false,
 		"preserve_case": false,
-		"regex": true,
+		"regex": false,
 		"replace_history":
 		[
+			"platillosfromCSV",
+			"cargarPlatillosDesdeCsv",
+			"idPlatillo",
+			"populatePlatillos",
+			"listbox",
+			"scrollbar",
+			"frame",
+			"pedidoListbox",
+			"self.platillosListbox",
 			"insertarPedido",
 			"clienteTeru",
 			"platilloTeru",
@@ -1067,54 +1171,67 @@
 		"show_context": true,
 		"use_buffer2": true,
 		"whole_word": true,
-		"wrap": false
+		"wrap": true
 	},
 	"groups":
 	[
 		{
-			"selected": 0,
+			"sheets":
+			[
+			]
+		},
+		{
+			"selected": 2,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "Sistema/Ingredientes.py",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 3606,
+						"buffer_size": 245,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								3602,
-								3602
+								245,
+								245
 							]
 						],
 						"settings":
 						{
 							"BracketHighlighterBusy": false,
-							"WordCount":
-							{
-								"changes": -1,
-								"modified": true,
-								"selection": true,
-								"status": -1,
-								"syntax": "python"
-							},
+							"auto_complete": true,
+							"auto_indent": false,
 							"bh_regions":
 							[
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
 								"bh_default",
 								"bh_default_center",
 								"bh_default_open",
 								"bh_default_close",
 								"bh_default_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
 								"bh_tag",
 								"bh_tag_center",
 								"bh_tag_open",
@@ -1125,16 +1242,16 @@
 								"bh_double_quote_open",
 								"bh_double_quote_close",
 								"bh_double_quote_content",
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close",
-								"bh_single_quote_content",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_unmatched_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
 								"bh_c_define",
 								"bh_c_define_center",
 								"bh_c_define_open",
@@ -1144,48 +1261,183 @@
 								"bh_angle_center",
 								"bh_angle_open",
 								"bh_angle_close",
-								"bh_angle_content",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_round_content",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content",
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_regex_content"
+								"bh_angle_content"
 							],
-							"open_with_edit": true,
-							"syntax": "Packages/Python/Python.sublime-syntax"
+							"default_dir": "H:\\Documentos\\Trabajo\\TeruSistema",
+							"detect_indentation": false,
+							"gutter": false,
+							"history_arrows": true,
+							"indent_subsequent_lines": false,
+							"line_numbers": false,
+							"repl": true,
+							"repl_external_id": "py34",
+							"repl_id": "02ae73ece1d143e094c36ce3f26e6507",
+							"repl_restart_args":
+							{
+								"cmd":
+								[
+									"py34",
+									"-i",
+									"-u",
+									"$file_basename"
+								],
+								"cwd": "$file_path",
+								"encoding": "utf8",
+								"extend_env":
+								{
+									"PYTHONIOENCODING": "utf-8"
+								},
+								"external_id": "py34",
+								"syntax": "Packages/Python/Python.tmLanguage",
+								"type": "subprocess"
+							},
+							"repl_sublime2": false,
+							"smart_indent": false,
+							"spell_check": false,
+							"syntax": "Packages/Python/Python.tmLanguage",
+							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 1300.0,
+						"translation.y": 67.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 0,
+					"stack_index": 2,
 					"type": "text"
 				},
 				{
 					"buffer": 1,
-					"file": "Sistema/Platillo.py",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 3433,
+						"buffer_size": 287,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1946,
-								1953
+								287,
+								287
+							]
+						],
+						"settings":
+						{
+							"BracketHighlighterBusy": false,
+							"auto_complete": true,
+							"auto_indent": false,
+							"bh_regions":
+							[
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content"
+							],
+							"default_dir": "H:\\Documentos\\Trabajo\\TeruSistema",
+							"detect_indentation": false,
+							"gutter": false,
+							"history_arrows": true,
+							"indent_subsequent_lines": false,
+							"line_numbers": false,
+							"repl": true,
+							"repl_external_id": "py34",
+							"repl_id": "81fa5f106f13461688b88c10cf0dddfd",
+							"repl_restart_args":
+							{
+								"cmd":
+								[
+									"py34",
+									"-i",
+									"-u",
+									"$file_basename"
+								],
+								"cwd": "$file_path",
+								"encoding": "utf8",
+								"extend_env":
+								{
+									"PYTHONIOENCODING": "utf-8"
+								},
+								"external_id": "py34",
+								"syntax": "Packages/Python/Python.tmLanguage",
+								"type": "subprocess"
+							},
+							"repl_sublime2": false,
+							"smart_indent": false,
+							"spell_check": false,
+							"syntax": "Packages/Python/Python.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 67.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 245,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								245,
+								245
 							]
 						],
 						"settings":
@@ -1199,28 +1451,30 @@
 								"status": -1,
 								"syntax": "python"
 							},
+							"auto_complete": true,
+							"auto_indent": false,
 							"bh_regions":
 							[
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_default_content",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_tag_content",
 								"bh_double_quote",
 								"bh_double_quote_center",
 								"bh_double_quote_open",
 								"bh_double_quote_close",
 								"bh_double_quote_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
 								"bh_single_quote",
 								"bh_single_quote_center",
 								"bh_single_quote_open",
@@ -1231,40 +1485,71 @@
 								"bh_unmatched_open",
 								"bh_unmatched_close",
 								"bh_unmatched_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
 								"bh_c_define",
 								"bh_c_define_center",
 								"bh_c_define_open",
 								"bh_c_define_close",
 								"bh_c_define_content",
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_angle_content",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_round_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
 								"bh_square",
 								"bh_square_center",
 								"bh_square_open",
 								"bh_square_close",
 								"bh_square_content",
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_regex_content"
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content"
 							],
-							"syntax": "Packages/Python/Python.sublime-syntax",
+							"default_dir": "H:\\Documentos\\Trabajo\\TeruSistema",
+							"detect_indentation": false,
+							"gutter": false,
+							"history_arrows": true,
+							"indent_subsequent_lines": false,
+							"line_numbers": false,
+							"repl": true,
+							"repl_external_id": "py34",
+							"repl_id": "e9c9c9c5e20a4b809832925b416dc64b",
+							"repl_restart_args":
+							{
+								"cmd":
+								[
+									"py34",
+									"-i",
+									"-u",
+									"$file_basename"
+								],
+								"cwd": "$file_path",
+								"encoding": "utf8",
+								"extend_env":
+								{
+									"PYTHONIOENCODING": "utf-8"
+								},
+								"external_id": "py34",
+								"syntax": "Packages/Python/Python.tmLanguage",
+								"type": "subprocess"
+							},
+							"repl_sublime2": false,
+							"smart_indent": false,
+							"spell_check": false,
+							"syntax": "Packages/Python/Python.tmLanguage",
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 1140.0,
+						"translation.y": 67.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
+					"stack_index": 0,
 					"type": "text"
 				}
 			]
@@ -1287,6 +1572,12 @@
 				0,
 				1,
 				1
+			],
+			[
+				0,
+				1,
+				1,
+				2
 			]
 		],
 		"cols":
@@ -1297,6 +1588,7 @@
 		"rows":
 		[
 			0.0,
+			0.837386018237,
 			1.0
 		]
 	},
@@ -1315,7 +1607,7 @@
 	},
 	"output.exec":
 	{
-		"height": 529.0
+		"height": 130.0
 	},
 	"output.find_results":
 	{
@@ -1333,7 +1625,7 @@
 	"project": "SublimeTeru.sublime-project",
 	"replace":
 	{
-		"height": 106.0
+		"height": 66.0
 	},
 	"save_all_on_build": true,
 	"select_file":
@@ -1363,7 +1655,7 @@
 		],
 		"width": 0.0
 	},
-	"selected_group": 0,
+	"selected_group": 1,
 	"settings":
 	{
 	},

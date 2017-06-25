@@ -20,6 +20,7 @@ class TeruPlugin:
 				self.configuration = json.load(confFile)
 		except:
 			#No configuration file
+			print("¡No se encontró el archivo de configuración o hay error de sintaxis! {}".format(conf))
 			return
 		self.size = ""
 		if "size" in self.configuration:
@@ -51,13 +52,16 @@ class TeruPlugin:
 		Método que debe crear una ventana y devolver los valores necesarios obtenidos de dicha ventana.
 		"""
 		done = BooleanVar()
-		window = UserForm(master, done=done, padre=padre, keyLabels=self.configuration["keyLabels"], choices=self.configuration["choices"])
+		window = self.createWindow(master, padre, done)
 		self.size+="+{}+{}".format(padre.winfo_rootx(), padre.winfo_rooty())
 
 		master.geometry(self.size)
 		if wait:
 			master.wait_variable(done)
 		return window.formValues
+
+	def createWindow(self, master, padre, done):
+		return UserForm(master, done=done, padre=padre, keyLabels=self.configuration["keyLabels"], choices=self.configuration["choices"])
 
 	def withPlatillo(self, platillo):
 		"""

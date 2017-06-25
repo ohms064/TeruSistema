@@ -1,5 +1,4 @@
 from Datos.Platillos import Arroz
-
-class Sushi(Arroz.Arroz):
+class Onigiri(Arroz.Arroz):
 	def configurationFileName(self):
-		return "sushi.json"
+		return "onigiri.json"

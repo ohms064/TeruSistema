@@ -9,6 +9,8 @@ from Sistema.Comanda import *
 from Sistema.Clientes import *
 from Sistema.CSVReader import *
 from Sistema.Ingredientes import *
+from Sistema.UnidadMedida import *
+from Sistema.parserUtils import *
 
 class MainSystem():
 	def __init__(self):
@@ -71,7 +73,7 @@ class MainSystem():
 			if tarjeta:
 				dineroRecibido="0"
 			cliente = self.clientesDB.buscarCorreo(idCliente)
-			comanda = Comanda(int(numClientes), float(total), float(dineroRecibido), float(propina), tarjeta, cliente, pedido)
+			comanda = Comanda(int(numClientes), parse(total), float(dineroRecibido), float(propina), tarjeta, cliente, pedido)
 			return comanda
 
 		except ValueError as err:
@@ -92,6 +94,9 @@ class MainSystem():
 		self.platillosDB = PlatilloDB(self.conexion)
 		self.pedidosDB = PedidoDB(self.conexion)
 		self.ingredientesDB = IngredienteDB(self.conexion)
+		self.unidadDB = UnidadDB(self.conexion)
+		self.unidadDB.inicializar()
+		self.unidadDB.confirmar()
 
 	def nuevaPropina(self, propina):
 		"""
@@ -292,7 +297,7 @@ class MainSystem():
 	def cargarIngredientesDesdeCsv(self, filePath):
 		self.ingredientesDB.borrarTodoIngrediente()
 		try:
-			table = CSVTable(filePath, ["Nombre", "Precio", "Cantidad", "Unidad"], tuple())
+			table = CSVTable(filePath, ["Nombre", "Precio", "Cantidad", "Unidad"], ingredienteCSVSerializer)
 			values = list()
 			for ingrediente in table:
 				values.append(ingrediente)

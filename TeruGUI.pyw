@@ -1,4 +1,5 @@
 import tkinter as tk
+from Sistema.parserUtils import *
 from tkinter import ttk
 from tkinter import font
 from tkinter import messagebox as mb
@@ -36,6 +37,8 @@ class MesaGUI(tk.Frame):
 		self.categorias = self.sistema.platillosDB.getCategories()
 		self.subMenus = dict()
 		for categoria in self.categorias:
+			if categoria == "Extra":
+				continue
 			self.subMenus[categoria] = tk.Menu(self.master, tearoff=0)
 			platCategoria = self.sistema.platillosDB.buscarCategoria(categoria)
 			for platillo in platCategoria:
@@ -386,8 +389,11 @@ class Instanciador(tk.Frame):
 		self.textContador.set("Mesas: " + str(self.sistema.conf["visitas"]))
 
 	def onCloseWindow(self):
-		print("Cerrando sistema")
-		del self.sistema
+		try:
+			print("Cerrando sistema")
+			del self.sistema
+		except:
+			pass
 		print("Terminando ciclo")
 		self.master.eval('::ttk::CancelRepeat')
 		print("Destruyendo ventana")
@@ -640,7 +646,7 @@ class PlatillosGUI(tk.Frame):
 
 		tk.Label(self.master, text="Nueva Categoría").place(x=290, y=290)
 		tk.Entry(self.master, width=20, textvariable=self.nuevaCategoria).place(x=400, y=290)
-		tk.Button(self.master, text="Agregar", command=self.actualizarCategorias).place(x=470, y=315)
+		tk.Button(self.master, text="Agregar", command=self.actualizarCategorias).place(x=470, y=320)
 
 		tk.Label(self.master, text="Config").place(x=315, y=230)
 		tk.Entry(self.master, width=25, textvariable=self.plugin).place(x=370, y=230)
@@ -651,20 +657,29 @@ class PlatillosGUI(tk.Frame):
 
 		#Ingrediente Platillo
 		self.idIngredientePlatillo = tk.StringVar()
+		self.porcionIngredientePlatillo = tk.StringVar()
+		self.unidadIngredientePlatillo = tk.StringVar()
 		tk.Label(self.master, text="Ingrediente Platillo").place(x=540, y=10)
 
 		ingredientesPlatilloFrame, self.ingredientesPlatilloListbox = createListbox(self.master, width=30)
 		ingredientesPlatilloFrame.place(x=540, y=30)
 
 		tk.Label(self.master, text="Datos Ingrediente para Platillo").place(x=540, y=210)
+		
 		tk.Label(self.master, text="Id").place(x=540, y=230)
-		tk.Entry(self.master, width=10, textvariable=self.idIngredientePlatillo).place(x=570, y=230)
-		tk.Button(self.master, text="Agregar Ingrediente", command=self.insertarIngredientePlatillo).place(x=540, y=260)
-		tk.Button(self.master, text="Borrar Ingrediente", command=self.borrarIngredientePlatillo).place(x=670, y=260)
+		tk.Entry(self.master, width=10, textvariable=self.idIngredientePlatillo).place(x=595, y=230)
+		tk.Label(self.master, text="Porción").place(x=540, y=250)
+		tk.Entry(self.master, width=15, textvariable=self.porcionIngredientePlatillo).place(x=595, y=250)
+		ttk.Combobox(self.master, width=10, textvariable=self.unidadIngredientePlatillo, values=self.sistema.unidadDB.nombres).place(x=695, y=250)
+		
+		tk.Button(self.master, text="Agregar Ingrediente", command=self.insertarIngredientePlatillo).place(x=540, y=320)
+		tk.Button(self.master, text="Borrar Ingrediente", command=self.borrarIngredientePlatillo).place(x=670, y=320)
 
 		#Ingredientes
 		self.idIngrediente = tk.StringVar()
 		self.nombreIngrediente = tk.StringVar()
+		self.cantidadIngrediente = tk.StringVar()
+		self.unidadIngrediente = tk.StringVar()
 		tk.Label(self.master, text="Ingrediente").place(x=820, y=10)		
 
 		ingredienteFrame, self.ingredienteListbox = createListbox(self.master, width=30)
@@ -676,6 +691,9 @@ class PlatillosGUI(tk.Frame):
 		tk.Entry(self.master, width=30, textvariable=self.idIngrediente).place(x=875, y=230)
 		tk.Label(self.master, text="Nombre").place(x=820, y=250)
 		tk.Entry(self.master, width=30, textvariable=self.nombreIngrediente).place(x=875, y=250)
+		tk.Label(self.master, text="Cantidad").place(x=820, y=270)
+		tk.Entry(self.master, width=15, textvariable=self.cantidadIngrediente).place(x=875, y=270)
+		ttk.Combobox(self.master, width=10, textvariable=self.unidadIngrediente, values=self.sistema.unidadDB.nombres).place(x=975, y=270)
 
 		tk.Button(self.master, text="Insertar", command=self.insertarIngrediente).place(x=940, y=320)
 		tk.Button(self.master, text="Actualizar", command=self.actualzarIngrediente).place(x=870, y=320)
@@ -685,10 +703,15 @@ class PlatillosGUI(tk.Frame):
 		try:
 			idIngrediente = int(self.idIngrediente.get())
 			idPlatillo = int(self.idPlatillo.get())
+			porcion = float(self.porcionIngredientePlatillo.get())
 		except Exception as err:
 			print(err)
 			return
-		ingrediente = IngredientePlatillo(idIngrediente=idIngrediente, idPlatillo=idPlatillo)
+		unidad = self.unidadIngredientePlatillo.get()
+		if not unidad:
+			return
+
+		ingrediente = IngredientePlatillo(idIngrediente=idIngrediente, idPlatillo=idPlatillo, porcion=porcion, unidadPorcion=unidad)
 		self.sistema.ingredientesDB.insertarIngredientePlatillo(ingrediente)
 		self.sistema.ingredientesDB.confirmar()
 		clearListbox(self.ingredientesPlatilloListbox)
@@ -699,8 +722,14 @@ class PlatillosGUI(tk.Frame):
 
 	def insertarIngrediente(self):
 		nombre = self.nombreIngrediente.get()
-		if nombre:
-			ingrediente = Ingrediente(nombre=nombre)
+		try:
+			cantidad = float(self.cantidadIngrediente.get())
+		except Exception as err:
+			print(err)
+			return
+		unidad = self.unidadIngrediente.get()
+		if nombre and unidad:
+			ingrediente = Ingrediente(nombre=nombre, cantidad=cantidad, unidadCantidad=unidad)
 			self.sistema.ingredientesDB.insertarIngrediente(ingrediente)
 			clearListbox(self.ingredienteListbox)
 			self.populateIngredientes()
