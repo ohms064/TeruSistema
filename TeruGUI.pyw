@@ -304,6 +304,8 @@ class CierreGUI(tk.Frame):
 		"""
 		Se confirma el cierre.
 		"""
+		if(self.dineroLlevo.get() == ""):
+			self.dineroLlevo.set("0")
 		self.sistema.commitCierre(self.dineroLlevo.get(), self.dia.get())
 		self.reporteWindow.destroy()
 		self.showMain()

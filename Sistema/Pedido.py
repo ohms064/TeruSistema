@@ -1,19 +1,29 @@
 import sqlite3
 import datetime
 import json
-from Sistema.ObjectDB import *
+#from Sistema.ObjectDB import *
+if __name__ == '__main__':
+	from ObjectDB import *
+else:
+	from Sistema.ObjectDB import *
 
 class Pedido(object):
 	"""
 	Clase usada durante la estancia del cliente para que se vayan agregando platillos a su orden
 	"""
-	def __init__(self, fecha, orden=None, idCliente=-1):
+	def __init__(self, date, orden=None, idCliente=-1):
 		if orden is None:
 			self.orden = list()
 		else:
 			self.orden = orden
 		self.idCliente = idCliente
-		self.fecha = fecha
+
+		if(type(date) is datetime.date):
+			self.fecha = date
+
+		else:
+			self.fecha = date
+
 
 	def obtenerString(self, index):
 		"""
@@ -98,7 +108,7 @@ class PedidoDB(ObjectDB):
 			(
 			id INTEGER PRIMARY KEY,
 			idCliente INTEGER,
-			fecha DATE,
+			fecha TIMESTAMP,
 			FOREIGN KEY(idCliente) REFERENCES clienteTeru(id)
 			)""")
 
@@ -120,16 +130,26 @@ class PedidoDB(ObjectDB):
 		else:
 			sql = " INSERT INTO ordenTeru(idCliente, fecha) VALUES (?, ?)"
 			self.c.execute(sql, (pedido.idCliente, pedido.fecha, ))
-		print(sql)
 		lastId = self.c.lastrowid
 		for platillo in pedido.orden:
 			sql = " INSERT INTO orden_platillo_Teru(idOrden, idPlatillo, cantidad, extras) VALUES ({}, {}, {}, {})".format(lastId, platillo[0].idPlatillo, platillo[1], platillo[0].extra)
 			self.c.execute(sql)
 
 	def buscarTodos(self):
-		pass
+		#sql = "SELECT * FROM orden_platillo_Teru JOIN platilloTeru ON platilloTeru.id = orden_platillo_Teru.idPlatillo"
+		query = "SELECT * FROM ordenTeru"
+		sql = self.c.execute(query) 
+		output = list()
+		for q in sql:
+			output.append(Pedido(date=q[2], idCliente=q[0]))
+		return output
 
 	def buscarOrden(self, idOrden):
 		query = "SELECT * FROM ordenTeru JOIN orden_platillo_Teru ON ordenTeru.id = orden_platillo_Teru.idOrden WHERE ordenTeru.id = ?"
 		self.c.execute(query, (idOrden,))
 		#TODO: Ordenar la información obtenida
+
+if __name__ == '__main__':
+	conexion = sqlite3.connect("H:/Documentos/Trabajo/TeruSistema/Datos/Teru.db", detect_types=sqlite3.PARSE_DECLTYPES|sqlite3.PARSE_COLNAMES)
+	conexion.execute("PRAGMA journal_mode=WAL")
+	prompt = PedidoDB(conexion)

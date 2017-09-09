@@ -73,11 +73,11 @@ class MainSystem():
 			if tarjeta:
 				dineroRecibido="0"
 			cliente = self.clientesDB.buscarCorreo(idCliente)
-			comanda = Comanda(int(numClientes), parse(total), float(dineroRecibido), float(propina), tarjeta, cliente, pedido)
+			comanda = Comanda(int(numClientes), float(total), float(dineroRecibido), float(propina), tarjeta, cliente, pedido)
 			return comanda
 
 		except ValueError as err:
-			self.escribirError("SistemaTeru 71, nuevaComanda. Error al crear comanda.\n\tMensaje:{}".format(str(err)))
+			self.escribirError("SistemaTeru 80, nuevaComanda. Error al crear comanda.\n\tMensaje:{}".format(str(err)))
 			self.error = True
 			return None
 
@@ -147,6 +147,7 @@ class MainSystem():
 		gastos (opcional): Dinero que se ha gastado durante el día.
 		nomina (opcional): Dinero que se les pagó a los empleados
 		dia (opcional): Dia del que se quiere hacer cierre de caja, en caso de no enviarse se tomará el actual.
+		TODO:Usar la base de datos
 		"""
 		self.dineroCaja = int(dineroCaja)
 		self.reporteCadena = ""
@@ -182,12 +183,12 @@ class MainSystem():
 						totalMesas += 1
 						totalClientes += int(line[1])
 						if line[-1].rstrip("\n") == "TARJETA":
-							ventasTarjeta += int(line[2])
-							self.totalPropinaTarjeta += int(line[3])
+							ventasTarjeta += float(line[2])
+							self.totalPropinaTarjeta += float(line[3])
 						else:
-							ventasEfectivo += int(line[2])
-							self.totalPropinaEfectivo += int(line[3])
-						totalVentasPropina += int(line[4])
+							ventasEfectivo += float(line[2])
+							self.totalPropinaEfectivo += float(line[3])
+						totalVentasPropina += float(line[4])
 		except FileNotFoundError:
 			return "Archivo no encontrado " + str(diaFunc[0]) + "-" + str(diaFunc[1]) + "-" + str(diaFunc[2]) + ".csv"
 
@@ -247,12 +248,13 @@ class MainSystem():
 						totalMesas += 1
 						totalClientes += int(line[1])
 						if line[-1].rstrip("\n") == "TARJETA":
-							ventasTarjeta += int(line[2])
-							totalPropinaTarjeta += int(line[3])
+
+							ventasTarjeta += float(line[2])
+							totalPropinaTarjeta += float(line[3])
 						else:
-							ventasEfectivo += int(line[2])
-							totalPropinaEfectivo += int(line[3])
-						totalVentasPropina += int(line[4])
+							ventasEfectivo += float(line[2])
+							totalPropinaEfectivo += float(line[3])
+						totalVentasPropina += float(line[4])
 		except FileNotFoundError:
 			return "Archivo no encontrado " + str(diaFunc[0]) + "-" + str(diaFuncdiaFunc[1]) + "-" + str(diaFunc[2]) + ".csv"
 		
