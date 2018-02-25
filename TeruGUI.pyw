@@ -615,6 +615,10 @@ class PlatillosGUI(tk.Frame):
 		self.importMenu.add_command(label="Importar Platillos desde CSV", command=self.platillosfromCSV)
 		self.importMenu.add_command(label="Importar Ingredientes desde CSV", command=self.ingredientesfromCSV)
 		self.mainMenu.add_cascade(label="Importar", menu=self.importMenu)
+		self.exportMenu = tk.Menu(self.master, tearoff=0)
+		self.exportMenu.add_command(label="Exportar Platillos como CSV", command=self.platillosToCsv)
+		self.exportMenu.add_command(label="Exportar Ingredientes como CSV", command=self.ingredientesToCsv)
+		self.mainMenu.add_cascade(label="Exportar", menu=self.exportMenu)
 		self.master.config(menu=self.mainMenu)
 
 	def createWidgets(self):
@@ -912,7 +916,15 @@ class PlatillosGUI(tk.Frame):
 				else:
 					mb.showwarning(title="Error", message="No se pudo leer el archivo, se restauraron los datos anteriores.")
 
+	def platillosToCsv(self):
+		filePath = fd.asksaveasfilename(parent=self.master)
+		if filePath:
+			self.sistema.exportarPlatillosDesdeCsv(filePath)
 
+	def ingredientesToCsv(self):
+		filePath = fd.asksaveasfilename(parent=self.master)
+		if filePath:
+			self.sistema.exportarIngredientesDesdeCsv(filePath)
 
 if __name__ == '__main__':
 	root = tk.Tk()

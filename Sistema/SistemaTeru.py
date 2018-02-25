@@ -11,6 +11,7 @@ from Sistema.CSVReader import *
 from Sistema.Ingredientes import *
 from Sistema.UnidadMedida import *
 from Sistema.parserUtils import *
+from Sistema.Network import *
 
 class MainSystem():
 	def __init__(self):
@@ -20,8 +21,9 @@ class MainSystem():
 		self.reporteCadena = ""
 		self.dineroCaja = ""
 		os.makedirs("Datos", exist_ok=True)
-
-		with open("Comandas\\" + self.dia + ".csv", "a+") as arch:
+		self.server = None
+		self.defaultConf = {"fecha" : self.dia, "promoVisitas" : 5, "visitas" : 0, "firstRun": True, "Categorias Platillo": [], "Database":"Datos\\Teru.db", "Datos":{"Sucursal":"Cuernacava Centro", "id":100000}, "Network":{"Host":"localhost", "Port":"5555"}}
+		with open("Comandas\\" + self.dia + ".csv", "a+") as arch:#Verificamos que exista el archivo csv con las comandas del día
 			if (arch.tell() == 0):
 				arch.write("hora,#Clientes,total,propina,total + propina,idCliente, nickCliente,dineroRecibido,cambio")
 		try:
@@ -36,11 +38,11 @@ class MainSystem():
 					
 		except (FileNotFoundError, ValueError) as err:
 			with open("Datos\\conf.json", "w") as archConf:
-				self.conf = {"fecha" : self.dia, "promoVisitas" : 5, "visitas" : 0, "firstRun": True, "Categorias Platillo": [], "Database":"Datos\\Teru.db", "Datos":{"Sucursal":"Cuernacava Centro", "id":100000}}
+				self.conf = self.defaultConf
 				json.dump(self.conf, archConf, indent=3)
 		except Exception as err:
 			self.escribirError(err)
-			self.conf = {"fecha" : self.dia, "promoVisitas" : 5, "visitas" : 0, "firstRun": True, "Categorias Platillo": [], "Database":"Datos\\Teru.db", "Datos":{"Sucursal":"Cuernacava Centro", "id":100000}}
+			self.conf = self.defaultConf
 		finally:
 			print(self.conf)
 		self.beginDB()
@@ -50,12 +52,24 @@ class MainSystem():
 			self.conf["Datos"] = {"Sucursal":"Cuernacava Centro", "id":100000}
 			self.clientesDB.insertarPlaceholder(self.conf["Datos"]["id"], self.conf["Datos"]["Sucursal"])
 
+
 	def escribirError(self, err):
+		"""
+		Función que debe ser llamada si ocurre cualquier excepción.
+		"""
 		print("Error! Escribiendo reporte")
 		print(str(err))
 		with open("error.txt", "a") as archError:
 			archError.write("\nError {}\n\t".format(self.dia))
 			archError.write(str(err))
+
+	def startServer(self, host, port):
+		"""
+		Se inicia el servidor que recibirá datos de programas externos
+		"""
+		if self.server != None:
+			self.server.Stop()
+		self.server = NetworkServerSocket(host=host, port=port)
 
 	def nuevaComanda(self, numClientes, total, dineroRecibido, propina=0, tarjeta=False, idCliente="", pedido=None):
 		"""
@@ -263,6 +277,8 @@ class MainSystem():
 		 
 	def __del__(self):
 		self.conexion.close()
+		if self.server != None:
+			self.server.Stop()
 		with open("Datos\\conf.json", "w") as archConf:
 			self.conf["tutorialInicio"] = False
 			json.dump(self.conf, archConf, indent=3)
@@ -309,6 +325,42 @@ class MainSystem():
 			self.escribirError(err)
 			print(err)
 			self.ingredientesDB.rewind()
+			return False
+
+	def exportarPlatillosDesdeCsv(self, filePath):
+		platillos = self.platillosDB.buscarTodos()
+		try:
+			table = CSVTable(filePath, ["Nombre", "Precio", "Categoría", "Plugin"], tuple())
+			values = list()
+			for p in platillos:
+				values.append(p.nombre)
+				values.append(p.precio)
+				values.append(p.categoria)
+				values.append(p.pluginName)
+				table.WriteRow(values)
+				values = list()			
+			return True
+		except Exception as err: 
+			self.escribirError(err)
+			print(err)
+			return False
+
+	def exportarIngredientesDesdeCsv(self, filePath):
+		ingredientes = self.ingredientesDB.buscarTodos()
+		try:
+			table = CSVTable(filePath, ["Nombre", "Precio", "Cantidad", "Unidad"], ingredienteCSVSerializer)
+			values = list()
+			for i in ingredientes:
+				values.append(i.nombre)
+				values.append(i.precio)
+				values.append(i.cantidad)
+				values.append(i.unidadCantidad)
+				table.WriteRow(values)
+				values = list()			
+			return True
+		except Exception as err: 
+			self.escribirError(err)
+			print(err)
 			return False
 
 if __name__ == '__main__':

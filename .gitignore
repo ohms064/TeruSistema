@@ -71,3 +71,4 @@ Datos/Teru.db-wal
 *.db-wal
 *.db-shm
 ListaIngredientes.csv
+*.csv

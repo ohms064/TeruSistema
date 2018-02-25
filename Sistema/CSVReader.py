@@ -4,21 +4,29 @@ class CSVTable:
 		self.filename = filename
 		self.returnType = returnType
 		self.rowLenght = len(columnsName)
-		with open(self.filename, "r", encoding='utf-8') as csvFile:
-			line = csvFile.readline()
-			self.columnsOrder = line.replace("\n","").split(",")
-			if csvFile.tell() == 0:
-				raise EmptyFileError
-			if len(self.columnsOrder) != self.rowLenght:
-				raise RowMismatchError
+		try:
+			with open(self.filename, "r", encoding='utf-8') as csvFile:
+				line = csvFile.readline()
+				self.columnsOrder = line.replace("\n","").split(",")
+				if csvFile.tell() == 0:
+					raise EmptyFileError
+				if len(self.columnsOrder) != self.rowLenght:
+					raise RowMismatchError
+		except (FileNotFoundError, EmptyFileError) as err:
+			with open(self.filename, "w", encoding='utf-8') as csvFile:
+				line = ",".join(columnsName)
+				print("Creating csv with ", line)
+				csvFile.write(line + "\n")
+
 
 	def WriteRow(self, dictRow):
 		if dictRow is None:
 			row = str("{}," * self.rowLenght).format(*[dictRow[data] for data in self.columnsOrder])
 		elif type(dictRow) is list or type(dictRow) is tuple:
-			if len(dictRow) != rowLenght:
+			if len(dictRow) != self.rowLenght:
 				raise RowMismatchError
 			row = str("{}," * self.rowLenght).format(*dictRow)
+			row = row[:-1]
 		else:
 			return 
 		with open(self.filename, "a", encoding='utf8') as csvFile:
