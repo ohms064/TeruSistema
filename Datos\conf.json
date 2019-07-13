@@ -1,0 +1,17 @@
+{
+   "fecha": "12-7-2019",
+   "promoVisitas": 5,
+   "visitas": 0,
+   "firstRun": true,
+   "Categorias Platillo": [],
+   "Database": "Datos\\Teru.db",
+   "Datos": {
+      "Sucursal": "Cuernacava Centro",
+      "id": 100000
+   },
+   "Network": {
+      "Host": "localhost",
+      "Port": "5555"
+   },
+   "tutorialInicio": false
+}

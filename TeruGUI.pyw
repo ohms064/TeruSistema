@@ -600,7 +600,7 @@ class PlatillosGUI(tk.Frame):
 		self.padre = padre
 		self.sistema = sistema
 		self.master.wm_title("Platillos")
-		self.master.geometry("1100x360")
+		self.master.geometry("1380x360")
 		self.pack()
 		self.createWidgets()
 		self.createMenu()
@@ -686,6 +686,8 @@ class PlatillosGUI(tk.Frame):
 		self.nombreIngrediente = tk.StringVar()
 		self.cantidadIngrediente = tk.StringVar()
 		self.unidadIngrediente = tk.StringVar()
+		self.lugarIngrediente = tk.StringVar()
+		self.precioIngrediente = tk.StringVar()
 		tk.Label(self.master, text="Ingrediente").place(x=820, y=10)		
 
 		ingredienteFrame, self.ingredienteListbox = createListbox(self.master, width=30)
@@ -694,11 +696,16 @@ class PlatillosGUI(tk.Frame):
 
 		tk.Label(self.master, text="Datos Ingrediente").place(x=820, y=210)
 		tk.Label(self.master, text="Id").place(x=820, y=230)
-		tk.Entry(self.master, width=30, textvariable=self.idIngrediente).place(x=875, y=230)
+		tk.Entry(self.master, width=20, textvariable=self.idIngrediente).place(x=875, y=230)
 		tk.Label(self.master, text="Nombre").place(x=820, y=250)
-		tk.Entry(self.master, width=30, textvariable=self.nombreIngrediente).place(x=875, y=250)
+		tk.Entry(self.master, width=20, textvariable=self.nombreIngrediente).place(x=875, y=250)
 		tk.Label(self.master, text="Cantidad").place(x=820, y=270)
-		tk.Entry(self.master, width=15, textvariable=self.cantidadIngrediente).place(x=875, y=270)
+		tk.Entry(self.master, width=20, textvariable=self.lugarIngrediente).place(x=875, y=270)
+
+		tk.Label(self.master, text="Tienda").place(x=1100, y=230)
+		tk.Entry(self.master, width=20, textvariable=self.precioIngrediente).place(x=1155, y=230)
+		tk.Label(self.master, text="Precio").place(x=1100, y=250)
+		tk.Entry(self.master, width=20, textvariable=self.cantidadIngrediente).place(x=1155, y=250)
 		ttk.Combobox(self.master, width=10, textvariable=self.unidadIngrediente, values=self.sistema.unidadDB.nombres).place(x=975, y=270)
 
 		tk.Button(self.master, text="Insertar", command=self.insertarIngrediente).place(x=940, y=320)
@@ -730,12 +737,14 @@ class PlatillosGUI(tk.Frame):
 		nombre = self.nombreIngrediente.get()
 		try:
 			cantidad = float(self.cantidadIngrediente.get())
+			precio = float(self.precioIngrediente.get())
 		except Exception as err:
 			print(err)
 			return
 		unidad = self.unidadIngrediente.get()
+		lugar = self.lugarIngrediente.get()
 		if nombre and unidad:
-			ingrediente = Ingrediente(nombre=nombre, cantidad=cantidad, unidadCantidad=unidad)
+			ingrediente = Ingrediente(nombre=nombre, cantidad=cantidad, unidadCantidad=unidad, lugar=lugar, precio=precio)
 			self.sistema.ingredientesDB.insertarIngrediente(ingrediente)
 			clearListbox(self.ingredienteListbox)
 			self.populateIngredientes()

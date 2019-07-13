@@ -2,12 +2,13 @@ from Sistema.ObjectDB import *
 from Sistema.Platillo import *
 
 class Ingrediente:
-	def __init__(self, idIngrediente=-1, nombre="" ,precio=0, cantidad=0, unidadCantidad="", ):
+	def __init__(self, idIngrediente=-1, nombre="" ,precio=0, cantidad=0, unidadCantidad="", lugar = ""):
 		self.idIngrediente = idIngrediente
 		self.nombre = nombre
 		self.precio = precio
 		self.cantidad = cantidad
 		self.unidadCantidad = unidadCantidad
+		self.lugar = lugar
 
 	def __str__(self):
 		return "{:3d}, {}".format(self.idIngrediente, self.nombre)
@@ -46,6 +47,7 @@ class IngredienteDB(ObjectDB):
 			precio REAL,
 			cantidad REAL,
 			idUnidad INTEGER,
+			lugar VARCHAR,
 			UNIQUE(nombre),
 			FOREIGN KEY(idUnidad) REFERENCES unidadTeru(id)
 			)""")
@@ -85,7 +87,7 @@ class IngredienteDB(ObjectDB):
 		sql = "INSERT OR IGNORE INTO ingrediente_platillo_Teru(idPlatillo, idIngrediente, porcion, idUnidad, extra) VALUES(?, ?, ?, ?, ?)"
 		self.c.execute(sql, (ingredientePlatillo.idPlatillo, ingredientePlatillo.idIngrediente, ingredientePlatillo.porcion, idUnidad, ingredientePlatillo.extra))
 
-	def actualizarIngrediente(self, identificador, nombre="", precio="", cantidad="", idUnidad=""):
+	def actualizarIngrediente(self, identificador, nombre="", precio="", cantidad="", idUnidad="", lugar=""):
 		if nombre == "" and precio == "" and categoria == "" and plugin == "":
 			return False
 		sql = "UPDATE ingredienteTeru SET "
@@ -97,6 +99,8 @@ class IngredienteDB(ObjectDB):
 			sql += "cantidad = {}, ".format(cantidad)
 		if idUnidad:
 			sql += "idUnidad = '{}', ".format(idUnidad)
+		if lugar:
+			sql += "lugar = '{}', ".format(lugar)
 
 		sql = sql[0:-2] + " WHERE id={}".format(identificador)
 		print(sql)
